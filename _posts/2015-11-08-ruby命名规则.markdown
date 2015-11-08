@@ -1,0 +1,60 @@
+---
+title:  "ruby 命名规则"
+date:   2013-11-08 21:27:00
+description: 'ruby 命名规则总结'
+---
+
+## 常量
+常量名使用大写字母，单词之间用下划线 _ 分隔
+
+{% highlight ruby %}
+EXAMPLE_CONSTANT
+{% endhighlight %}
+
+## 变量名
+变量名使用小写字母，单词之间用下划线 _ 分隔
+
+{% highlight ruby %}
+EXAMPLE_CONSTANT
+{% endhighlight %}
+
+## 类，模块
+
+类和模块的命名遵循驼峰规则，每个单词的首字母必须是大写，其余为小写。
+
+{% highlight ruby %}
+User
+ActiveRecord
+{% endhighlight %}
+
+如果是简略名称，需要用大写
+
+{% highlight ruby %}
+HTMLFormater
+XMLFormater
+{% endhighlight %}
+
+## 方法
+
+方法名遵循 snake_case，小写字母以 _ 分隔表示
+
+{% highlight ruby %}
+find_by_email
+full_message
+{% endhighlight %}
+
+### 真假值方法，使用动词转换为形容词，并在结尾加上问号 ? 来命名,
+
+Good:
+
+{% highlight ruby %}
+visible?
+{% endhighlight %}
+
+Bad:
+
+{% highlight ruby %}
+is_visible
+is_visible?
+{% endhighlight %}
+

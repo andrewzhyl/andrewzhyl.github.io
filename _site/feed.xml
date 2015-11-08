@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Andrewzhyl&#39;s Blog</title>
+    <description>记录一些东西</description>
+    <link>http://andrewzhyl.github.io</link>
+    <atom:link href="http://andrewzhyl.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>ruby 命名规则</title>
+        
+        
+          <description>&lt;h2&gt;常量&lt;/h2&gt;
+
+&lt;p&gt;常量名使用大写字母，单词之间用下划线 _ 分隔&lt;/p&gt;
+</description>
+        
+        <pubDate>Sat, 09 Nov 2013 05:27:00 +0800</pubDate>
+        <link>http://andrewzhyl.github.io/2013/ruby%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99/</link>
+        <guid isPermaLink="true">http://andrewzhyl.github.io/2013/ruby%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99/</guid>
+      </item>
+    
+  </channel>
+</rss>
