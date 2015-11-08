@@ -56,26 +56,52 @@
 
 <p>如果是简略名称，需要用大写</p>
 
+<p>Good:</p>
+
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">HTMLFormater</span>
-<span class="no">XMLFormater</span></code></pre></div>
+<span class="no">HTTPClient</span></code></pre></div>
+
+<p>Bod:</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">Example_Class</span>
+<span class="no">EXAMPLE_CLASS</span>
+<span class="no">HttpClient</span>
+<span class="no">HTTPclient</span>
+<span class="no">HTTP_Client</span></code></pre></div>
 
 <h2>方法</h2>
 
-<p>方法名遵循 snake_case，小写字母以 _ 分隔表示</p>
+<p>方法名遵循 snake_case，使用小写字母以 _ 分隔表示</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">find_by_email</span>
 <span class="n">full_message</span></code></pre></div>
 
-<h3>真假值方法，使用动词转换为形容词，并在结尾加上问号 ? 来命名,</h3>
+<p>真假值方法，使用动词或形容词，并在结尾加上问号 ? 来命名,不需要用 is_ 开头</p>
 
 <p>Good:</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">visible?</span></code></pre></div>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">visible?</span>
+<span class="n">user?</span>
+<span class="n">permitted?</span>
+<span class="n">clicked?</span></code></pre></div>
 
 <p>Bad:</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">is_visible</span>
 <span class="n">is_visible?</span></code></pre></div>
+
+<p>破坏性和非破坏性的方法都存在的情况下，破坏性的方法需要在最后加上叹号 ！结尾</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">split</span>
+<span class="nb">split</span><span class="o">!</span> <span class="c1"># split! 是破坏性的方法</span></code></pre></div>
+
+<h2>文件名</h2>
+
+<p>文件或文件夹名称都是小写字母，单词之间使用下划线 _ 或中划线 - 分隔，文件名作为类或模块名，文件夹作为命名空间</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">foo</span><span class="o">.</span><span class="n">rb</span> <span class="c1"># 类或模块名为 Foo </span>
+<span class="n">foo_bar</span><span class="o">.</span><span class="n">rb</span> <span class="c1"># 类或模块名为 FooBar </span>
+<span class="n">foo</span><span class="o">/</span><span class="n">bar_baz</span><span class="o">.</span><span class="n">rb</span> <span class="c1"># Foo::BarBaz</span></code></pre></div>
 
     </section>
 </article>
