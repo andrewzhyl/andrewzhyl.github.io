@@ -1,17 +1,25 @@
+---
+title:  "GO 编程基础"
+date:   2016-05-30 18:27:00
+description: 'GO 编程基础(一、二、三)'
+---
+
 # GO 编程基础
 
 ## (一) 开发环境
+
 ### GO 命令
 
 #### 常用命令
-- go get : 获取远程包(需 `提前安装` git 或hg)
-- go run: 直接运行程序
-- go build: 测试编译，检查是否有编译错误
-- go run: 直接运行程序
-- go fmt: 格式化源码
-- go install:  编译包文件并编译整个程序
-- go test : 运行测试文件
-- go doc : 查看手册
+- `go get` : 获取远程包(需 `提前安装` git 或hg)
+- `go run`: 直接运行程序
+- `go build`: 测试编译，检查是否有编译错误
+- `go run`: 直接运行程序
+- `go fmt`: 格式化源码
+- `go install`:  编译包文件并编译整个程序
+- `go test` : 运行测试文件
+- `go doc` : 查看手册
+
 
 ```
 godoc -http=:8080
@@ -26,7 +34,8 @@ godoc -http=:8080
 
 ## (二) Go基础知识
 
-GO 程序的一般结构:
+GO 程序的一般结构:  
+
 - Go 程序是通过 `package` 来组织的 (与 python 类似)
 - 只有 `package` 名称为 `main` 的包可以包含 `main` 函数
 - 一个可执行程序，有且仅有一个 `main` 包
@@ -36,8 +45,7 @@ GO 程序的一般结构:
 - 通过 `type` 关键字进行结构(`struct`) 或接口(`interface`) 的声明
 - 通过 `func` 关键字来进行函数的声明
 
-```
-
+``` go
 // 当前程序的包名
 package main
 
@@ -67,14 +75,15 @@ func main() {
 
 ### 可见性规则
 
-Go 语言使用 `大小写` 来决定该常量、变量、类型、接口、结构或函数是否可以被外部包所调用：
-根据约定， `函数名` 首字母 `小写` 即为 `private`
-首字母 `大写` 即为 `public`
+Go 语言使用 `大小写` 来决定该常量、变量、类型、接口、结构或函数是否可以被外部包所调用：  
+根据约定， `函数名` 首字母 `小写` 即为 `private`  
+首字母 `大写` 即为 `public`  
 
 
 ### 组定义
-常量组
-```go
+常量组  
+
+``` go
 const (
   PI = 3.14
   const1 = "1"
@@ -82,8 +91,10 @@ const (
   const3 = 3
 )
 ```
+
 全局变量组
-```go
+
+``` go
 var (
   name = "gopher"
   name1 = "1"
@@ -91,8 +102,10 @@ var (
   name3 = 3
 )
 ```
+
 一般类型组
-```go
+
+``` go
 type(
   newType int
   type1 float32
@@ -100,16 +113,17 @@ type(
   type3 byte
 )
 ```
+
 ## (三) 类型与变量
 
-### go 基本类型
+### go 基本类型  
+
 - 布尔型
 - 整型: int/uint
 - 8 位整型： int8/uint8
     - 长度：1字节
     - 取值范围：[-128,127]
 - 字节型: byte(uint8别名)
-
 
 - 复数： complex64/complex128
          -  长度：8/16 字节
