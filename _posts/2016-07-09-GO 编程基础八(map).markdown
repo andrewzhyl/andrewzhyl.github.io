@@ -14,6 +14,7 @@ description: '学习 map'
 - 使用 `for range` 对 `map` 和 `slice` 进行迭代操作
 
 **map 初始化方式**
+
 ``` go
 var m map[int]string = map[int]string{} #第一种
 var m map[int]string = make(map[int]string) # 第二种
@@ -28,6 +29,7 @@ a, ok := m[2][1]    # 多返回值，Ok 表示值是否已存在
 ```
 
 **切片遍历**
+
 ``` go
   s := []int{1, 2, 3, 4, 5, 6}
   for _, value := range s { // value 只是引用的值
