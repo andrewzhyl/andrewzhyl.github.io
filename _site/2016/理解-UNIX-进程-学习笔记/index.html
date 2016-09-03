@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Andrew's Blog - 《理解 UNIX 进程》学习笔记</title>
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="My Blog" href="/rss.xml">
+  <link rel="stylesheet" href="/assets/css/highlight.css">
+</head>
+<body>
+
+  <nav class="main-nav">
+    
+        <a href="/"> <span class="arrow">←</span> Home </a>
+    
+
+    
+        
+            <a href="/about">About </a>
+        
+    
+    <a class="cta" href="/feed.xml">Subscribe</a>
+</nav>
+
+  
+
+  <section id="wrapper" class="">
+    <article class="post">
+    <header>
+        <h1>《理解 UNIX 进程》学习笔记</h1>
+        <h2 class="headline">August 13, 2016</h2>
+    </header>
+    <section id="post-body">
+        <h1 id="unix-">《理解 UNIX 进程》学习笔记</h1>
+
+<p>@(学习笔记)</p>
+
+<h2 id="section">系统调用/命令/库函数</h2>
+
+<ol>
+  <li>用户在shell环境中可以操作的命令或可执行文件</li>
+  <li>系统内核可调用的函数与工具等</li>
+  <li>一些常用的函数（function）与函数库（library），大部分为C的函数库（libc）</li>
+  <li>设备文件的说明，通常是在/dev下的文件</li>
+  <li>配置文件或者是某些文件的格式</li>
+  <li>游戏（games）</li>
+  <li>惯例与协议等，例如Linux文件系统、网络协议、ASCII code等说明</li>
+  <li>系统管理员可用的管理命令</li>
+  <li>跟kernel有关的文件</li>
+</ol>
+
+<hr />
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">系统调用</th>
+      <th style="text-align: left">ruby</th>
+      <th style="text-align: center">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code>select(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>getpid(2)</code></td>
+      <td style="text-align: left"><code>Process.pid</code> 或 全局变量 <code>$$</code></td>
+      <td style="text-align: center">获取当前进程的 pid</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>getppid(2)</code></td>
+      <td style="text-align: left"><code>Process.ppid</code></td>
+      <td style="text-align: center">获取当前父进程的 pid</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>ps(1)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">进程状态</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>open(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">打开或创建一个文件</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>close(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">删除一个描述符(关闭一个打开的文件)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>read(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>write(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>pipe(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>fsync(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>stat(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>getrlimit(2)</code></td>
+      <td style="text-align: left"><code>Process.getrlimit</code></td>
+      <td style="text-align: center">查询资源限制，比如 <code>Process.getrlimit(:NOFILE)</code> 查询进程可以打开的最大文件数</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>setrlimit(2)</code></td>
+      <td style="text-align: left"><code>Process.setrlimit</code></td>
+      <td style="text-align: center">修改资源限制，比如 <code>Process.setrlimit(:NOFILE, 10000)</code> 修改可以打开的最大文件数到 10000</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>stat(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>setenv(3)</code>,<code>getenv(3)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">设置或获取环境变量</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>fork(2)</code></td>
+      <td style="text-align: left"><code>Kenel#fork</code></td>
+      <td style="text-align: center">允许运行中的进程已编程的方式衍生(forking)子进程，子进程和原进程一模一样</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>waitpid(2)</code></td>
+      <td style="text-align: left"><code>Process.wait</code>及其表亲</td>
+      <td style="text-align: center">阻塞并等待随机或指定子进程退出</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="unix-2">理解 UNIX 进程（2）：基础知识</h2>
+
+<h3 id="section-1">2.4 系统调用</h3>
+
+<ul>
+  <li>UNIX 系统的组成：用户空间(userland) 和内核。</li>
+  <li>程序不可以直接访问内核，所有通信都是通过系统调用来完成</li>
+  <li>所有的程序都运行在用户空间。</li>
+  <li>系统调用允许你的用户空间程序通过内核间接地与计算机硬件进行交互</li>
+</ul>
+
+<h3 id="wtf2">2.5 命名法，wtf(2)</h3>
+
+<p>Linux 系统手册常用的节：
+- 节1：一般命令
+- 节2： 系统调用
+- 节3：C 库函数
+- 节4：特殊文件</p>
+
+<pre><code>man 2 getpid # 从节2 查看 getpid 使用说明
+man find # 等同于 man 1 find
+</code></pre>
+
+<h3 id="unix--1">2.6 Unix 进程之本</h3>
+
+<ul>
+  <li>所有的代码都是在进程中执行的。</li>
+  <li>一个进程可以生成并管理其他多个进程</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-3">理解 UNIX 进程（3）：进程皆有标识</h2>
+
+<ul>
+  <li>进程都有一个唯一的进程标识符，称为 <code>pid</code></li>
+  <li><code>pid</code> 是一个顺序数字标识，不传达进程本身的任何信息</li>
+  <li>查看进程命令: ` ps -p <pid-of-irb-process>`</pid-of-irb-process></li>
+  <li>ruby 的 <code>Process.pid</code> 对应于系统调用 <code>getpid(2)</code></li>
+</ul>
+
+<hr />
+
+<h2 id="unix-4">理解 UNIX 进程（4）：进程皆有父</h2>
+<ul>
+  <li>系统中运行的每一个进程都有对应的父进程</li>
+  <li>每个进程都知道其父进程标识符（称为 ppid）</li>
+</ul>
+
+<p>ruby 获取父进程：</p>
+
+<pre><code class="language-ruby">puts Process.ppid
+</code></pre>
+
+<p><strong>实践领域</strong></p>
+
+<ul>
+  <li>ppid 一般用于检测守护进程</li>
+  <li>ruby 的 <code>Process.ppid</code> 对应系统调用 <code>getppid(2)</code></li>
+</ul>
+
+<hr />
+
+<h2 id="unix-5">理解 UNIX 进程（5）：进程皆有文件描述符</h2>
+
+<p>文件描述符代表打开的文件</p>
+
+<h3 id="section-2">5.1 万物皆为文件</h3>
+
+<ul>
+  <li>UNIX 中一切皆为文件，包括（设备、管道、套接字等），书中用 <code>资源</code> 表示</li>
+  <li>传统定义（文件系统中的文件）的时候，将使用 <code>文件</code> 表示</li>
+</ul>
+
+<h3 id="section-3">5.2 描述符代表资源</h3>
+
+<ul>
+  <li>在进程中打开一个资源，会获得一个文件描述符编号（<code>file descriptor number</code>）</li>
+  <li>文件描述符不会在无关进程之间共享，它只存在于其所属的进程之中。</li>
+  <li>进程结束后，文件描述符会和进程打开的资源一同被关闭</li>
+  <li>ruby 中，任何一个 IO 对象都有一个相关联的文件描述符编号，用 <code>IO#fileno</code> 访问</li>
+  <li>进程打开的所有资源都会获得一个用于标识的唯一数字。这是内核跟踪进程所用资源的方法</li>
+</ul>
+
+<h3 id="section-4">5.3 标准流</h3>
+
+<p>在通常情况下，UNIX每个程序在开始运行的时刻，都会有3个已经打开的 stream. 分别用来输入，输出，打印诊断和错误信息。通常他们会被连接到用户终端（tty(4)）. 但也可以改变到其它文件或设备。这取决于双亲进程的选择和设置。</p>
+
+<p>每个 UNIX 进程都有三个打开的资源：标准输入（STDIN）、标准输出(STDOUT) 和标准错误(STDERR)</p>
+
+<p><strong>STDIN</strong>:
+提供了一种从键盘或管道中读取输入的通用方法</p>
+
+<p><strong>STDOUT</strong> 和 <strong>STDERR</strong>
+提供了一种向显示器、文件、打印机等输出写入内容的通用方法</p>
+
+<p>每个进程的 <code>0,1,2</code> 三个文件描述符编号分别属于 <code>STDIN,STDOUT,STDERR</code></p>
+
+<hr />
+
+<h2 id="unix-6">理解 UNIX 进程（6）：进程皆有资源限制</h2>
+<p>@(学习笔记)</p>
+
+<ul>
+  <li>文件描述符编号一直处理递增状态</li>
+  <li>内核为进程施加了某些资源限制</li>
+</ul>
+
+<h3 id="section-5">6.1 找出限制</h3>
+
+<pre><code>p Process.getrlimit(:NOFILE) # 查询可打开的最大文件数
+# =&gt; [4864, 9223372036854775807]
+</code></pre>
+<ul>
+  <li>返回值第一个元素是文件描述符数量的软限制(soft limit)，超过软限制将会产生异常</li>
+  <li>第二个元素是文件描述符数量的硬限制(hard limit),实际上表示无限制</li>
+</ul>
+
+<h3 id="section-6">6.3 提高软限制</h3>
+
+<pre><code class="language-ruby"> Process.setrlimit(:NOFILE, 5886)
+ p Process.getrlimit(:NOFILE)
+ #=&gt; [5886, 5886]
+</code></pre>
+<ul>
+  <li>软限制和硬限制都被设置成了 5886</li>
+  <li>可以给 ` Process.setrlimit` 传递第 3 个参数来制定新的硬限制</li>
+</ul>
+
+<pre><code>P  Process.setrlimit(:NOFILE, Process.getrlimit(:NOFILE)[1])
+</code></pre>
+<p>设置文件描述符数量限制为最大，其实我本机只能设置到 <code>10000</code> 左右</p>
+
+<h3 id="section-7">6.4 超出限制</h3>
+
+<p>打开 irb 输入：
+<code>
+Process.setrlimit(:NOFILE, 8)
+# 会出现 `output=': Too many open files - dup (Errno::EMFILE)
+</code>
+因为进程打开时默认已经使用了 8个文件描述符编号，这时再操作会有错误出现</p>
+
+<p>打开 irb 输入：
+<code>
+Process.setrlimit(:NOFILE, 9)
+ f = File.open('/dev/null')
+# 会出现 Errno::EMFILE: Too many open files @ rb_sysopen - /dev/null
+</code></p>
+
+<h3 id="section-8">6.5 其它资源限制</h3>
+
+<pre><code class="language-ruby"># 当前用户所允许的最大并发进程数
+Process.getrlimit(:NPROC)
+
+# 可以创建的最大的文件
+Process.getrlimit(:FSIZE)
+
+# 用于进程栈的最大段的大小
+Process.getrlimit(:STACK)
+</code></pre>
+<p>请查看 Process.getrlimit 文档查看完整的可用选项列表</p>
+
+<h3 id="section-9">6.6 实践领域</h3>
+
+<ul>
+  <li><code>httperf</code> 是一款多并发测试工具，需要提高系统的软限制才可以创建更多的并发</li>
+  <li>我们还可以在执行第三方代码的时候，对代码所属进程进行设置限制，并取消修改限制的权限，确保其无法超出徐克范围的资源数量</li>
+</ul>
+
+<h3 id="section-10">6.7 系统调用</h3>
+
+<p><code>Process.getrlimit</code> 对应系统调用的 <code>getrlimit(2)</code>
+<code>Process.setrlimit</code> 对应系统调用的 <code>setrlimit(2)</code></p>
+
+<hr />
+
+<h2 id="unix-7">理解 UNIX 进程（7）：进程皆有环境</h2>
+
+<ul>
+  <li>环境变量是包含进程数据的键-值对(<code>key-value pairs</code>)</li>
+  <li>每个进程都有环境变量，由父进程设置并由子进程继承</li>
+</ul>
+
+<h3 id="section-11">7.1 环境变量是散列吗？</h3>
+
+<ul>
+  <li>ENV 使用了散列式的存取器 API，但并非 HASH</li>
+  <li>它实现了 <code>Enumerable</code> 和部分 <code>Hash API</code>, 但不是全部，<code>merge</code> 就没有实现</li>
+  <li>系统调用不能直接操作环境变量，但 C 库函数 <code>setenv(3)</code> 和 <code>getenv(3)</code> 可以</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-8">理解 UNIX 进程（8）：进程皆有参数</h2>
+
+<ul>
+  <li>所有进程都可以访问 <code>ARGV</code> 的特殊数组</li>
+  <li>argv 是 argumant vector 的缩写，表示参数向量或数组</li>
+  <li>有些库会读取 <code>ARGV</code> 来解析命令行选项，我们可以在读取前修改它</li>
+</ul>
+
+<h3 id="section-12">实践领域</h3>
+
+<ul>
+  <li>ARGV 常用于将文件名作为参数传入程序</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-9">理解 UNIX 进程（9）：进程皆有名</h2>
+
+<p>进程的非自身通信方式：
+- 通过文件系统，写入日志信息的方式来了解彼此的状态
+- 借助网络来打开套接字通其它进程进行通过</p>
+
+<p>进程自身的通信机制：一个是进程名称，另一个是退出码</p>
+
+<h3 id="section-13">9.1 进程命名</h3>
+<ul>
+  <li>每个进程都要一个名称</li>
+  <li>进程可以在运行期间被修改作为一种通信手段</li>
+  <li>ruby 中用全局变量 <code>$PROGRAM_NAME</code> 或 <code>$0</code> 获得当前进程名称</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-10">理解 UNIX 进程（10）：进程皆有退出码</h2>
+
+<ul>
+  <li>进程在结束的时候都带有数字退出码(0~255), 用于指明进程是否顺利结束</li>
+  <li>退出码为 0 表示顺利结束，其它的表示各种错误</li>
+  <li>退出码也是一种进程的通信途径</li>
+</ul>
+
+<h3 id="section-14">如何退出进程</h3>
+
+<ul>
+  <li>ruby 中用 <code>kernel#exit</code> 来退出进程，退出码是 0，但是亦可以定制 `exit 22</li>
+  <li><code>kernel#exit</code>  被调用，退出之前，会调用 <code>at_exit</code> 定义的语句块</li>
+  <li>
+    <ul>
+      <li><code>kernel#exit！</code>  被调用，退出码设置为 1，不会调用 <code>at_exit</code></li>
+    </ul>
+  </li>
+  <li><code>kernel#abort</code> 从错误进程中退出的通用方法，会将当前进程的退出码设置为 1</li>
+  <li><code>kernel#abort</code> 退出码设置为 1， 也会调用 <code>at_exit</code></li>
+  <li><code>kernel#raise</code> 不会立即结束进程，只是抛出异常，会沿着调用栈向上传递，如果不处理，那么异常会终结该进程</li>
+  <li><code>kernel#raise</code> 退出码设置为 1，也会调用 <code>at_exit</code></li>
+</ul>
+
+<hr />
+
+<h2 id="unix-11">理解 UNIX 进程（11）：进程皆可衍生</h2>
+
+<h3 id="luke-fork2">11.1 Luke,使用 fork(2)</h3>
+<ul>
+  <li>衍生(forking) 是 Unix 编程中最强大的概念之一</li>
+  <li><code>fork(2)</code> 系统调用，允许运行中的进程以编程的形式创建新的进程，这个新进程和原始进程一模一样</li>
+</ul>
+
+<p>fork 工作原理：
+- 调用 <code>fork(2)</code> 的进程是 “父进程”，新创建的进程是 “子进程”
+- 子进程从父进程出集成了其所占用内存中的所有内容，以及所有属于父进程的已打开的文件描述符
+- 子进程的 ppid 是父进程的 pid
+- 子进程获得了父进程所有的文件描述符的编号，两个进程可以共享打开的文件、套接字等
+- 子进程继承了父进程内存中的所有内容
+- fork 调用几乎瞬间就可以返回，速度很快，比分别载入 3 个应用程序实例要快的多
+- 子进程可以随意更改其内存内容的副本，而不会对父进程造成任何影响</p>
+
+<pre><code class="language-ruby">if fork
+  puts "#{Process.pid} entered the if block"
+else
+  puts "#{Process.pid} entered the else block"
+end
+</code></pre>
+<ul>
+  <li>以上 if 和 else 都会被执行</li>
+  <li>在父进程中，fork 范湖新创建的子进程的 pid，整数值为真，执行 if 语句块</li>
+  <li>在子进程中，fork 返回 nil ，所以子进程执行了 else 语句块</li>
+</ul>
+
+<h3 id="section-15">11.2 多核编程</h3>
+
+<ul>
+  <li>通过生成新的进程，你的代码可以(不能完全保证)被分配到多个 CPU 核心中,实现多核并发</li>
+  <li>如果系统繁忙，可能 4 个进程都由一个 CPU 来处理</li>
+</ul>
+
+<p><strong><code>注意：</code></strong></p>
+
+<p><code>fork(2)</code> 创建了一个和旧进程一模一样的新进程，如果父进程使用了 500M 内存进行了衍生，那么就会有 1GB 的内存被占用了，重复同样的操作 10 次，很快会耗尽所有的内容，这通常被称为 “fork 炸弹”(for bomb)</p>
+
+<h3 id="block">11.3 使用 block</h3>
+
+<ul>
+  <li>将一个 block 传递给 fork 方法，那么 block 会在新的子进程中执行，而父进程会跳过 block 中的内容</li>
+  <li>子进程执行完 block 之后就会推出，不会像父进程那样执行随后的代码</li>
+</ul>
+
+<pre><code class="language-ruby">fork do
+  # 此处的代码仅在子进程中执行
+end
+# 此处的代码仅在父进程中执行
+</code></pre>
+
+<h3 id="section-16">11.5 系统调用</h3>
+
+<p><code>kenel#fork</code> 对应系统调用 <code>fork(2)</code></p>
+
+<h2 id="unix-12">理解 UNIX 进程（12）：孤儿进程</h2>
+
+<pre><code class="language-ruby">fork do 
+  100.times do
+    sleep 1
+    puts "I'm an orphan! #{Process.pid}"
+  end
+end
+
+abort "Parent process died..."
+</code></pre>
+<p>示例代码，父进程退出之后，子进程还没有退出，称为孤儿进程</p>
+
+<p>管理孤儿：</p>
+
+<ul>
+  <li>守护进程：守护进程是一种长期运行的进程，为了能够一直保持运行，他们有意作为孤儿进程存在</li>
+  <li>使用 Unix 信号来与脱离终端会话的进程进行通信</li>
+</ul>
+
+
+    </section>
+</article>
+<footer id="post-meta" class="clearfix">
+    <a href="http://twitter.com/andrewzhyl">
+        <img class="avatar" src="/assets/images/avatar.png">
+        <div>
+            <span class="dark">andrewzhyl</span>
+            <span>记录一些东西</span>
+        </div>
+    </a>
+
+    <section id="sharing">
+        <a class="twitter" href="https://twitter.com/intent/tweet?text=http://andrewzhyl.github.io/2016/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/ - 《理解 UNIX 进程》学习笔记 by @andrewzhyl"><span class="icon-twitter"> Tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+    </section>
+</footer>
+
+<!-- Disqus comments -->
+
+
+<!-- Archive post list -->
+
+
+
+
+
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/highlight.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script>
+  //   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  //   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  //   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  //   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  //   ga('create', '', 'auto');
+  //   ga('send', 'pageview');
+  </script>
+</body>
+</html>
+
+
+

@@ -4,7 +4,7 @@ meta_description: "欲与何人言"
 
 aboutPage: true
 
-markdown: redcarpet
+gems: [jekyll-paginate] 
 highlighter: pygments
 
 paginate: 20
