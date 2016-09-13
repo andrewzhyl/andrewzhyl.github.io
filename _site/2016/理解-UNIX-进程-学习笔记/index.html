@@ -149,6 +149,16 @@
       <td style="text-align: left"><code>Process.wait</code>及其表亲</td>
       <td style="text-align: center">阻塞并等待随机或指定子进程退出</td>
     </tr>
+    <tr>
+      <td style="text-align: left"><code>kill(2)</code></td>
+      <td style="text-align: left"><code>Process.kill</code></td>
+      <td style="text-align: center">向pid所指进程发送信号。signal可以是信号编号或名称(字符串或Symbol)。若信号是负值(或信号名称前面带有-时), 则向进程组而非进程发送信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>sigaction(2)</code></td>
+      <td style="text-align: left"><code>Kernel#trap</code></td>
+      <td style="text-align: center">捕获信号并设置一个信号处理程序</td>
+    </tr>
   </tbody>
 </table>
 
@@ -168,7 +178,7 @@
 <h3 id="wtf2">2.5 命名法，wtf(2)</h3>
 
 <p>Linux 系统手册常用的节：
-- 节1：一般命令
+- 节1：一般命令(shell)
 - 节2： 系统调用
 - 节3：C 库函数
 - 节4：特殊文件</p>
@@ -463,6 +473,8 @@ end
 
 <p><code>kenel#fork</code> 对应系统调用 <code>fork(2)</code></p>
 
+<hr />
+
 <h2 id="unix-12">理解 UNIX 进程（12）：孤儿进程</h2>
 
 <pre><code class="language-ruby">fork do 
@@ -482,6 +494,459 @@ abort "Parent process died..."
   <li>守护进程：守护进程是一种长期运行的进程，为了能够一直保持运行，他们有意作为孤儿进程存在</li>
   <li>使用 Unix 信号来与脱离终端会话的进程进行通信</li>
 </ul>
+
+<hr />
+
+<h2 id="unix-13">理解 UNIX 进程（13）：友好的进程</h2>
+
+<ul>
+  <li>Unix 系统采用写时复制(copy-on-write, COW) 的方法来优化</li>
+  <li>CoW 是把子进程对父进程实际的内存复制操作推迟到了真正需要写入的时候</li>
+  <li>如果不支持 Cow,子进程需要复制父进程所占内存内容的完整副本</li>
+</ul>
+
+<pre><code class="language-ruby">arr = [1,2,3]
+
+fork do 
+  # 此时子进程已经完成初始化
+  # 借助 COW，子进程不需要复制变量 arr,因为他没有修改任何共享变量
+  # 因此可以继续从和父进程同样的内存位置进行读取
+  p arr
+end
+
+arr = [1,2,3]
+
+fork do
+# 此时子进程已经完成初始化
+  # 由于 COW，子进程不需要复制变量 arr
+  arr &lt;&lt; 45
+  # 绗棉的代码修改了数组，因此在进行修改之前需要为子进程创建一个该数组的
+  # 副本。父进程中的这个数组并不会收到影响
+end
+</code></pre>
+
+<ul>
+  <li>使用 COW策略，fork(2) 的速度会很快，因为子进程只获取了它所需要的那部分数据的副本，其余部分依然可以共享</li>
+  <li>MRI 或 Rubinius 对其并不支持， Ruby2.0 以上版本会提供 Cow 友好的垃圾收集器</li>
+  <li>Ruby 企业版(Ruby Enterprise Edition) 是 COW 友好的 ruby 版本</li>
+</ul>
+
+<blockquote>
+  <p>MRI 的垃圾收集器会用 “标记-清除” (mark-and-sweep) 的算法，当垃圾收集器被调用时，它必须对每个已知的对象进行迭代并写入信息，指出该对象是否应该被回收。
+  因此在衍生之后，首次进行垃圾收集的时候，写时复制所带来的好处会被撤销</p>
+</blockquote>
+
+<hr />
+
+<h2 id="unix-14">理解 UNIX 进程（14）：进程可待</h2>
+
+<h3 id="babysitting">看顾(Babysitting)</h3>
+
+<ul>
+  <li>ruby 的 <code>Process.wait</code> 是一个阻塞调用，会一直等待父进程的某个子进程退出之后才继续执行</li>
+  <li><code>Process.wait</code> 的返回值是某个子进程的 pid</li>
+</ul>
+
+<pre><code>fork do 
+  5.times do 
+    sleep 1
+    puts "I am an orphan!"
+  end
+end
+
+puts Process.wait # 等待某个子进程执行完毕
+abort "Parent process died..."
+</code></pre>
+
+<h3 id="processwait-">Process.wait 一家子</h3>
+
+<ul>
+  <li><code>Process.wait</code> 返回的一个值是 pid,<code>Process.wait2</code> 返回的两个值是(pid, status)</li>
+  <li><code>Process.waitpid</code> 接收一个进程 pid 等待指定进程退出，pid 为 -1 时和 <code>Process.wait</code> 不带参数功能一样</li>
+  <li><code>Process.waitpid2</code>  和 <code>Process.wait2</code> 对应，  <code>Process.waitpid</code> 和 类似 <code>Process.wait</code> 对应</li>
+</ul>
+
+<h3 id="section-17">竞争条件</h3>
+
+<ul>
+  <li>内核会将退出的进程信息加入队列，这样一来父进程总是能够依靠子进程退出的顺序接收到信息(实际并不是按顺序，最好使用 <code>Process.waitpid</code> 指定 id</li>
+  <li>如果不存在子进程 <code>Process.wait</code> 会抛出 <code>Errno::ECHILD</code> 异常</li>
+</ul>
+
+<h2 id="section-18">14.6 实践领域</h2>
+
+<p>关注子进程是 unix 编程模型的核心，被称为 <code>看顾进程(Babysitting)</code>, <code>master/worker</code> 或 <code>preforking</code></p>
+
+<blockquote>
+  <p>如果你有一个衍生出多个并发子进程的进程，这个进程看管着这些子进程，确保他们能够保持响应，并对子进程的退出做出回应</p>
+</blockquote>
+
+<h2 id="section-19">14.7 系统调用</h2>
+
+<p>ruby 的 <code>Process.wait</code> 及其表亲都对应于系统调用 <code>waitpid(2)</code></p>
+
+<hr />
+
+<h2 id="unix-15">理解 UNIX 进程（15）：僵尸进程</h2>
+
+<h3 id="section-20">15.1 等待终有结果</h3>
+
+<p>使用 <code>Process.detach(pid)</code> 分离子进程，它会生成一个新线程，此线程 的唯一工作就是等待 pid 退出.
+这样可以保证内核不会一直保留不需要的的进程信息</p>
+
+<pre><code class="language-ruby">  pid = fork do
+    5.times {
+      sleep(1)
+      puts "thread..#{Process.pid}"
+    }
+  end
+   
+# 这行代码确保子进程不会变成僵尸
+  Process.detach(pid)
+</code></pre>
+
+<h3 id="section-21">15.2 僵尸长什么样子</h3>
+
+<pre><code class="language-ruby">#创建一个子进程， 1 秒钟之后推出
+pid = fork{ sleep 1}
+#打印子进程的 pid
+puts pid
+# 让父进程长眠，以便于我们检查子进程的进程状态信息
+sleep
+</code></pre>
+
+<pre><code class="language-bash">ps -ho pid,state -p 7132
+</code></pre>
+<p>终端输入以上代码，会显示僵尸进程的状态信息，7132 是进程 pid, 状态为 <code>z</code> 或 <code>Z+</code> 表示是僵尸进程</p>
+
+<h3 id="section-22">15.3 实践领域</h3>
+
+<ul>
+  <li>任何子进程在结束之时其父进程仍在运行，那么子进程会成为僵尸</li>
+  <li>一旦父进程读取了僵尸进程的状态信息，那么它将不复存在，也不会再消耗内核资源</li>
+</ul>
+
+<h3 id="section-23">15.4 系统调用</h3>
+
+<p><code>Process.detach(pid)</code> 没有对应系统调用，因为ruby 仅仅使用线程和 <code>Process.wait</code> 来实现它</p>
+
+<hr />
+
+<h2 id="unix-16">理解 UNIX 进程（16）：进程皆可获得信号</h2>
+
+<p><code>Process.wait</code> 是阻塞调用，知道子进程结束，调用才会返回(除非加第二个参数)</p>
+
+<h3 id="sigchld">16.1 捕获 SIGCHLD</h3>
+<ul>
+  <li>通过 <code>trap(:CHLD)</code> 可以捕获 :CHLD 信号</li>
+  <li>通过捕获 :CHLD, 内核会提醒父进程它的子进程何时退出</li>
+</ul>
+
+<p>代码见 snippet/signal_chld_native.rb</p>
+
+<h3 id="sigchld-">16.2 SIGCHLD 与并发</h3>
+
+<ul>
+  <li>信号投递是不可靠的</li>
+  <li>Process.wait 加入第二个参数，这样是非阻塞的调用,可用于确保统计每个子进程的</li>
+  <li>如果没有子进程存在，<code>Process.wait</code> 乃至其变量，将会抛出 <code>Errno::ECHILD</code> 异常</li>
+</ul>
+
+<pre><code class="language-ruby">pid = Process.wait(-1, Process::WNOHANG)
+</code></pre>
+
+<p>以上练习代码在 <code>snippets/signal_chld_nohang.rb</code></p>
+
+<h3 id="section-24">16.3 信号入门</h3>
+
+<p>信号是一种异步通信，进程从内核接收信号时，可以执行以下操作：
+- 忽略该信号
+- 执行特定的操作
+- 执行默认的操作</p>
+
+<h3 id="section-25">16.4 信号来自何方</h3>
+
+<ul>
+  <li>信号由内核发送，但信号是从一个进程发送到另一个进程，只不过是借用内核作为中介。</li>
+  <li>信号最初的目的是用来指定终结进程的不同方式</li>
+</ul>
+
+<p><code>注意：ruby 的 Irb 环境,定义了自己的信号处理程序，跟系统本身和 ruby 程序本身不同</code></p>
+
+<p>启动两个 ruby 进程，使用信号来结束其中一个
+(1) 在第一个 ruby 会话中执行以下代码：</p>
+
+<pre><code class="language-ruby">puts Process.pid
+sleep # 休眠，以便于有时间发送信号
+</code></pre>
+
+<p>(2) 在第二个 ruby 会话中发送信号中介第一个会话：</p>
+
+<pre><code class="language-ruby">Process.kill(:INT, &lt;pid of first session&gt;)
+</code></pre>
+
+<p>INT 是 <code>INTERRUPT</code>(中断)缩写，第二个进程会像第一个进程发送一个 <code>INT</code> 信号</p>
+
+<h3 id="section-26">16.5 信号一览</h3>
+
+<p>信号命名的时候，名字中的 <code>SIG</code> 部分是可选的。表中 <code>动作</code> 一列描述了每个信号的默认操作</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">动作</th>
+      <th style="text-align: left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">表示进程会立即结束</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">表示进程会立即结束并进行核心转储(栈跟踪)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Ign</td>
+      <td style="text-align: left">表示进程会忽略该信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">表示进程会停止运行(暂停)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Cont</td>
+      <td style="text-align: left">表示进程会恢复运行(继续)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Unix 系统通常支持的信号：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">信号</th>
+      <th style="text-align: left">值</th>
+      <th style="text-align: left">动作</th>
+      <th style="text-align: left">注释</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">SIG<code>HUP</code></td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">由控制终端或控制进程终止时发出</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>INT</code></td>
+      <td style="text-align: left">2</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">来自键盘的中断信号(通常是 <code>Ctrl-C</code> )</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>QUIT</code></td>
+      <td style="text-align: left">3</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">来自键盘的退出信号(通常是 <code>Ctrl-/</code> )</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>ILL</code></td>
+      <td style="text-align: left">4</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">非法指令</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>ABRT</code></td>
+      <td style="text-align: left">6</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">来自 abort(3) 的终止信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>FPE</code></td>
+      <td style="text-align: left">8</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">浮点数异常</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>KILL</code></td>
+      <td style="text-align: left">9</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">kill 信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>SEGV</code></td>
+      <td style="text-align: left">11</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">非法内存地址引用</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>PIPE</code></td>
+      <td style="text-align: left">13</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">管道损坏(Broken pipe):向没有读取进程的管道写入信息</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>ALRM</code></td>
+      <td style="text-align: left">14</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">来自 alarm(2) 的计时器到时信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>TERM</code></td>
+      <td style="text-align: left">15</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">终止信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>USR1</code></td>
+      <td style="text-align: left">30,10,16</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">用户自定义信号 1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>USR2</code></td>
+      <td style="text-align: left">31,12,17</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">用户自定义信号 2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>CHLD</code></td>
+      <td style="text-align: left">20,17,18</td>
+      <td style="text-align: left">Ign</td>
+      <td style="text-align: left">子进程停止或终止</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>CONT</code></td>
+      <td style="text-align: left">19,18,25</td>
+      <td style="text-align: left">Cont</td>
+      <td style="text-align: left">如果停止，则继续执行</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>STOP</code></td>
+      <td style="text-align: left">17,19,23</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">停止进程执行(来自非终端)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>TSTP</code></td>
+      <td style="text-align: left">18,20,24</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">来自终端的停止信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>TTIN</code></td>
+      <td style="text-align: left">21,21,26</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">后台进程的终端输入</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code>TTOU</code></td>
+      <td style="text-align: left">22,22,27</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">后台进程的终端输出</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>SIGKILL 和 SIGSTOP 信号不能被捕获、阻塞或忽略</li>
+  <li>SIGUSR1 和 SIGUSR2 这两个信号由你的进程来定义</li>
+</ul>
+
+<h3 id="section-27">16.6 重新定义信号的行为</h3>
+
+<p>（1）重新定义 INT 信号的行为：</p>
+
+<pre><code class="language-ruby">puts Process.pid
+trap(:INT) { print "Na na na, you can't get me"}
+sleep # 休眠，以便于有时间发送信号
+</code></pre>
+
+<p>（2）在第二个会话中发信号：</p>
+
+<pre><code class="language-ruby"># Process.kill(:INT, &lt;pid of first session&gt;)
+Process.kill(:INT, 61852)
+</code></pre>
+
+<p>（3）使用 Ctrl-C 来终结第一个会话，会发现结果还是一样</p>
+
+<p>（4）KILL  是不可以被重定义的</p>
+
+<pre><code class="language-ruby">Process.kill(:KILL, &lt;pid of first session&gt;)
+</code></pre>
+
+<p>或者在终端 kill -9 pid</p>
+
+<h3 id="section-28">16.7 忽略信号</h3>
+
+<p>修改 16.6 的代码，给 trap 加第二个参数，可以忽略信号
+<code>ruby
+puts Process.pid
+trap(:INT, "IGNORE")
+sleep # 休眠，以便于有时间发送信号
+</code>
+发送 <code>INT</code> 给以上代码的进程，进程不会退出</p>
+
+<h3 id="section-29">16.8 信号处理程序是全局性的</h3>
+
+<ul>
+  <li>捕获一个信号有点像使用一个全局变量</li>
+  <li>信号处理并没有命名空间</li>
+</ul>
+
+<h3 id="section-30">16.9 恰当地重定义信号处理程序</h3>
+
+<p>利用以下方式可以保留第一次的系统的默认行为
+``` ruby
+trap(:INT){ puts ‘This is the first signal handler’}</p>
+
+<p>old_handler = trap(:INT){
+  old_handler.call
+  puts ‘This is the second handler’
+  exit
+}
+sleep # 以便于有时间发送信号
+```</p>
+
+<p>从最佳时间的角度说，代码不应该定义任何信号处理程序，除非它是服务器</p>
+
+<pre><code class="language-ruby"># 一种 “友好的” 捕获信号的方法
+
+old_handler = trap(:QUIT){
+  # 进行清理
+  puts "All done!"
+
+  old_handler.call if old_handler.respond_to?(:call)
+}
+</code></pre>
+
+<p>退出之前清理资源可以使用 <code>at_exit</code>，不需要获取信号来处理</p>
+
+<h3 id="section-31">16.10 何时接收不到信号？</h3>
+
+<p>进程可以从繁忙的 for 循环中解脱出来，转而使用信号处理程序，它总会执行完所有被调用的信号处理程序中的代码</p>
+
+<h3 id="section-32">16.11 实践领域</h3>
+
+<ul>
+  <li>常见用法是在 shell 中使用 <code>kill(1)</code> 发送信号</li>
+  <li>信号是有长期运行的进程使用，例如服务器和守护进程。</li>
+  <li>多数情况下，发信号的是人类用户而非自动化程序</li>
+</ul>
+
+<p>web 服务器 <code>Unicorn</code> ：
+- 通过终止其所有进程并立即关闭来响应 <code>INT</code> 信号
+- 通过重新执行来响应 <code>USR2</code> 信号，从而实现零关闭时间重启(热部署)
+- 通过增加运行的工作进程数量来响应 <code>TTIN</code> 信号
+- unicorn 的信号：https://unicorn.bogomips.org/SIGNALS.html</p>
+
+<h3 id="section-33">16.12 系统调用</h3>
+
+<p>ruby 的 <code>Process.kill</code> 对应于 <code>kill(2)</code>
+<code>Kernal#trap</code> 基本对应于 <code>sigaction(2)</code></p>
 
 
     </section>
