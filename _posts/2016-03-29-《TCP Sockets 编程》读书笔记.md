@@ -411,3 +411,181 @@ Socket#bind -> bind(2)
 Socket#connect -> connect(2)
 ```
 
+---
+
+## 第五章：交换数据
+
+- TCP 连接如同遗传连接了本地套接字和远程套接字的管子，可以通过管子发送数据
+- 所有的数据都被编码成 TCP/IP 分组
+
+## 流
+
+- TCP 是一个基于流的协议
+-  创建套接字，需要传入 :STREAM 选项
+- TCP 连接提供了一个不间断的、有序的通信流。
+
+演示伪代码：
+
+``` ruby
+# 下面的代码会在网络上发送 3 份数据，一次一份
+data = ['a','b','c']
+
+for piece in data
+  write_to_connection(piece)
+end
+
+# 下面的代码在一次做作中读取全部数据
+result = read_from_connection #=> ['a','b','c']
+```
+
+`流并没有消息边界的概念`：
+
+- 客户端分别发送 3 份数据，服务器读取，是将其作为一份数据来接手，并不知道客户端是分批发送的数据
+
+---
+
+
+## 第六章：套接字读取
+
+学习如何在套接字上传送数据
+
+## 6.1 简单的读操作
+
+- Ruby 的各种套接字以及 File 在 IO 中都有一个共同的父类。
+- Ruby 中所有的 IO 对象(套接字、管道、文件...)都有一套通用的接口，支持 read、write、flush 等方法
+- 抽象源自操作系统核心本身，底层的 `read(2)` `write(2)` 等系统调用都可以作用域文件、套接字、管道等之上
+
+服务端：
+``` ruby
+require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+  # 从连接中读取数据最简单的方法
+  puts connection.read
+
+  # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+  connection.close
+end
+```
+
+客户端调用：
+
+``` bash
+echo ohi | nc lcoalhost 4481
+```
+  
+## 6.2 没那么简单
+
+- `EOF`:  end-of-file, 表示数据结尾
+- 服务器的 read 会一直阻塞，直到客户端发完数据为止
+
+客户端：
+
+``` bash
+ tail -f /var/log/system.log | nc -v localhost 4481
+```
+
+
+## 6.3 读取长度
+- 解决阻塞的办法是，指定最小的读取长度，告诉服务器读取(read)特定的数据量
+
+``` ruby
+require 'socket'
+one_kb = 1024 # 字节数
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  # 以 1kb 为单位进行读取
+  while data = connection.read(one_kb) do 
+    puts data
+  end
+
+  # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+  connection.close
+end
+```
+
+## 6.4 阻塞的本质
+
+- `read` 调用会一直阻塞，直到获取了完整长度的数据为止
+
+解决 `read` 死锁的办法：
+
+1. 客户端发完 500B 后再发送一个 ·EOF·
+2. 服务器采用部分读取 (partial read) 的方式
+
+## 6.5 EOF 事件
+
+- 当在连接上调用 `read` 并接收到 EOF 事件时，就可以确定不会再有数据，可以停止读取了。
+- `EOF` 代表 `end of file`(文件结束)
+- `EOF` 并不代表某种字符序列，它更新一个状态事件(state even)
+- 如果一个套接字没有数据可写，可以调用 `shutdown` 或 `close` 表示不再需要写入数据。这发送一个 `EOF` 事件给另一端进行读操作的进程
+- 调用 `File#read` 时(同 `Socket#read` 的行为方式类似)，会一直进行数据读取，直到无数据为止。一旦读完文件，会受到一个 `EOF` 事件并返回已读取到的数据
+
+``` ruby
+# ./code/snippets/read_with_length.rb
+
+require 'socket'
+one_hundred_kb = 1024 * 100 # 字节数
+
+Socket.tcp_server_loop(4481) do |connection|
+  begin
+    # 以 1kb 为单位进行读取
+    while data = connection.readpartial(one_hundred_kb) do
+        puts data
+      end
+    rescue EOFError
+    end
+
+    # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+    connection.close
+  end
+
+```
+
+客户端连接：
+
+``` ruby
+# ./code/snippets/write_with_eof.rb
+
+require 'socket'
+client = TCPSocket.new('localhost', 4481)
+client.write('gekko')
+client.close
+```
+
+## 6.6 部分读取
+
+- 调用 `readpartial` 不会阻塞，而是立即返回可用数据
+- `readpartial` 必须传递一个整数作为参数，来指定最大的长度
+-  `readpartial` 最多读取到指定长度。如果指明 1kb 数据，但客户端发送了 500B，并不会阻塞，会立即将读到的数据返回 
+-  当接收到 `EOF` 时 `read` 仅仅是返回， 而 `readpartial` 则会产生一个 `EOFError` 异常
+
+``` ruby
+# ./code/snippets/readpartial_with_length.rb
+
+require 'socket'
+one_hundred_kb = 1024 * 100 # 字节数
+
+Socket.tcp_server_loop(4481) do |connection|
+  begin
+    # 以 1kb 为单位进行读取
+    while data = connection.readpartial(one_hundred_kb) do
+        puts data
+      end
+    rescue EOFError
+    end
+
+    # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+    connection.close
+  end
+
+```
+
+### 6.7 系统调用
+
+``` bash
+Socket#read -> read(2),行为类似 fread(3)
+Socket#readpartial -> read(2)
+```
+
