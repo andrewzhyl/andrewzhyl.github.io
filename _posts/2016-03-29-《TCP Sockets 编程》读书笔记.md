@@ -68,6 +68,7 @@ socket = Socket.new(:INET6, :STREAM)
 
 ### 第三章：服务器套接字生命周期
 用于侦听连接而非发起连接，其典型的生命周期如下：
+
 1. 创建
 2. 绑定
 3. 侦听
@@ -75,6 +76,7 @@ socket = Socket.new(:INET6, :STREAM)
 5. 关闭
 
 ### 3.1 服务器绑定
+
 ```  ruby
 require 'socket'
 # 首先创建一个新的 TCP 套接字
@@ -418,7 +420,7 @@ Socket#connect -> connect(2)
 - TCP 连接如同遗传连接了本地套接字和远程套接字的管子，可以通过管子发送数据
 - 所有的数据都被编码成 TCP/IP 分组
 
-## 流
+### 流
 
 - TCP 是一个基于流的协议
 -  创建套接字，需要传入 :STREAM 选项
@@ -449,7 +451,7 @@ result = read_from_connection #=> ['a','b','c']
 
 学习如何在套接字上传送数据
 
-## 6.1 简单的读操作
+### 6.1 简单的读操作
 
 - Ruby 的各种套接字以及 File 在 IO 中都有一个共同的父类。
 - Ruby 中所有的 IO 对象(套接字、管道、文件...)都有一套通用的接口，支持 read、write、flush 等方法
@@ -474,7 +476,7 @@ end
 echo ohi | nc lcoalhost 4481
 ```
   
-## 6.2 没那么简单
+### 6.2 没那么简单
 
 - `EOF`:  end-of-file, 表示数据结尾
 - 服务器的 read 会一直阻塞，直到客户端发完数据为止
@@ -486,7 +488,7 @@ echo ohi | nc lcoalhost 4481
 ```
 
 
-## 6.3 读取长度
+### 6.3 读取长度
 - 解决阻塞的办法是，指定最小的读取长度，告诉服务器读取(read)特定的数据量
 
 ``` ruby
@@ -505,7 +507,7 @@ Socket.tcp_server_loop(4481) do |connection|
 end
 ```
 
-## 6.4 阻塞的本质
+### 6.4 阻塞的本质
 
 - `read` 调用会一直阻塞，直到获取了完整长度的数据为止
 
@@ -514,7 +516,7 @@ end
 1. 客户端发完 500B 后再发送一个 ·EOF·
 2. 服务器采用部分读取 (partial read) 的方式
 
-## 6.5 EOF 事件
+### 6.5 EOF 事件
 
 - 当在连接上调用 `read` 并接收到 EOF 事件时，就可以确定不会再有数据，可以停止读取了。
 - `EOF` 代表 `end of file`(文件结束)
@@ -554,7 +556,7 @@ client.write('gekko')
 client.close
 ```
 
-## 6.6 部分读取
+### 6.6 部分读取
 
 - 调用 `readpartial` 不会阻塞，而是立即返回可用数据
 - `readpartial` 必须传递一个整数作为参数，来指定最大的长度
@@ -588,4 +590,197 @@ Socket.tcp_server_loop(4481) do |connection|
 Socket#read -> read(2),行为类似 fread(3)
 Socket#readpartial -> read(2)
 ```
+
+---
+
+
+## 第七章：套接字写操作
+
+- 套接字写入数据，需要调用 `write` 方法
+- 系统调用: `Socket#write` -> `write(2)`
+
+``` ruby
+require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  # 向连接中写入数据的最简单的方法
+  connection.write('Welcome!')
+  connection.close
+end
+```
+
+---
+
+## 第八章：缓冲
+
+### 8.1 写缓冲
+
+- 调用 `write` 并返回，不代表数据已通过网络发送并被客户端套接字接收
+- 调用 `write` 并返回，只表明已将数据提交给了 `Ruby` 的 `IO` 系统和底层的操作系统内核
+- 在应用程序代码和实际的网络硬件之间至少还存在一个缓冲层
+- TCP 套接字morning将 sync 设置为 true, 跳过了 ruby 的内部缓冲
+- IO 缓冲是为了更好的性能
+
+### 8.2 读写入多少数据
+
+- 因为有缓冲区，我们可以一次写入所有的数据，由内核决定如何对数据进行分割或合并来调节性能
+- 如果数据量很大的 write，可以将自己将数据分割，避免全部载入内存中
+
+### 8.3 读缓冲
+
+- 读操作同样会被缓冲
+- 用 `read` 读取指定长度的数据，ruby 实际会接收大于制定长度的数据, ruby 多读的数据会被存储在 ruby 内部的读缓冲区
+- 下次调用 `read`,ruby 会查看内部缓冲区数据，然后再通过内核请求更多的数据
+
+### 8.4 该读取多少数据
+
+- TCP 提供的是数据流，无法得知发送方到底发送了多少数据，读取长度只能靠猜测
+- 指定读取长度时，内核会分配一定的内存
+- 指定读取长度太大，会浪费内存资源；指定长度太小，会有大量系统调用开销
+- Mongrel、Unicorn、Puma、Passenger 以及 Net::HTTP，采 `readpartial(1024*16)` 16KB 作为读取长度
+- `redis-rb` 使用 1KB 作为读取长度
+
+---
+
+## 第 10 章：套接字选项
+
+### 10.1 SO_TYPE
+
+```  ruby
+require 'socket'
+socket = TCPSocket.new('google.com', 80)
+
+# 获得一个描述套接字类型的 Socket::Option 实例
+opt = socket.getsockopt(Socket::SOL_SOCKET, Socket::SO_TYPE)
+
+# 将描述该选项的整数值同存储在 Socket::SOCK_STREAM 中的整数值进行比较
+puts opt.int == Socket::SOCK_STREAM #=> true
+puts opt.int == Socket::SOCK_DGRAM #=> false
+```
+
+简便方式：
+
+``` ruby
+require 'socket'
+socket = TCPSocket.new('google.com', 80)
+
+# 使用符号名,而不是常量
+opt = socket.getsockopt(:SOCKET, :TYPE)
+```
+
+### 10.2 SO_REUSE_ADDR
+
+- `SO_REUSE_ADDR` 选项告诉内核：如果服务器当前处于 TCP 的 `TIME_WAIT` 状态，即便另一个套接字要绑定(`bind`) 到服务器目前所使用的本地地址也无妨.
+- TCPServer.new、Socket.tcp_server_loop 及其类似的方法默认都打开了此选项
+
+示例代码：
+
+``` ruby
+require 'socket'
+server = TCPServer.new('localhost', 4481)
+server.setsockopt(:SOCKET, :REUSEADDR, true)
+
+server.getsockopt(:SOCKET, :REUSEADDR) #=> true
+```
+
+### 10.3 系统调用
+
+``` bash
+Socket#setsockopt -> setsockopt(2)
+Socket#getsockopt -> getsockopt(2)
+```
+
+---
+
+
+## 第11章：非阻塞式 IO
+
+### 11.1 非阻塞式读操作
+
+**两种阻塞的读操作**
+- `read` 会一直保持阻塞，直到接收到 `EOF` 或是获得指定的最小字节数为止
+- `readpartial` 会立即返回所有的可用数据，但如果没有数据可用，那么 `readpartial`仍会陷入阻塞
+
+**`Socket#read_nonblock` **:
+
+- 非阻塞读操作，需要指定整数值，作为读取的最大字节数
+- 如果可用数据小于最大字节数，则返回可用数据
+- 没有数据可读，`read_nonblock` 调用仍然会立即返回，并产生一个 `Errno::EAGAIN`异常
+- `Errno::EAGAIN`: 文件被标记用于非阻塞式 IO，无数据可读
+
+
+>  `read_nonblock` 方法首先检查 `ruby` 的内部缓冲区中是否还有未处理的数据，如果有，则立即返回
+>    `read_nonblock` 会询问内核是否有其他可用的数据可供 `select(2)`  读取,如果有，不管这些数据是在内核缓冲区还是网络中，他们都会被读取并返回
+>   其他情况都会使 `read(2)` 阻塞并在 `read_nonblock` 中引发异常
+
+``` ruby
+require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+  begin
+    puts connection.read_nonblock(4096)
+  rescue Errno::EAGAIN => e
+    IO.select([connection])
+    retry
+  rescue EOFError
+    break
+  end
+
+  connection.close
+end
+```
+
+### 11.2 非阻塞式写操作
+
+- `write_nonblock` 会在出现阻塞的时候，返回部分写入的结果
+- `write_nonblock` 的行为和系统调用 `write(2)`一样， 尽可能多的写入数据并返回写入的数量
+- `write` 和 `write_nonblock` 不同，`write` 会多次调用 `write(2)` 写入所有请求的数据
+-  `write_nonblock` 如果遇到阻塞会得到一个 `Errno::EAGAIN` 异常
+
+``` ruby
+./code/snippets/write_nonblock.rb
+require 'socket'
+
+client = TCPSocket.new('localhost', 4481)
+payload = 'Lorem ipsum' * 100_000
+
+written = client.write_nonblock(payload)
+puts written < payload.size 
+```
+
+非阻塞，多次写入：
+
+``` ruby
+./code/snippets/retry_partial_write.rb
+
+require 'socket'
+
+client = TCPSocket.new('localhost', 4481)
+payload = 'Lorem ipsum' * 100_000
+
+begin
+  loop do
+    bytes = client.write_nonblock(payload)
+
+    break if bytes >= payload.size
+    puts "----#{bytes}"
+    payload.slice!(0, bytes) # 删除已经写入的数据
+    IO.select(nil, [client])
+  end
+
+rescue Errno::EAGAIN
+  IO.select(nil, [client])
+  retry
+end
+```
+
+### 11.3 非拥塞式接收
+
+- `accept` 只是从侦听队列中弹出一个连接
+- `accept_nonblock` 在侦听队列为空时不会阻塞，只是产生一个 `Errno::EAGAIN`
+
+### 11.4 非拥塞式连接
+
+- `connect_nonblock` 不能立即发起到远程主机的连接，他会在后台继续执行操作并产生 `Errno::EINPROGRESS`
 
