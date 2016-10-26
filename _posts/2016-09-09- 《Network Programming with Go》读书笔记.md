@@ -1,7 +1,7 @@
 ---
-title:  "《理解 UNIX 进程》学习笔记"
-date:   2016-08-12 20:20:00
-description: '《理解 UNIX 进程》'
+title:  "《Network Programming with Go》学习笔记"
+date:   2016-09-09 20:20:00
+description: '《Network Programming with Go》学习笔记'
 ---
 
 # 《Network Programming with Go》学习笔记

@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Andrew's Blog - 《TCP Sockets 编程》读书笔记</title>
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="My Blog" href="/rss.xml">
+  <link rel="stylesheet" href="/assets/css/highlight.css">
+</head>
+<body>
+
+  <nav class="main-nav">
+    
+        <a href="/"> <span class="arrow">←</span> Home </a>
+    
+
+    
+        
+            <a href="/about">About </a>
+        
+    
+    <a class="cta" href="/feed.xml">Subscribe</a>
+</nav>
+
+  
+
+  <section id="wrapper" class="">
+    <article class="post">
+    <header>
+        <h1>《TCP Sockets 编程》读书笔记</h1>
+        <h2 class="headline">March 29, 2016</h2>
+    </header>
+    <section id="post-body">
+        <h1 id="tcp-sockets-">《TCP Sockets 编程》读书笔记</h1>
+
+<h2 id="section">第一章：建立套接字</h2>
+
+<h3 id="ruby-">1.1 ruby 的套接字库</h3>
+<p>socket 库是 ruby 标准库的组成，包含各种用于 TCP 套接字、UDP 套接字的类</p>
+
+<h3 id="section-1">1.2 创建首个套接字</h3>
+
+<pre><code class="language-ruby">require 'socket'
+socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM)
+</code></pre>
+<ul>
+  <li>INET 是 internet 的缩写，特别用于指代 IPv4 版本的套接字。</li>
+  <li>STREAM 表示用数据流通信，由 TCP 提供。</li>
+  <li>DGRAM(datagram 的缩写，数据报),则表示 UDP 套结字</li>
+</ul>
+
+<h3 id="section-2">1.3 什么是端点</h3>
+
+<ul>
+  <li>套接字使用 IP 地址将消息指向特定的主机。</li>
+  <li>主机由唯一的 IP 地址来标识</li>
+</ul>
+
+<h3 id="section-3">1.4 环回地址</h3>
+
+<ul>
+  <li>环回接口(loopback interface)。与硬件无关、完全虚拟的接口。发送到环回接口的数据立即会在同一个接口上被接收。</li>
+  <li>环回接口对应的主机名是 localhost, 对应的 IP 地址通常是 127.0.0.1，定义在 hosts 文件中</li>
+</ul>
+
+<h3 id="ipv6">1.5 IPv6</h3>
+<ul>
+  <li>IPv4 由 4 组数字组成，各自的范围在 0 ~ 255, 每组数字可以用 8 位二进制数字来表示，合计共需 32 位进制，意味着有 2的32次方或 43亿个地址。</li>
+  <li>IPv6 用另一个不同的格式，可以拥有天文数字级别的独立 IP 地址。</li>
+</ul>
+
+<h3 id="section-4">1.6 端口</h3>
+<p>套接字的 IP 地址和端口号的组合必须是唯一，端口号就是套接字端点的 “分机号”。</p>
+
+<h3 id="section-5">1.7 创建第二个套接字</h3>
+
+<p><strong>IPv6 域中的套接字</strong>:</p>
+
+<pre><code class="language-ruby"># ./code/snippets/create_socket_memoized.rb
+
+require 'socket'
+socket = Socket.new(:INET6, :STREAM)
+</code></pre>
+
+<h3 id="section-6">1.8 系统调用</h3>
+
+<p><code>Socket.new -&gt; socket(2)</code></p>
+
+<hr />
+
+<h2 id="section-7">第二章：建立连接</h2>
+
+<ul>
+  <li>TCP 在两个端点之间建立连接。端点可以处在同一台主机或不同主机</li>
+  <li>套接字必须担任以下角色之一：
+    <ol>
+      <li>发起者(initiator)</li>
+      <li>侦听者(listener)</li>
+    </ol>
+  </li>
+  <li>网络编程中，从事侦听的套接字称为 “服务器”，发起连接的套接字称为 “客户端”</li>
+</ul>
+
+<hr />
+
+<h3 id="section-8">第三章：服务器套接字生命周期</h3>
+<p>用于侦听连接而非发起连接，其典型的生命周期如下：</p>
+
+<ol>
+  <li>创建</li>
+  <li>绑定</li>
+  <li>侦听</li>
+  <li>接受</li>
+  <li>关闭</li>
+</ol>
+
+<h3 id="section-9">3.1 服务器绑定</h3>
+
+<pre><code class="language-ruby">require 'socket'
+# 首先创建一个新的 TCP 套接字
+socket = Socket.new(:INET, :STREAM)
+
+# 创建一个 C 结构体来保存用于侦听的地址。
+addr = Socket.pack_sockaddr_in(4481, '0.0.0.0')
+
+#执行绑定
+socket.bingd(addr)
+</code></pre>
+
+<p>这个套接字已绑定到本机的 4481 端口，其它套接字不可用此端口，否则会产生异常 <code>Errno::EADDRINUSE</code></p>
+
+<h3 id="section-10">3.1.1 该绑定到哪个端口</h3>
+
+<ul>
+  <li>规则1: 不要使用  0~1024 之间的端口。这些端口是保留给系统使用的。 
+http: 80，SMTP: 25，RSYNC: 873，绑定这些端口需要 root 权限。</li>
+  <li>规则2：不要使用 49 000 ~ 65 535 之间的端口。
+这些是临时(tphemeral)端口。通常是用于临时之需的服务使用。</li>
+  <li>除此之外,1025~48 999 的端口使用时一视同仁的。可以参考 <a href="http://www.iana.org/assignments/port-numbers">IANA 的注册端口列表</a>，确保不与其他流行的服务器冲突。</li>
+</ul>
+
+<h3 id="section-11">3.1.2 该绑定到哪个地址</h3>
+
+<ul>
+  <li>绑定环回地址(127.0.0.1) ，仅限于本地连接使用。无法用于外部连接，只有 localhost 或 127.0.0.1 的连接才会被服务器套接字接受</li>
+  <li>绑定 <code>192.168.0.5</code> ，套接字只侦听此接口，无法用于本地连接</li>
+  <li>使用用 0.0.0.0，会侦听所有可用接口、环回地址等</li>
+</ul>
+
+<h3 id="section-12">3.2 服务器侦听</h3>
+
+<p>创建套接字绑定到端口之后，需要进行侦听.</p>
+
+<pre><code class="language-ruby">require 'socket'
+
+# 创建套接字并绑定到端口 4481
+socket = Socket.new(:INET, :STREAM)
+addr = Socket.pack_sockadd_in(4481, '0.0.0.0')
+socket.bind(addr)
+
+#告诉套接字侦听接入的连接
+socket.listen(5)
+</code></pre>
+
+<h3 id="section-13">3.2.1 侦听队列</h3>
+
+<ul>
+  <li>listen 方法传递了一个整数类型的参数，表示服务器套接字能容纳的待处理的最大连接数</li>
+  <li>待处理的连接列表被称为侦听队列。</li>
+  <li>如果客户端连接到达且侦听队列已满，客户端会产生 Errno::ECONNREFUSED</li>
+</ul>
+
+<h3 id="section-14">3.2.2 侦听队列的长度</h3>
+
+<ul>
+  <li><code>Socket::SOMAXCONN</code> 可以获知当前锁允许的最大的侦听队列长度，Mac 上是 128</li>
+  <li>需要 root 权限来增加系统级别限制。</li>
+  <li>可使用 server.listen(Socket::SOMAXCONN) 将侦听队列长度设置为允许的最大值。</li>
+</ul>
+
+<h3 id="section-15">3.3 接受连接</h3>
+
+<pre><code class="language-ruby">require 'socket'
+# 创建套接字并绑定到端口 4481
+socket = Socket.new(:INET, :STREAM)
+addr = Socket.pack_sockadd_in(4481, '0.0.0.0')
+socket.bind(addr)
+
+#告诉套接字侦听接入的连接
+socket.listen(5)
+
+#接受连接
+connection, - = server.accept
+</code></pre>
+<p>用 netcat 发起一个连接, 运行后 nc 和 ruby 程序都会顺利退出</p>
+
+<pre><code class="language-bash">$ echo ohai | nc localhost 4481
+</code></pre>
+
+<h4 id="accept">accept</h4>
+
+<ul>
+  <li>accept 调用时阻塞式的，没有接收到新的连接，它会一直阻塞当前线程。</li>
+  <li>accept 调用返回一个数组，第一个是建立好的连接，第二个元素是 Addrinfo 对象，该对象描述客户端连接的远程地址</li>
+</ul>
+
+<h4 id="addrinfo">Addrinfo</h4>
+
+<ul>
+  <li>Addrinfo 类描述了一台主机机器端口号</li>
+  <li>有用的方法包括 #ip_address 和 #ip_port</li>
+  <li>构建例子：Addrinfo.tcp(‘localhost’, 4481)</li>
+</ul>
+
+<h3 id="section-16">连接详解</h3>
+
+<pre><code class="language-ruby">require 'socket'
+# 创建套接字并绑定到端口 4481
+socket = Socket.new(:INET, :STREAM)
+addr = Socket.pack_sockadd_in(4481, '0.0.0.0')
+socket.bind(addr)
+
+#告诉套接字侦听接入的连接
+socket.listen(128)
+
+#接受连接
+connection, - = server.accept
+
+print 'Connection class:'
+p connection.class
+
+print 'Server fileno:'
+p server.fileno
+
+print 'Connection fileno:'
+p connection.fileno
+
+print 'Local address:'
+p connection.local_address
+
+print 'Remote address:'
+p connection.remote_address # accept 第二个返回值相同
+</code></pre>
+
+<p>使用 netcat 命令发起连接后会输出：
+<code> ruby
+Connection class: Socket
+Server fileno: 7
+Connection fileno: 8
+Local address: #&lt;Addrinfo: 127.0.0.1:4481 TCP&gt;
+Remote address: #&lt;Addrinfo: 127.0.0.1:50488 TCP&gt;
+Addrinfo"#&lt;Addrinfo: 127.0.0.1:50488 TCP&gt;"
+</code>
+#### 3.3.3 连接类
+- 连接类是 Socket 表示一个连接就是一个 Socket 的实例</p>
+
+<h4 id="section-17">3.3.4 文件描述符</h4>
+
+<ul>
+  <li>fileno(文件描述符编号)是内核用于跟踪当前进程所打开文件的一种方法。</li>
+  <li>在 Unix 世界中，所有的一些都被视为文件。包括文件系统中的文件以及管道、套接字和打印机，等等。</li>
+  <li>accept 返回了一个不同于服务器套接字的全新 Socket，每个连接都是一个全新的 Socket 对象描述</li>
+</ul>
+
+<h4 id="section-18">3.3.5 连接地址</h4>
+
+<ul>
+  <li>本地地址：本地主机、本地端口</li>
+  <li>远程地址：远程主机、远程端口</li>
+  <li>以上 4 个属性的组合必须是唯一的</li>
+</ul>
+
+<h4 id="accept-">3.3.6 accept 循环</h4>
+<p>accept 返回一个连接</p>
+
+<pre><code class="language-ruby">require 'socket'
+# 创建套接字并绑定到端口 4481
+socket = Socket.new(:INET, :STREAM)
+addr = Socket.pack_sockadd_in(4481, '0.0.0.0')
+socket.bind(addr)
+
+#告诉套接字侦听接入的连接
+socket.listen(128)
+
+#进入无限循环，接受并处理连接
+loop do
+  #接受连接
+  connection, - = server.accept # 返回连接，第二个 - 是远程地址
+  # 处理连接
+  connection.close
+end
+</code></pre>
+
+<h3 id="section-19">3.4 关闭服务器</h3>
+<p>服务器接受某个连接并处理完毕，那么最后需要关闭该连接。这样才算完成一个连接的
+“创建-处理-关闭” 的生命周期。</p>
+
+<h4 id="section-20">3.4.1 退出时关闭</h4>
+<p>关闭连接的理由：</p>
+
+<ul>
+  <li>资源使用</li>
+  <li>打开文件的数量限制</li>
+</ul>
+
+<blockquote>
+  <p><code>Process.getrlimit(:NOFILE)</code>，获知当前进程所需要打开文件的数量。
+返回值是数组，包含软限制(用户配置的设置)和硬限制(系统限制)。
+<code>Process.setrlimit(Process.getrlimit(:NOFILE)[1])</code> 将进程的打开文件限制改为最大值</p>
+</blockquote>
+
+<h4 id="section-21">3.4.2 不同的关闭方式</h4>
+<p>套接字允许双向通信(读/写)，实际上可以只关闭其中一个通道。</p>
+
+<ul>
+  <li><code>Socket#close_write</code>  关闭写操作流 (wite stream) 会发送一个EOF到套接字的另一端。</li>
+  <li><code>Socket#close_read</code> 关闭读操作流</li>
+  <li><code>Socket#close_write</code>  <code>Socket#close_read</code> 方法在底层都利用 <code>shutdown(2)</code></li>
+  <li><code>Socket#close</code> 关闭套接字实例并回收所用资源，但不会关闭副本，副本所占用资源也不会被回收。</li>
+  <li><code>Socket#shutdown</code>  会关闭当前套接字及其副本上的通信，但不会回收所用资源。每个套接字都需要使用 close 结束它的生命周期。</li>
+  <li><code>Socket#dup</code> 创建文件描述符副本</li>
+  <li><code>Process.fork</code> 可以获得一个文件描述符副本，该方法创建了一个全新的进程(仅在 Unix 环境中)，这个进程和当前进程一模一样，除了拥有当前进程在内存中的所有内容外，新进程还通过 <code>dup</code> 获得了所有已打开的文件描述符的副本</li>
+</ul>
+
+<h3 id="ruby--1">3.5 Ruby 包装器</h3>
+
+<h4 id="section-22">3.5.1 服务器创建</h4>
+
+<pre><code class="language-ruby">require 'socket'
+server = TCPServer.new(4481)
+</code></pre>
+<p>简便的服务器创建方式</p>
+
+<ul>
+  <li><code>TCPServer#accept</code> 值返回连接</li>
+  <li><code>TCPServer</code> 默认的侦听队列长度是 5, 可以用 <code>TCPSrver#listen</code> 修改侦听队列长度</li>
+</ul>
+
+<pre><code class="language-ruby">require 'socket'
+servers = Socket.tcp_server_sockets(4481)
+</code></pre>
+<p>以上代码同时返回两个套接字，IPv4 和 IPv6</p>
+
+<h4 id="section-23">3.5.2 连接处理</h4>
+
+<p><code>accept_loop</code> 无限循环，并且还可以接受多个侦听套接字</p>
+
+<pre><code class="language-ruby">require 'socket'
+
+# 创建侦听套接字
+server = TCPServer.new(4481)
+
+# 进入无线循环接手并处理连接
+Socket.accept_loop(server) do |connection|
+  # 处理连接
+  connection.close
+end
+</code></pre>
+
+<p>多个套接字处理
+```
+# 创建侦听套接字
+servers = Socket.tcp_server_sockets(4481) # 创建两个套接字 IPv4 和 IPv6</p>
+
+<h1 id="section-24">进入无线循环接手并处理连接</h1>
+<p>Socket.accept_loop(servers) do |connection|
+  # 处理连接
+  connection.close
+end
+```</p>
+
+<h4 id="section-25">3.5.3 合而为一</h4>
+
+<pre><code class="language-ruby">require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+  # 处理连接
+  connection.close
+end
+</code></pre>
+
+<h3 id="section-26">3.6 系统调用</h3>
+
+<pre><code class="language-bash">Socket#bind -&gt; bind(2)
+Socket#listen -&gt; listen(2)
+Socket#accept -&gt; accept(2)
+Socket#local_address -&gt; getsockname(2)
+Socket#remote_address -&gt; getpeername(2)
+Socket#close -&gt; close(2)
+Socket#close_write -&gt; shutdown(2)
+Socket#shutdown -&gt; shutdown(2)
+</code></pre>
+
+<hr />
+
+<h2 id="section-27">第四章：客户端生命周期</h2>
+
+<p><strong>网络连接两部分：</strong></p>
+
+<ul>
+  <li>服务器负责侦听及处理接入的连接</li>
+  <li>客户端负责向服务器发起连接</li>
+</ul>
+
+<p><strong>客户端的生命周期</strong></p>
+
+<ul>
+  <li>(1) 创建</li>
+  <li>(2)  绑定</li>
+  <li>(3)  连接</li>
+  <li>(4)  关闭</li>
+</ul>
+
+<h3 id="section-28">4.1 客户端绑定</h3>
+
+<ul>
+  <li>建议：不要给客户端绑定端口</li>
+  <li>客户端不需要调用 bind，他会从临时端口范围内获得一个随机端口号</li>
+</ul>
+
+<h3 id="section-29">4.2 客户端连接</h3>
+
+<ul>
+  <li>connect 调用默认有一段较长时间的超时</li>
+  <li>出现超时，会产生一个 <code>Errno::ETIMEOUT</code> 异常</li>
+</ul>
+
+<pre><code class="language-ruby">require 'socket'
+socket = Socket.new(:INET, :STREAM)
+
+# 发起到 baidu.com 端口 80 的连接
+remote_addr = Socket.pack_sockaddr_in(80, 'baidu.com')
+socket.connect(remote_addr)
+</code></pre>
+
+<h3 id="ruby--2">4.3 ruby 包装器</h3>
+
+<p>客户端创建简写版本：</p>
+
+<pre><code class="language-ruby">require 'socket'
+socket = TCPSocket.new('baidu.com', 80)
+</code></pre>
+
+<p>代码块：</p>
+
+<pre><code class="language-ruby">require 'socket'
+
+Socket.tcp('baidu.com', 80) do |connection|
+  connection.write "GET / HTTP/1.1\r\n"
+  connection.close
+end
+</code></pre>
+
+<p>省略代码块:</p>
+
+<pre><code class="language-ruby">require 'socket'
+
+client = Socket.tcp('baidu.com', 80)
+</code></pre>
+
+<h3 id="section-30">4.4 系统调用</h3>
+
+<pre><code class="language-bash">Socket#bind -&gt; bind(2)
+Socket#connect -&gt; connect(2)
+</code></pre>
+
+<hr />
+
+<h2 id="section-31">第五章：交换数据</h2>
+
+<ul>
+  <li>TCP 连接如同遗传连接了本地套接字和远程套接字的管子，可以通过管子发送数据</li>
+  <li>所有的数据都被编码成 TCP/IP 分组</li>
+</ul>
+
+<h3 id="section-32">流</h3>
+
+<ul>
+  <li>TCP 是一个基于流的协议</li>
+  <li>创建套接字，需要传入 :STREAM 选项</li>
+  <li>TCP 连接提供了一个不间断的、有序的通信流。</li>
+</ul>
+
+<p>演示伪代码：</p>
+
+<pre><code class="language-ruby"># 下面的代码会在网络上发送 3 份数据，一次一份
+data = ['a','b','c']
+
+for piece in data
+  write_to_connection(piece)
+end
+
+# 下面的代码在一次做作中读取全部数据
+result = read_from_connection #=&gt; ['a','b','c']
+</code></pre>
+
+<p><code>流并没有消息边界的概念</code>：</p>
+
+<ul>
+  <li>客户端分别发送 3 份数据，服务器读取，是将其作为一份数据来接手，并不知道客户端是分批发送的数据</li>
+</ul>
+
+<hr />
+
+<h2 id="section-33">第六章：套接字读取</h2>
+
+<p>学习如何在套接字上传送数据</p>
+
+<h3 id="section-34">6.1 简单的读操作</h3>
+
+<ul>
+  <li>Ruby 的各种套接字以及 File 在 IO 中都有一个共同的父类。</li>
+  <li>Ruby 中所有的 IO 对象(套接字、管道、文件…)都有一套通用的接口，支持 read、write、flush 等方法</li>
+  <li>抽象源自操作系统核心本身，底层的 <code>read(2)</code> <code>write(2)</code> 等系统调用都可以作用域文件、套接字、管道等之上</li>
+</ul>
+
+<p>服务端：
+``` ruby
+require ‘socket’</p>
+
+<p>Socket.tcp_server_loop(4481) do |connection|
+  # 从连接中读取数据最简单的方法
+  puts connection.read</p>
+
+<p># 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+  connection.close
+end
+```</p>
+
+<p>客户端调用：</p>
+
+<pre><code class="language-bash">echo ohi | nc lcoalhost 4481
+</code></pre>
+
+<h3 id="section-35">6.2 没那么简单</h3>
+
+<ul>
+  <li><code>EOF</code>:  end-of-file, 表示数据结尾</li>
+  <li>服务器的 read 会一直阻塞，直到客户端发完数据为止</li>
+</ul>
+
+<p>客户端：</p>
+
+<pre><code class="language-bash"> tail -f /var/log/system.log | nc -v localhost 4481
+</code></pre>
+
+<h3 id="section-36">6.3 读取长度</h3>
+<ul>
+  <li>解决阻塞的办法是，指定最小的读取长度，告诉服务器读取(read)特定的数据量</li>
+</ul>
+
+<pre><code class="language-ruby">require 'socket'
+one_kb = 1024 # 字节数
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  # 以 1kb 为单位进行读取
+  while data = connection.read(one_kb) do 
+    puts data
+  end
+
+  # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+  connection.close
+end
+</code></pre>
+
+<h3 id="section-37">6.4 阻塞的本质</h3>
+
+<ul>
+  <li><code>read</code> 调用会一直阻塞，直到获取了完整长度的数据为止</li>
+</ul>
+
+<p>解决 <code>read</code> 死锁的办法：</p>
+
+<ol>
+  <li>客户端发完 500B 后再发送一个 ·EOF·</li>
+  <li>服务器采用部分读取 (partial read) 的方式</li>
+</ol>
+
+<h3 id="eof-">6.5 EOF 事件</h3>
+
+<ul>
+  <li>当在连接上调用 <code>read</code> 并接收到 EOF 事件时，就可以确定不会再有数据，可以停止读取了。</li>
+  <li><code>EOF</code> 代表 <code>end of file</code>(文件结束)</li>
+  <li><code>EOF</code> 并不代表某种字符序列，它更新一个状态事件(state even)</li>
+  <li>如果一个套接字没有数据可写，可以调用 <code>shutdown</code> 或 <code>close</code> 表示不再需要写入数据。这发送一个 <code>EOF</code> 事件给另一端进行读操作的进程</li>
+  <li>调用 <code>File#read</code> 时(同 <code>Socket#read</code> 的行为方式类似)，会一直进行数据读取，直到无数据为止。一旦读完文件，会受到一个 <code>EOF</code> 事件并返回已读取到的数据</li>
+</ul>
+
+<pre><code class="language-ruby"># ./code/snippets/read_with_length.rb
+
+require 'socket'
+one_hundred_kb = 1024 * 100 # 字节数
+
+Socket.tcp_server_loop(4481) do |connection|
+  begin
+    # 以 1kb 为单位进行读取
+    while data = connection.readpartial(one_hundred_kb) do
+        puts data
+      end
+    rescue EOFError
+    end
+
+    # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+    connection.close
+  end
+
+</code></pre>
+
+<p>客户端连接：</p>
+
+<pre><code class="language-ruby"># ./code/snippets/write_with_eof.rb
+
+require 'socket'
+client = TCPSocket.new('localhost', 4481)
+client.write('gekko')
+client.close
+</code></pre>
+
+<h3 id="section-38">6.6 部分读取</h3>
+
+<ul>
+  <li>调用 <code>readpartial</code> 不会阻塞，而是立即返回可用数据</li>
+  <li><code>readpartial</code> 必须传递一个整数作为参数，来指定最大的长度</li>
+  <li><code>readpartial</code> 最多读取到指定长度。如果指明 1kb 数据，但客户端发送了 500B，并不会阻塞，会立即将读到的数据返回</li>
+  <li>当接收到 <code>EOF</code> 时 <code>read</code> 仅仅是返回， 而 <code>readpartial</code> 则会产生一个 <code>EOFError</code> 异常</li>
+</ul>
+
+<pre><code class="language-ruby"># ./code/snippets/readpartial_with_length.rb
+
+require 'socket'
+one_hundred_kb = 1024 * 100 # 字节数
+
+Socket.tcp_server_loop(4481) do |connection|
+  begin
+    # 以 1kb 为单位进行读取
+    while data = connection.readpartial(one_hundred_kb) do
+        puts data
+      end
+    rescue EOFError
+    end
+
+    # 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+    connection.close
+  end
+
+</code></pre>
+
+<h3 id="section-39">6.7 系统调用</h3>
+
+<pre><code class="language-bash">Socket#read -&gt; read(2),行为类似 fread(3)
+Socket#readpartial -&gt; read(2)
+</code></pre>
+
+<hr />
+
+<h2 id="section-40">第七章：套接字写操作</h2>
+
+<ul>
+  <li>套接字写入数据，需要调用 <code>write</code> 方法</li>
+  <li>系统调用: <code>Socket#write</code> -&gt; <code>write(2)</code></li>
+</ul>
+
+<pre><code class="language-ruby">require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  # 向连接中写入数据的最简单的方法
+  connection.write('Welcome!')
+  connection.close
+end
+</code></pre>
+
+<hr />
+
+<h2 id="section-41">第八章：缓冲</h2>
+
+<h3 id="section-42">8.1 写缓冲</h3>
+
+<ul>
+  <li>调用 <code>write</code> 并返回，不代表数据已通过网络发送并被客户端套接字接收</li>
+  <li>调用 <code>write</code> 并返回，只表明已将数据提交给了 <code>Ruby</code> 的 <code>IO</code> 系统和底层的操作系统内核</li>
+  <li>在应用程序代码和实际的网络硬件之间至少还存在一个缓冲层</li>
+  <li>TCP 套接字morning将 sync 设置为 true, 跳过了 ruby 的内部缓冲</li>
+  <li>IO 缓冲是为了更好的性能</li>
+</ul>
+
+<h3 id="section-43">8.2 读写入多少数据</h3>
+
+<ul>
+  <li>因为有缓冲区，我们可以一次写入所有的数据，由内核决定如何对数据进行分割或合并来调节性能</li>
+  <li>如果数据量很大的 write，可以将自己将数据分割，避免全部载入内存中</li>
+</ul>
+
+<h3 id="section-44">8.3 读缓冲</h3>
+
+<ul>
+  <li>读操作同样会被缓冲</li>
+  <li>用 <code>read</code> 读取指定长度的数据，ruby 实际会接收大于制定长度的数据, ruby 多读的数据会被存储在 ruby 内部的读缓冲区</li>
+  <li>下次调用 <code>read</code>,ruby 会查看内部缓冲区数据，然后再通过内核请求更多的数据</li>
+</ul>
+
+<h3 id="section-45">8.4 该读取多少数据</h3>
+
+<ul>
+  <li>TCP 提供的是数据流，无法得知发送方到底发送了多少数据，读取长度只能靠猜测</li>
+  <li>指定读取长度时，内核会分配一定的内存</li>
+  <li>指定读取长度太大，会浪费内存资源；指定长度太小，会有大量系统调用开销</li>
+  <li>Mongrel、Unicorn、Puma、Passenger 以及 Net::HTTP，采 <code>readpartial(1024*16)</code> 16KB 作为读取长度</li>
+  <li><code>redis-rb</code> 使用 1KB 作为读取长度</li>
+</ul>
+
+<hr />
+
+<h2 id="section-46">第 10 章：套接字选项</h2>
+
+<h3 id="sotype">10.1 SO_TYPE</h3>
+
+<pre><code class="language-ruby">require 'socket'
+socket = TCPSocket.new('google.com', 80)
+
+# 获得一个描述套接字类型的 Socket::Option 实例
+opt = socket.getsockopt(Socket::SOL_SOCKET, Socket::SO_TYPE)
+
+# 将描述该选项的整数值同存储在 Socket::SOCK_STREAM 中的整数值进行比较
+puts opt.int == Socket::SOCK_STREAM #=&gt; true
+puts opt.int == Socket::SOCK_DGRAM #=&gt; false
+</code></pre>
+
+<p>简便方式：</p>
+
+<pre><code class="language-ruby">require 'socket'
+socket = TCPSocket.new('google.com', 80)
+
+# 使用符号名,而不是常量
+opt = socket.getsockopt(:SOCKET, :TYPE)
+</code></pre>
+
+<h3 id="soreuseaddr">10.2 SO_REUSE_ADDR</h3>
+
+<ul>
+  <li><code>SO_REUSE_ADDR</code> 选项告诉内核：如果服务器当前处于 TCP 的 <code>TIME_WAIT</code> 状态，即便另一个套接字要绑定(<code>bind</code>) 到服务器目前所使用的本地地址也无妨.</li>
+  <li>TCPServer.new、Socket.tcp_server_loop 及其类似的方法默认都打开了此选项</li>
+</ul>
+
+<p>示例代码：</p>
+
+<pre><code class="language-ruby">require 'socket'
+server = TCPServer.new('localhost', 4481)
+server.setsockopt(:SOCKET, :REUSEADDR, true)
+
+server.getsockopt(:SOCKET, :REUSEADDR) #=&gt; true
+</code></pre>
+
+<h3 id="section-47">10.3 系统调用</h3>
+
+<pre><code class="language-bash">Socket#setsockopt -&gt; setsockopt(2)
+Socket#getsockopt -&gt; getsockopt(2)
+</code></pre>
+
+<hr />
+
+<h2 id="io">第11章：非阻塞式 IO</h2>
+
+<h3 id="section-48">11.1 非阻塞式读操作</h3>
+
+<p><strong>两种阻塞的读操作</strong>
+- <code>read</code> 会一直保持阻塞，直到接收到 <code>EOF</code> 或是获得指定的最小字节数为止
+- <code>readpartial</code> 会立即返回所有的可用数据，但如果没有数据可用，那么 <code>readpartial</code>仍会陷入阻塞</p>
+
+<p>**<code>Socket#read_nonblock</code> **:</p>
+
+<ul>
+  <li>非阻塞读操作，需要指定整数值，作为读取的最大字节数</li>
+  <li>如果可用数据小于最大字节数，则返回可用数据</li>
+  <li>没有数据可读，<code>read_nonblock</code> 调用仍然会立即返回，并产生一个 <code>Errno::EAGAIN</code>异常</li>
+  <li><code>Errno::EAGAIN</code>: 文件被标记用于非阻塞式 IO，无数据可读</li>
+</ul>
+
+<blockquote>
+  <p><code>read_nonblock</code> 方法首先检查 <code>ruby</code> 的内部缓冲区中是否还有未处理的数据，如果有，则立即返回
+   <code>read_nonblock</code> 会询问内核是否有其他可用的数据可供 <code>select(2)</code>  读取,如果有，不管这些数据是在内核缓冲区还是网络中，他们都会被读取并返回
+  其他情况都会使 <code>read(2)</code> 阻塞并在 <code>read_nonblock</code> 中引发异常</p>
+</blockquote>
+
+<pre><code class="language-ruby">require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+  begin
+    puts connection.read_nonblock(4096)
+  rescue Errno::EAGAIN =&gt; e
+    IO.select([connection])
+    retry
+  rescue EOFError
+    break
+  end
+
+  connection.close
+end
+</code></pre>
+
+<h3 id="section-49">11.2 非阻塞式写操作</h3>
+
+<ul>
+  <li><code>write_nonblock</code> 会在出现阻塞的时候，返回部分写入的结果</li>
+  <li><code>write_nonblock</code> 的行为和系统调用 <code>write(2)</code>一样， 尽可能多的写入数据并返回写入的数量</li>
+  <li><code>write</code> 和 <code>write_nonblock</code> 不同，<code>write</code> 会多次调用 <code>write(2)</code> 写入所有请求的数据</li>
+  <li><code>write_nonblock</code> 如果遇到阻塞会得到一个 <code>Errno::EAGAIN</code> 异常</li>
+</ul>
+
+<pre><code class="language-ruby">./code/snippets/write_nonblock.rb
+require 'socket'
+
+client = TCPSocket.new('localhost', 4481)
+payload = 'Lorem ipsum' * 100_000
+
+written = client.write_nonblock(payload)
+puts written &lt; payload.size 
+</code></pre>
+
+<p>非阻塞，多次写入：</p>
+
+<pre><code class="language-ruby">./code/snippets/retry_partial_write.rb
+
+require 'socket'
+
+client = TCPSocket.new('localhost', 4481)
+payload = 'Lorem ipsum' * 100_000
+
+begin
+  loop do
+    bytes = client.write_nonblock(payload)
+
+    break if bytes &gt;= payload.size
+    puts "----#{bytes}"
+    payload.slice!(0, bytes) # 删除已经写入的数据
+    IO.select(nil, [client])
+  end
+
+rescue Errno::EAGAIN
+  IO.select(nil, [client])
+  retry
+end
+</code></pre>
+
+<h3 id="section-50">11.3 非拥塞式接收</h3>
+
+<ul>
+  <li><code>accept</code> 只是从侦听队列中弹出一个连接</li>
+  <li><code>accept_nonblock</code> 在侦听队列为空时不会阻塞，只是产生一个 <code>Errno::EAGAIN</code></li>
+</ul>
+
+<h3 id="section-51">11.4 非拥塞式连接</h3>
+
+<ul>
+  <li><code>connect_nonblock</code> 不能立即发起到远程主机的连接，他会在后台继续执行操作并产生 <code>Errno::EINPROGRESS</code></li>
+</ul>
+
+<hr />
+
+<h2 id="section-52">第 12 章：连接复用</h2>
+
+<ul>
+  <li>连接复用指同时处理多个活动套接字，不是并行处理，无关多线程</li>
+</ul>
+
+<p>示例代码：<code>./code/snippets/native_multiplexing.rb</code></p>
+
+<h2 id="select2">12.1 select(2)</h2>
+<ul>
+  <li><code>IO.select</code> 的作用是接手若干个 <code>IO</code> 对象，告知哪个可以进行读写</li>
+</ul>
+
+<pre><code class="language-go"># snippets/select_returns.rb
+for_reading = [&lt;TCPSocket&gt;, &lt;TCPSocket&gt;, &lt;TCPSocket&gt;]
+for_writing = [&lt;TCPSocket&gt;, &lt;TCPSocket&gt;, &lt;TCPSocket&gt;]
+
+ready = IO.select(for_reading, for_writing, for_writing)
+
+# 对于每个座位参数传入的数组均会返回一个数组
+# 在这里， for_writing 中没有连接可写，for_reading 中有一个连接可读
+p ready #=&gt; [[&lt;TCPSocket&gt;], [], []]
+</code></pre>
+
+<ul>
+  <li><code>IO.select</code> 可以使用 3 个数组作为参数：
+    <ul>
+      <li>第一个参数是希望从中进行读取的 IO 对象数组</li>
+      <li>第二个参数是希望进行写入的 IO 对象数组</li>
+      <li>第三个是在异常条件下使用的 IO 对象数组，可以被忽略</li>
+      <li><code>IO.select</code>  返回一个包含了3个元素的嵌套数组，分别对应它的参数列表</li>
+    </ul>
+  </li>
+  <li><code>IO.select</code> 会阻塞，是一个同步方法调用</li>
+  <li><code>IO.select</code> 还有第四个参数，一个以秒为单位的超时值，可以避免 <code>IO.select</code> 永久的阻塞下去， 如果超时会返回 <code>nil</code></li>
+  <li>可以传递纯 ruby 对象给 <code>IO.select</code> ，只要它们实现了 <code>to_io</code> 方法并返回一个 IO 对象</li>
+</ul>
+
+<pre><code class="language-go"># snippets/select_timeout.rb
+for_reading = [&lt;TCPSocket&gt;, &lt;TCPSocket&gt;, &lt;TCPSocket&gt;]
+for_writing = [&lt;TCPSocket&gt;, &lt;TCPSocket&gt;, &lt;TCPSocket&gt;]
+
+timeout = 10
+ready = IO.select(for_reading, for_writing, for_writing, timeout)
+
+# 在这里 `IO.select` 在 10 秒钟内没有检测到任何状态的改变
+# 因此返回 nil, 而非嵌套数组
+p ready #=&gt; nil
+</code></pre>
+
+<h2 id="section-53">12.2 读/写之外的事件</h2>
+<p><code>IO.select</code> 监视套接字的读写状态</p>
+
+<h3 id="eof">12.2.1 EOF</h3>
+<p><code>EOF</code> 是 <code>end of file</code> ，如果在监视可读性时，接到 <code>EOF</code> ，该套接字会作为可读套接字数组的一部分被返回</p>
+
+<h3 id="accept-1">12.2.2 accept</h3>
+
+<ul>
+  <li>监视服务器套接字可读性时，如果收到接入连接，套接字可作为可读套接字数组的一部分返回</li>
+</ul>
+
+<h3 id="connect">12.2.2 connect</h3>
+
+<ul>
+  <li><code>connect_nonblock</code> 是非阻塞式连接，如果不能立刻完成连接，则会产生 <code>Errno::EIGPROGRESS</code></li>
+  <li>使用 <code>IO.select</code> 了解后台连接是否已经完成
+端口扫描器代码见 <code>./code/snippets/port_scanner.rb</code></li>
+</ul>
+
+<h3 id="section-54">12.2.3 高性能复用</h3>
+
+<ul>
+  <li><code>IO.select</code> 是 ruby 核心代码库，他是 ruby 进行复用唯一手段</li>
+  <li>大多数系统支持多种复用方法， <code>select(2)</code> 几乎是最古老，也是用的最少的</li>
+  <li><code>IO.select</code> 同它所监视的连接数呈线性关系，监视连接数越多，性能就越差</li>
+  <li>
+    <p><code>select(2)</code> 系统调用受到 <code>FD_SETSIZE</code>（文件描述符数量大小） 的限制，无法对编号大于 FD_SETSIZE(多数系统上是 1024)的文件描述符进行监视</p>
+  </li>
+  <li><code>poll(2)</code> 系统调用与 <code>select(2)</code> 仅限于表面不同</li>
+  <li><code>epoll(2)</code> 以及 BSD 的 <code>kqueue(2)</code> 系统调用比 <code>select(2)</code> 效果更好，性能更先进</li>
+  <li><code>EvenMachine</code> 倾向于使用 <code>epoll(2)</code> 以及 BSD 的 <code>kqueue(2)</code></li>
+  <li>ruby 的 gem <code>nio4r</code> 为 <code>select(2)</code>, <code>epoll(2)</code> 等提供了通用的接口</li>
+</ul>
+
+<hr />
+
+<h2 id="nagle-">第 13 章：Nagle 算法</h2>
+
+<ul>
+  <li>Nagle 算法是一种默认用于所有的 TCP 连接的优化</li>
+  <li>这种优化适合那些不进行缓冲、每次只发送很小数据量的应用程序</li>
+  <li>ruby 有缓冲，所以在 TCP 上实现的大部分常见协议会希望禁用 Nagle 算法</li>
+</ul>
+
+<pre><code class="language-ruby">server.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+</code></pre>
+
+<hr />
+
+<h2 id="section-55">第 14 章：消息划分</h2>
+
+<ul>
+  <li>发送多条消息并复用连接，需要用某种方式表明消息之间的起止</li>
+  <li>多消息重用连接与 <code>HTTP keep-alive</code> 特性背后的理念一致，在多个请求间保持连接开放(包括客户端和服务器协商的划分消息的方法)，通过避免打开新的连接来节省资源。</li>
+</ul>
+
+<p><strong>协议与消息</strong>：</p>
+
+<ul>
+  <li>协议定义了应该如何格式化消息</li>
+  <li>比如：HTTP 协议既定义了消息边界(连续的新行)，也定义了用于消息内容(涉及请求行、头部等)的协议</li>
+</ul>
+
+<h3 id="section-56">14.1 使用新行</h3>
+
+<ul>
+  <li>使用新行(newlines) 是一种划分消息的简单方法</li>
+  <li>使用 ruby <code>IO#gets</code> 和 <code>IO#puts</code> 可以发送带新行的消息</li>
+  <li><code>IO#gets</code> 和 <code>IO#puts</code>  在不同的操作系统中使用的行分隔符不一样，需要注意兼容性问题</li>
+  <li>现实中使用新行划分消息的协议是 HTTP，用 <code>\r\n</code></li>
+</ul>
+
+<h3 id="section-57">14.2 使用内容长度</h3>
+
+<p>划分指定内容长度(content length):</p>
+
+<ul>
+  <li>发送方先计算出消息的长度，使用 pack 将其转换成固定宽度的整数</li>
+  <li>消息接收方首先读取这个长度值，知道了消息的大小</li>
+  <li>然后接收方严格读取长度值所指定的字节数，获得完整的消息</li>
+</ul>
+
+<p>代码详细见 cloudhash/server2.rb  cloudhash/client2.rb</p>
+
+<hr />
+
+<h2 id="section-58">第 15 章： 超时</h2>
+
+<p>如果套接字没能在 5 秒内完成数据写入，那就说明存在问题</p>
+
+<h3 id="section-59">15.1 不可用的选项</h3>
+
+<ul>
+  <li>ruby 标准库 <code>timeout</code> 提供了一种通用的超时机制</li>
+  <li>操作系统提供了自带的套接字超时处理机制, ruby 1.9 之后 不能会用</li>
+  <li>ruby 处理套接字超时建议使用 <code>IO.select</code></li>
+</ul>
+
+<h3 id="ioselect">15.2 IO.select</h3>
+
+<ul>
+  <li>除了读取超时，连接/接收的超时都可以用 <code>IO.select</code> 处理</li>
+</ul>
+
+<p>代码见 <code>snippet/read_timeout.rb</code></p>
+
+<pre><code class="language-ruby">require 'socket'
+require 'timeout'
+
+timeout = 5 # 秒
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  begin
+    # 发起一个初始化 read(2)。这一点很重要
+    # 因为要求套接字上有被请求的数据，有数据可读时避免使用 select(2)
+    connection.read_nonblock(4096)
+
+  rescue Errno::EAGAIN
+    # 监视连接是否可读
+    if IO.select([connection], nil, nil, timeout)
+      # IO.select 会将套接字返回，不过我们并不关心返回值
+      # 不返回 nil 就意味着套接字可读
+      retry
+    else
+      raise Timeout::Error  # 使用 timeout 只是为了用 Timeout::Error 常量
+    end
+
+  end
+
+  connection.close
+end
+</code></pre>
+
+<hr />
+
+<h2 id="dns-">第 16 章： DNS 查询</h2>
+
+<h3 id="mri--gil">MRI 和 GIL</h3>
+
+<ul>
+  <li><code>Global Interpreter Lock, GIL</code> 全局解释锁，确保 ruby 解释器只做一件有潜在危险的事。多线程环境中，当一个线程进行活动时，其它线程全部处于阻塞状态</li>
+  <li>如果一个线程进行阻塞式 IO, （例如一个阻塞式 read）, GIL 会释放 GIL 并让另一个线程继续执行</li>
+  <li>只要代码块用到了 C 语言扩展 API, GIL 会阻塞其它代码的运行</li>
+  <li>ruby 的 DNS 查询使用了一个 C 语言扩展，可能会被长时间阻塞，MRI 就不会释放 GIL</li>
+</ul>
+
+<p>resolv</p>
+
+<ul>
+  <li>resolv 为 DNS 查询提供了一套纯 Ruby 的替代方案，是的 MRI 能够为长期阻塞的 DNS 查询释放 GIL</li>
+  <li>ruby 标准库使用 <code>resolv-replace</code> 猴子不定来使用 resolv</li>
+</ul>
+
+<pre><code class="language-ruby">require `resolv` # 库
+reequire `resolv-replace` # 猴子补丁
+</code></pre>
+
+<hr />
+
+<h2 id="ssl-">第 17 章: SSL 套接字</h2>
+
+<ul>
+  <li>SSL 使用公钥加密提供了一套用于在套接字上进行安全的数据交换的机制</li>
+  <li>套接字可以升级为 SSL，但一个套接字不能同时进行 SSL 和非 SSL 通信</li>
+  <li>ruby 中使用标准库的 openssl 实现套接字转为 SSL 套接字</li>
+</ul>
+
+<h2 id="ssl--1">第 18 章: SSL 套接字</h2>
+
+<ul>
+  <li>TCP 套接字数据提供了一种有序的数据流。</li>
+  <li>可以将 TCP 数据流想象成一个队列。套接字连接的一端向连接中写入数据，就相当于将数据入列。</li>
+  <li>数据经过若干阶段（本地缓冲、网络传输、远程缓冲），然后在接收端的套接字出列。</li>
+  <li>TCP 紧急数据，更多的时候被称作 “带外数据”(out-of-band data),支持将数据推到队列的前端，绕过其它已经在传输的数据，比便于另一端尽快接收</li>
+</ul>
+
+<h3 id="section-60">发送紧急数据</h3>
+
+<pre><code class="language-ruby">require 'socket'
+
+socket = TCPSocket.new 'localhost', 4481
+
+# 会用标准方法发送数据
+socket.write 'first'
+socket.write 'second'
+
+# 发送紧急数据
+socket.send '!',Socket::MSG_OOB
+</code></pre>
+<ul>
+  <li><code>Socket#send</code> 将 <code>Socket::MSG_OOB</code> 常量作为标志。 OOB 指的就是带外数据</li>
+  <li>发送方和接收方需要合作才可以处理带外数据</li>
+</ul>
+
+<h2 id="section-61">接收紧急数据</h2>
+
+<pre><code class="language-ruby">require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  # 优先接收紧急数据
+  urgent_data = connection.recv(1, Socket::MSG_OOB)
+  data = connection.readpartial(1024)
+end
+</code></pre>
+
+<ul>
+  <li>接收紧急数据，需要使用 <code>Socket#recv</code> 以及在发送紧急数据时用过的那个标志</li>
+  <li>紧急数据会优先于 “普通” 数据使用，即使写入的比 “普通” 数据晚</li>
+  <li>如果不存在未处理的紧急数据，调用 <code>connection.recv(1, Socket::MSG_OOB)</code> 会失败，并产生 <code>Errno::EINVAL</code></li>
+</ul>
+
+<h2 id="section-62">局限</h2>
+
+<ul>
+  <li>TCP 实现对于紧急数据仅提供了有限的支持，一次只能发送一个字节的紧急数据。如果发送多个字节，只有最后一个字节会被视为紧急数据，之前的数据会被视为普通的 TCP 数据流</li>
+</ul>
+
+<h2 id="ioselect-1">紧急数据和 IO.select</h2>
+
+<ul>
+  <li>如果套接字接收到了紧急数据，它们会被包含在 <code>IO.select</code>  所返回数组的第三个元素中</li>
+  <li><code>IO.select</code> 会不停的报告有紧急数据，即便是所有的紧急数据已经处理完毕，所以需要特殊处理</li>
+</ul>
+
+<h2 id="sooobinline-">SO_OOBINLINE 选项</h2>
+
+<p><code>SO_OOBINLINE</code> 套接字选项，允许在带内接收带外数据，启用后回一句写入次序从队列读出</p>
+
+<h2 id="tcp-sockets-20-">TCP Sockets 编程(20): 串行化</h2>
+
+<p>串行化架构处理流程：</p>
+
+<ol>
+  <li>客户端连接</li>
+  <li>客户端/服务器交换请求及响应</li>
+  <li>客户端断开连接</li>
+  <li>返回到步骤(1)</li>
+</ol>
+
+<p>串行化的特点：简单化，没有锁，没有共享状态，处理完一个连接之后才能处理另一个，不能支持并发操作</p>
+
+<h2 id="tcp-sockets-21-">TCP Sockets 编程(21): 单连接进程</h2>
+
+<p>单连接进程事件流程：</p>
+
+<ol>
+  <li>一个连接抵达服务器</li>
+  <li>主服务器进程接受该练级</li>
+  <li>衍生出一个和服务器一模一样的新子进程</li>
+  <li>服务器进程返回步骤 1，由子进程并行处理连接</li>
+</ol>
+
+<p>优点：</p>
+
+<ul>
+  <li>简单，能并行处理多个客户端</li>
+  <li>for 提供了一个父进程的所有东西的副本，没有锁和竞争条件</li>
+</ul>
+
+<p>缺点：</p>
+
+<ul>
+  <li>对 fork 出的子进程的数量没有施加限制，如果超出系统限制会崩溃</li>
+  <li>只有 Unix 系统才支持 fork，windows 或 JRuby 中没法使用 fork</li>
+</ul>
+
+<h2 id="tcp-sockets-22-">TCP Sockets 编程(22): 单连接线程</h2>
+
+<p>线程与进程：</p>
+
+<ul>
+  <li>生成(<code>spawn</code>): 线程的成本低于进程，进程生成需创建原始进程所拥有的一切资源的副本，多个线程共享内存，不需要创建副本</li>
+  <li>同步：因为线程共享内存，所以线程之间使用互斥量(mutex)、锁和同步访问。进程不需要这些</li>
+  <li>并行：解释器对当前执行环境使用了一个全局解释锁 <code>GIL</code>,所以多线程无法实现真正的并行, 在 <code>MRI</code> 中，只有进程才能实现真正的并发
+但ruby 中如果某个线程阻塞在 IO 上， ruby 能让其他的线程继续执行</li>
+</ul>
+
+<p>使用线程注意：</p>
+
+<ul>
+  <li>套接字如果分配给一个实例变量，会在所有活动线程之间共享该实例的内部状态</li>
+  <li>使用线程进行套接字编程，必须让每个线程获得它自己的连接对象，这样可以减少麻烦</li>
+</ul>
+
+<h2 id="tcp-sockets-23-preforking">TCP Sockets 编程(23): Preforking</h2>
+
+<p>Preforking 处理流程：</p>
+
+<ol>
+  <li>主服务器进程创建一个侦听套接字</li>
+  <li>主服务器进程衍生出一大批子进程</li>
+  <li>每个子进程在共享套接字上接受连接，然后进行独立处理</li>
+  <li>主服务器进程随时关注子进程</li>
+</ol>
+
+<p>Preforking 优点：
+- 多进程处理连接的负载均衡由操作系统处理
+- 子进程完全隔离，每个进程都拥有包括 ruby 解释器在内的所有资源的副本，单个进程的故障不会影响其他进程。</p>
+
+<p>缺点:
+- 衍生进程越多，消耗的内存也越多</p>
+
+<h2 id="tcp-sockets-24-">TCP Sockets 编程(24): 线程池</h2>
+
+<ul>
+  <li>线程池模式类似于 <code>preforking</code></li>
+  <li>线程池在服务器启动后生产一批线程，将处理连接的任务交给独立线程来完成</li>
+</ul>
+
+    </section>
+</article>
+<footer id="post-meta" class="clearfix">
+    <a href="http://twitter.com/andrewzhyl">
+        <img class="avatar" src="/assets/images/avatar.png">
+        <div>
+            <span class="dark">andrewzhyl</span>
+            <span>记录一些东西</span>
+        </div>
+    </a>
+
+    <section id="sharing">
+        <a class="twitter" href="https://twitter.com/intent/tweet?text=http://andrewzhyl.github.io/2016/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/ - 《TCP Sockets 编程》读书笔记 by @andrewzhyl"><span class="icon-twitter"> Tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+    </section>
+</footer>
+
+<!-- Disqus comments -->
+
+
+<!-- Archive post list -->
+
+
+
+
+
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/highlight.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script>
+  //   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  //   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  //   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  //   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  //   ga('create', '', 'auto');
+  //   ga('send', 'pageview');
+  </script>
+</body>
+</html>
+
+
+

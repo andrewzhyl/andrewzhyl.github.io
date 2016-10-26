@@ -39,6 +39,8 @@
 
 <p>@(学习笔记)</p>
 
+<p><img src="/assets/images/working_with_unix_processes.png" alt="本书结构图" /></p>
+
 <h2 id="section">系统调用/命令/库函数</h2>
 
 <ol>
@@ -105,11 +107,6 @@
       <td style="text-align: center"> </td>
     </tr>
     <tr>
-      <td style="text-align: left"><code>pipe(2)</code></td>
-      <td style="text-align: left"> </td>
-      <td style="text-align: center"> </td>
-    </tr>
-    <tr>
       <td style="text-align: left"><code>fsync(2)</code></td>
       <td style="text-align: left"> </td>
       <td style="text-align: center"> </td>
@@ -159,6 +156,56 @@
       <td style="text-align: left"><code>Kernel#trap</code></td>
       <td style="text-align: center">捕获信号并设置一个信号处理程序</td>
     </tr>
+    <tr>
+      <td style="text-align: left"><code>pipe(2)</code></td>
+      <td style="text-align: left"><code>IO.pipe</code></td>
+      <td style="text-align: center">创建一个管道</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>socketpair(2)</code></td>
+      <td style="text-align: left"><code>Socket.pair</code></td>
+      <td style="text-align: center">创建可以用过消息通信的 Unix 套接字</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>recv(2)</code></td>
+      <td style="text-align: left"><code>Socket#recv</code></td>
+      <td style="text-align: center">从TCP连接的另一端接收数据。该函数的第一个参数指定接收端套接字描述，第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>send(2)</code></td>
+      <td style="text-align: left"><code>Socket.send</code></td>
+      <td style="text-align: center">向TCP连接的另一端发送数据</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>setsid(2)</code></td>
+      <td style="text-align: left"><code>Process.setsid</code></td>
+      <td style="text-align: center">1. 将进程编程一个新会话的会话领导，2. 该进程变成一个新进程组的组长， 3. 该进程没有控制终端</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>getpgrp(2)</code></td>
+      <td style="text-align: left"><code>Process.getpgrp</code></td>
+      <td style="text-align: center">获取进程组 id</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>system(3)</code></td>
+      <td style="text-align: left"><code>Kernel#system</code></td>
+      <td style="text-align: center">系统调用函数，底层是 <code>fork(2)</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>execv2(2)</code></td>
+      <td style="text-align: left"><code>Kernel#exec</code></td>
+      <td style="text-align: center">系统调用函数，底层是 <code>fork(2)</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>popen(3)</code></td>
+      <td style="text-align: left"><code>IO.popen</code></td>
+      <td style="text-align: center">底层是 <code>fork+exec</code>,设置了一个管道，用于同生成进程进行通信</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code>posix_spawn(2)</code></td>
+      <td style="text-align: left"><code>posix-spawn(2)</code></td>
+      <td style="text-align: center">会获得父进程已打开的所有文件描述符的副本，但不会获得内存中所有内容的副本</td>
+    </tr>
   </tbody>
 </table>
 
@@ -177,11 +224,14 @@
 
 <h3 id="wtf2">2.5 命名法，wtf(2)</h3>
 
-<p>Linux 系统手册常用的节：
-- 节1：一般命令(shell)
-- 节2： 系统调用
-- 节3：C 库函数
-- 节4：特殊文件</p>
+<p>Linux 系统手册常用的节：</p>
+
+<ul>
+  <li>节1：一般命令(shell)</li>
+  <li>节2： 系统调用</li>
+  <li>节3：C 库函数</li>
+  <li>节4：特殊文件</li>
+</ul>
 
 <pre><code>man 2 getpid # 从节2 查看 getpid 使用说明
 man find # 等同于 man 1 find
@@ -262,6 +312,25 @@ man find # 等同于 man 1 find
 
 <p>每个进程的 <code>0,1,2</code> 三个文件描述符编号分别属于 <code>STDIN,STDOUT,STDERR</code></p>
 
+<h3 id="stdinstdoutstderrstdinstdoutstderr">STDIN、STDOUT、STDERR和$stdin、$stdout、$stderr的区别</h3>
+
+<ul>
+  <li>STDIN这一组以大写字母开头，是常量</li>
+  <li><code>$stdin</code> 这一组以$开头，是全局变量</li>
+  <li>常量不可变，STDOUT总指向屏幕显示（除非运行ruby时在命令行设置&gt;out 2&gt;err之类）</li>
+  <li>变量可变，所以 <code>$stdin</code> 可以替换成别的IO/File对象</li>
+  <li>全局的输出方法，如print puts等，总是向 <code>$stdout</code> 输出，而非向 <code>STDOUT </code>输出，如：</li>
+</ul>
+
+<pre><code class="language-ruby">  print 1 # 最开始时$stdout和STDOUT是一致的，输出到屏幕 
+
+  $stdout = open('output_file','w') # $stdout指向另一个File对象
+  print 2 # 这时输出到output_file了 
+
+  $stdout = STDOUT  # $stdout和STDOUT又指向同一个对象了
+  print 3 # 又输出到屏幕了 
+</code></pre>
+
 <hr />
 
 <h2 id="unix-6">理解 UNIX 进程（6）：进程皆有资源限制</h2>
@@ -277,6 +346,7 @@ man find # 等同于 man 1 find
 <pre><code>p Process.getrlimit(:NOFILE) # 查询可打开的最大文件数
 # =&gt; [4864, 9223372036854775807]
 </code></pre>
+
 <ul>
   <li>返回值第一个元素是文件描述符数量的软限制(soft limit)，超过软限制将会产生异常</li>
   <li>第二个元素是文件描述符数量的硬限制(hard limit),实际上表示无限制</li>
@@ -288,6 +358,7 @@ man find # 等同于 man 1 find
  p Process.getrlimit(:NOFILE)
  #=&gt; [5886, 5886]
 </code></pre>
+
 <ul>
   <li>软限制和硬限制都被设置成了 5886</li>
   <li>可以给 ` Process.setrlimit` 传递第 3 个参数来制定新的硬限制</li>
@@ -375,13 +446,17 @@ Process.getrlimit(:STACK)
 
 <h2 id="unix-9">理解 UNIX 进程（9）：进程皆有名</h2>
 
-<p>进程的非自身通信方式：
-- 通过文件系统，写入日志信息的方式来了解彼此的状态
-- 借助网络来打开套接字通其它进程进行通过</p>
+<p>进程的非自身通信方式：</p>
+
+<ul>
+  <li>通过文件系统，写入日志信息的方式来了解彼此的状态</li>
+  <li>借助网络来打开套接字通其它进程进行通过</li>
+</ul>
 
 <p>进程自身的通信机制：一个是进程名称，另一个是退出码</p>
 
 <h3 id="section-13">9.1 进程命名</h3>
+
 <ul>
   <li>每个进程都要一个名称</li>
   <li>进程可以在运行期间被修改作为一种通信手段</li>
@@ -419,19 +494,23 @@ Process.getrlimit(:STACK)
 <h2 id="unix-11">理解 UNIX 进程（11）：进程皆可衍生</h2>
 
 <h3 id="luke-fork2">11.1 Luke,使用 fork(2)</h3>
+
 <ul>
   <li>衍生(forking) 是 Unix 编程中最强大的概念之一</li>
   <li><code>fork(2)</code> 系统调用，允许运行中的进程以编程的形式创建新的进程，这个新进程和原始进程一模一样</li>
 </ul>
 
-<p>fork 工作原理：
-- 调用 <code>fork(2)</code> 的进程是 “父进程”，新创建的进程是 “子进程”
-- 子进程从父进程出集成了其所占用内存中的所有内容，以及所有属于父进程的已打开的文件描述符
-- 子进程的 ppid 是父进程的 pid
-- 子进程获得了父进程所有的文件描述符的编号，两个进程可以共享打开的文件、套接字等
-- 子进程继承了父进程内存中的所有内容
-- fork 调用几乎瞬间就可以返回，速度很快，比分别载入 3 个应用程序实例要快的多
-- 子进程可以随意更改其内存内容的副本，而不会对父进程造成任何影响</p>
+<p>fork 工作原理：</p>
+
+<ul>
+  <li>调用 <code>fork(2)</code> 的进程是 “父进程”，新创建的进程是 “子进程”</li>
+  <li>子进程从父进程出集成了其所占用内存中的所有内容，以及所有属于父进程的已打开的文件描述符</li>
+  <li>子进程的 ppid 是父进程的 pid</li>
+  <li>子进程获得了父进程所有的文件描述符的编号，两个进程可以共享打开的文件、套接字等</li>
+  <li>子进程继承了父进程内存中的所有内容</li>
+  <li>fork 调用几乎瞬间就可以返回，速度很快，比分别载入 3 个应用程序实例要快的多</li>
+  <li>子进程可以随意更改其内存内容的副本，而不会对父进程造成任何影响</li>
+</ul>
 
 <pre><code class="language-ruby">if fork
   puts "#{Process.pid} entered the if block"
@@ -439,6 +518,7 @@ else
   puts "#{Process.pid} entered the else block"
 end
 </code></pre>
+
 <ul>
   <li>以上 if 和 else 都会被执行</li>
   <li>在父进程中，fork 范湖新创建的子进程的 pid，整数值为真，执行 if 语句块</li>
@@ -637,6 +717,7 @@ sleep
 <p><code>Process.wait</code> 是阻塞调用，知道子进程结束，调用才会返回(除非加第二个参数)</p>
 
 <h3 id="sigchld">16.1 捕获 SIGCHLD</h3>
+
 <ul>
   <li>通过 <code>trap(:CHLD)</code> 可以捕获 :CHLD 信号</li>
   <li>通过捕获 :CHLD, 内核会提醒父进程它的子进程何时退出</li>
@@ -659,10 +740,13 @@ sleep
 
 <h3 id="section-24">16.3 信号入门</h3>
 
-<p>信号是一种异步通信，进程从内核接收信号时，可以执行以下操作：
-- 忽略该信号
-- 执行特定的操作
-- 执行默认的操作</p>
+<p>信号是一种异步通信，进程从内核接收信号时，可以执行以下操作：</p>
+
+<ul>
+  <li>忽略该信号</li>
+  <li>执行特定的操作</li>
+  <li>执行默认的操作</li>
+</ul>
 
 <h3 id="section-25">16.4 信号来自何方</h3>
 
@@ -937,17 +1021,380 @@ old_handler = trap(:QUIT){
   <li>多数情况下，发信号的是人类用户而非自动化程序</li>
 </ul>
 
-<p>web 服务器 <code>Unicorn</code> ：
-- 通过终止其所有进程并立即关闭来响应 <code>INT</code> 信号
-- 通过重新执行来响应 <code>USR2</code> 信号，从而实现零关闭时间重启(热部署)
-- 通过增加运行的工作进程数量来响应 <code>TTIN</code> 信号
-- unicorn 的信号：https://unicorn.bogomips.org/SIGNALS.html</p>
+<p>web 服务器 <code>Unicorn</code> ：</p>
+
+<ul>
+  <li>通过终止其所有进程并立即关闭来响应 <code>INT</code> 信号</li>
+  <li>通过重新执行来响应 <code>USR2</code> 信号，从而实现零关闭时间重启(热部署)</li>
+  <li>通过增加运行的工作进程数量来响应 <code>TTIN</code> 信号</li>
+  <li>unicorn 的信号：https://unicorn.bogomips.org/SIGNALS.html</li>
+</ul>
 
 <h3 id="section-33">16.12 系统调用</h3>
 
 <p>ruby 的 <code>Process.kill</code> 对应于 <code>kill(2)</code>
 <code>Kernal#trap</code> 基本对应于 <code>sigaction(2)</code></p>
 
+<hr />
+
+<h2 id="unix-17">理解 UNIX 进程（17）：进程皆可互通</h2>
+
+<p>进程通信(简称  IPC),常见的两个实用方法：管道和套接字对(<code>socket pairs</code>)</p>
+
+<h3 id="section-34">17.1 我们的第一个管道</h3>
+
+<ul>
+  <li>管道是一个数据流</li>
+  <li>一端可读，一端可写，管道的两端可以被不同的进程使用</li>
+</ul>
+
+<pre><code class="language-ruby">reader, writer = IO.pipe #=&gt; [#&lt;IO:fd 7&gt;, #&lt;IO:fd 8&gt;]
+</code></pre>
+<ul>
+  <li>IO.pipe 返回两个 IO 对象，对象类似匿名文件， 没有 #path</li>
+  <li>ruby 的 IO 类是 File, TCPSocket, UDPSocket 等的超类，所有的这些资源都有一个通用的接口</li>
+</ul>
+
+<pre><code class="language-ruby">reader, writer = IO.pipe
+writer.write("Into the pipe I go ...")
+writer.close
+puts reader.read
+# =&gt; 'Into the pipe I go ...'
+</code></pre>
+<p>关闭 writer 会发送一个 EOF，这样 reader 就不会被一直阻塞
+<code>IO#read</code> 会不停的从管道中读取数据，直到读到一个 <code>EOF(end of file)</code>文件结束标志</p>
+
+<h3 id="section-35">17.2 管道是单向的</h3>
+
+<p><code>reader</code> 只能从文件读取
+<code>writer</code> 只能向文件写入</p>
+
+<h3 id="section-36">17.3 共享管道</h3>
+
+<ul>
+  <li>管道也是一种资源，有自己的文件描述符及其他的一切，因此可以和子进程共享</li>
+  <li>fork 衍生子进程也会复制管道两端的 IO 对象，管道会被进程和子进程共享</li>
+  <li>管道中流淌的是数据流</li>
+</ul>
+
+<pre><code class="language-ruby">reader, writer = IO.pipe
+
+puts "--#{reader.fileno}"
+puts "--#{writer.fileno}"
+
+fork do     
+  puts reader.fileno
+  puts writer.fileno
+
+  reader.close
+
+  10.times do
+    #写入数据
+    writer.puts "Another one bites the dust"
+  end
+end
+
+writer.close
+while message = reader.gets
+  $stdout.puts message
+end
+</code></pre>
+<p><code>IO#puts</code> 和 <code>IO#gets</code> 是使用行终止符作为分隔符</p>
+
+<h3 id="section-37">17.4 流与消息</h3>
+<p><strong>关于流</strong>：</p>
+
+<ul>
+  <li>使用管道或 TCP 套接字这样的 IO 流是，并没有开始和结束的概念，数据写入流中，之后跟着一些特定的分隔符(delimiter)</li>
+  <li>从 IO 流中读取数据的时候，一次读取一块，遇到分隔符就停止。</li>
+  <li>HTTP 使用一连串的终止符来分割头部和主体。</li>
+</ul>
+
+<p><code>UNIX 套接字</code></p>
+
+<ul>
+  <li>一种只能用于在同一台物理机中进行通信的套接字，它比 TCP 套接字快很多，非常适合 <code>IPC</code></li>
+  <li>使用数据包通信(datagram)通信</li>
+  <li>一个套接字写入整个消息，另一个读取整个消息，不需要分隔符</li>
+</ul>
+
+<pre><code class="language-ruby">Socket.pair(:UNIX, :DGRAM, 0) 
+#=&gt;[#&lt;Socket:fd 15&gt;,#&lt;Socket:fd 16&gt;]
+</code></pre>
+
+<p><code>Socket#recv</code> 从TCP连接的另一端接收数据。该函数的第一个参数指定接收端套接字描述，第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据</p>
+
+<ul>
+  <li>管道提供单向通信</li>
+  <li>套接字提供双向通信</li>
+</ul>
+
+<p>代码示例看 <code>snippets/unix_socket.rb</code></p>
+
+<h3 id="ipcrpc">远程IPC（RPC）</h3>
+<p>RPC 通信方式：
+- 通过 TCP 套接字通信
+- RPC 远程调用，如消息队列，分布式系统</p>
+
+<p>IPC 进程通信方式：
+- 管道(PIPE)
+- FIFO(有名管道)
+- XSI 消息队列
+- XSI 信号量
+- XSI 共享内存
+- POSIX 信号量
+- 域套接字(Domain Socket)
+- 信号(Signal)
+- 互斥量(Mutex)</p>
+
+<h3 id="section-38">17.6 实践领域</h3>
+
+<p>管道和套接字都是快速的通信方式，管道是单向的，套接字是双向的</p>
+
+<hr />
+
+<h2 id="unix-18">理解 UNIX 进程（18）：守护进程</h2>
+
+<ul>
+  <li>守护进程是后台运行的集成，不受终端用户控制</li>
+  <li>web 服务器和数据库服务器都属于常见的守护进程</li>
+</ul>
+
+<h3 id="section-39">18.1 首个进程</h3>
+
+<ul>
+  <li>当内核被引导时会产生一个叫做 <code>init</code> 的进程。</li>
+  <li>这个进程的 <code>ppid</code> 是 0，作为所有进程的祖父。</li>
+  <li>它是首个进程，没有祖先，它的 pid 是 1</li>
+</ul>
+
+<h3 id="section-40">18.2 创建第一个守护进程</h3>
+
+<p>rack 的 rackup 有一个选项，可以将服务器变成守护进程并置于后台运行</p>
+
+<pre><code class="language-ruby">rackup -D  # 会将服务器作为 daemon 进程启动
+</code></pre>
+
+<h3 id="rack">18.3 深入 Rack</h3>
+
+<pre><code class="language-ruby">def daemonize_app
+  if RUBY_VERSION &lt; "1.9"
+
+    # 衍生一个子进程，父进程退出
+    # 但衍生的子进程仍然有从父进程继承的组 id 和会话 id
+    exit if fork
+
+    # 因为终端与衍生进程之间仍有牵连，如果终端发出信号到衍生进程的会话组，这个信号仍会被当前子进程接收到
+    # Process.setsid 会使衍生进程成为一个新进程组和新会话组的组长兼领导，这里的子进程没有控制终端
+    # 注意：在已是进程组长的进程中调用 Process.setsid 会失败
+    Process.setsid
+
+    # 已成为进程组和会话组组长的衍生进程再次进行衍生，然后退出
+    # 因为终端只能分配给会话领导，所以在这里新衍生的进程，不是进程组组长，也不是会话领导
+    # 也没有控制终端,确保进程脱离了控制终端并且可以独自运行
+    exit if fork
+
+    # 设置代码的工作目录为系统根目录，是为了确保守护进程的当前工作目录在执行中不会消失
+    Dir.chdir "/" 
+
+    
+    STDIN.reopen "/dev/null"
+    STDOUT.reopen "/dev/null", "a" 
+    STDERR.reopen "/dev/null", "a" 
+  else
+    Process.daemon
+  end 
+end
+</code></pre>
+
+<p>ruby 1.9x 带有 <code>Process.daemon</code> 的方法，可以将当前进程变成守护进程</p>
+
+<h3 id="section-41">18.4 逐步将进程变成守护进程</h3>
+
+<pre><code class="language-ruby">    exit if fork
+</code></pre>
+
+<p>以上代码父进程会退出，因为 <code>fork</code> 会返回两次，在父进程中返回子进程的 pid,在子进程中返回 nil
+子进程会成为孤儿进程照常运行，孤儿进程的父进程 id 始终是 1, 也就是内核引导时的 <code>init</code> 进程</p>
+
+<p>创建守护进程时，必须将主进程退出，这样会使得调用此脚本的终端认为该命令已经执行完毕，于是将控制返回终端</p>
+
+<pre><code class="language-ruby">    Process.setsid
+</code></pre>
+<p>调用 <code>Process.setsid</code> 完成了以下三件事：
+(1) 该进程变成一个新会话的会话领导
+(2) 该进程变成一个新进程组的组长
+(3) 该进程没有控制终端</p>
+
+<h3 id="section-42">18.5 进程组和会话组</h3>
+
+<p><strong>进程组</strong></p>
+
+<ul>
+  <li>每一个进程都属于某个组，每一个组都有唯一的整数 id</li>
+  <li>子进程的组 id 继承自父进程，父子进程都是同一个进程组的成员。</li>
+  <li>如果父进程由终端控制，并被信号终止的话，父进程的子进程也会同样终止，这是因为终端接收信号，并将其转发给前台进程组中的所有进程。，同一个进程组的组员，会被同一个信号终止。</li>
+</ul>
+
+<p>ruby 的 <code>Process.getpgrp</code> 可以获得进程组的 id</p>
+
+<p><strong>会话组</strong></p>
+
+<pre><code class="language-bash">git log | grep shipped | less
+</code></pre>
+<p>以上例子解释：</p>
+
+<ul>
+  <li>每个命令都有自己的进程组，因为每个命令都可以创建子进程</li>
+  <li>这些命令都是同一个会话组的成员，shell 中的每次调用都会获得自己的会话组</li>
+  <li>一个会话组可以依附一个终端，也可以不依附任何终端，比如守护进程</li>
+  <li>终端用一种特殊的方法来处理会话组：发送给会话领导的信号被转发到该会话中的所有进程组内，然后再被转发到这些进程组内的所有进程。</li>
+</ul>
+
+<p>系统调用 <code>getdis(2)</code> 可以查到当前的会话组 id, ruby 没有对应实现
+但 ruby 的 <code>Process.setsid</code> 会返回其新创建的会话组 id</p>
+
+<pre><code class="language-ruby">    STDIN.reopen "/dev/null"
+    STDOUT.reopen "/dev/null", "a" 
+    STDERR.reopen "/dev/null", "a" 
+</code></pre>
+<p>以上代码将所有的标准流设置到 /dev/null， 也就是将其忽略
+因为守护进程不依附于某个终端会话，那么标准流也就没什么用了呃</p>
+
+<h3 id="section-43">18.6 实践领域</h3>
+
+<p><code>rackup</code> 有一个命令行选项可以将进程变为守护进程，对于任何流行的 ruby web 服务器来说都是这样</p>
+
+<pre><code class="language-ruby">rackup -D  # 会将服务器作为 daemon 进程启动
+</code></pre>
+
+<h3 id="section-44">18.7 系统调用</h3>
+
+<p>ruby 的 <code>Proces.setsid</code> 对应于 <code>setsid(2)</code>
+<code>Process.getpgrp</code> 对应于 <code>getpgrp(2)</code></p>
+
+<hr />
+
+<h2 id="unix-19">理解 UNIX 进程（19）：生成终端进程</h2>
+
+<p>ruby 程序常见的交互是在程序中通过 <code>shelling out</code> 的方式在终端执行某个命令。</p>
+
+<h3 id="fork--exec">19.1 fork + exec</h3>
+
+<ul>
+  <li><code>exec(2)</code> 允许使用另一个进程来替换当前进程。</li>
+  <li>使用 <code>exec(2)</code>  的缺点是，当前进程再也无法恢复了，所以可以用 <code>fork + exec</code> 的组合替代</li>
+  <li><code>exec(2)</code> 不会关闭任何打开的文件描述符(默认情况下)或是进行内存清理</li>
+</ul>
+
+<pre><code class="language-ruby">exec 'ls', '--help'
+</code></pre>
+
+<pre><code class="language-ruby">puts Process.pid
+
+fork do 
+  # exec 输出结果
+ res = exec 'ls'
+ Process.wait
+ puts res.inspect
+end
+Process.wait
+</code></pre>
+
+<h3 id="exec-">19.2 exec 的参数</h3>
+
+<p>exec 两种参数传递方式：</p>
+
+<ul>
+  <li>把字符串传递给 exec,实际上它会启动一个 shell 进程，然后再将这个字符串交由 shell 解释</li>
+  <li>传递一个数组的话，它会跳过 shell, 直接将此数组座位新进程的 ARGV</li>
+</ul>
+
+<p><code>Kernel#system</code>:</p>
+
+<p><code>Kernel#system</code> 的返回值，如果终端命令的退出码是 0，它就返回 true，否则返回 false
+借助 <code>fork(2)</code> 的魔力，终端命令与当前进程共享标准流，因此来自终端命令的任何输出同样也会出现在当前进程中</p>
+
+<pre><code class="language-ruby">system('ls')
+system('ls','--help')
+system('git log | tail -10')
+</code></pre>
+
+<p><strong>Kernel#`</strong>:</p>
+
+<pre><code class="language-ruby">`ls`
+`ls --help`
+%x[git log | tail -10]
+</code></pre>
+<p><strong>Kernel#`</strong> 的返回值由终端程序的 STDOUT 汇集而成的一个字符串</p>
+
+<p><code>Process.spawn</code>:</p>
+
+<pre><code class="language-ruby">#仅适用于 ruby 1.9!
+
+# 此调用会启动 rails server 进程并将环境变量 RAILS_ENV 设置为 test
+Process.spawn({'RAILS_ENV' =&gt; 'test'}, 'rails server')
+
+# 该调用在执行 ls --help 阶段将 STDERR 与 STDOUT 进行合并
+Process.spawn("ls", '--help', STDERR =&gt; STDOUT)
+</code></pre>
+<p><code>Process.spawn</code> 是非阻塞的，<code>Kernel#system</code> 会阻塞到命令执行完毕</p>
+
+<p><strong>IO.popen</strong></p>
+
+<ul>
+  <li><code>IO.popen</code> 是用纯 ruby 来实现 unix 管道</li>
+  <li>底层使用 <code>fork+exec</code> 实现，设置一个管道用于同生成进程进行通信</li>
+</ul>
+
+<p><strong>Open3</strong></p>
+
+<p>Open3 允许同时访问一个生成进程的 STDIN，STDOUT 和 STDERR</p>
+
+<pre><code class="language-ruby"># open3 是标准库的一员
+require 'open3'
+
+Open3.popen3('grep', 'data') do |stdin, stdout, stderr|
+  stdin.puts "some\ndatadgdsg\ndata"
+  stdin.close
+  puts stdout.read
+end
+
+# 在可行的情况下，Open3 会使用 Process.spawn
+# 可以像这样把选项传递给 Process.spawn
+Open3.popen3('ls', '-uhh', :err =&gt; :out) do  |stdin, stdout, stderr|
+  puts stdout.read
+end
+</code></pre>
+
+<h3 id="section-45">19.3 实践领域</h3>
+
+<p>本章的所有方法的缺点就是都依赖 <code>fork(2)</code>，因为 <code>fork(2)</code> 会引发由进程衍生所带来的成本。
+利用 shell out 执行简单的 <code>ls(1)</code> 调用，内核仍需要保证新的 <code>ls(1)</code> 进程可以使用 ruby 进程的全部内存。</p>
+
+<ul>
+  <li>ruby 语言核心库不支持系统调用 <code>posix_spawn(2)</code> 等不会带来 <code>fork(2)</code> 所引发的开销的系统调用。</li>
+  <li><code>posix-spawn</code> gem 提供了对 <code>posix_spawn(2)</code> 的访问，此调用在大多数 <code>Unix</code> 系统中都可用</li>
+  <li><code>posix-spawn</code> gem 模拟了 <code>Process.spawn</code> API,并且会速度更快，有资源利用效率更高的进程生成</li>
+  <li>系统调用 <code>posix_spawn(2)</code> 是 <code>fork(2)</code> 的一个子集</li>
+</ul>
+
+<p><code>fork(2)</code> 生成进程的两个独特属性：</p>
+
+<ul>
+  <li>1）获取了一份父进程在内存中的所有内容的副本</li>
+  <li>2) 获得了父进程已打开的所有文件描述符的副本</li>
+  <li>而系统调用 <code>posix_spawn(2)</code> 只实现了以上的 (1)，并不会有属性(2)，不会获取父进程在内存中的所有内容的副本</li>
+</ul>
+
+<h3 id="section-46">19.4 系统调用</h3>
+
+<ul>
+  <li>ruby 的 <code>Kenel#system</code> 对应于 <code>system(3)</code></li>
+  <li><code>Kenel#exec</code> 对应于 <code>execve(2)</code></li>
+  <li><code>IO.popen</code> 对应于 <code>popen(3)</code></li>
+  <li><code>posix-spawn</code> 这个 gem 使用 <code>posix_spawn(2)</code></li>
+</ul>
 
     </section>
 </article>
