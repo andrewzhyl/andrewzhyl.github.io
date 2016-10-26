@@ -784,3 +784,320 @@ end
 
 - `connect_nonblock` 不能立即发起到远程主机的连接，他会在后台继续执行操作并产生 `Errno::EINPROGRESS`
 
+---
+
+## 第 12 章：连接复用
+
+- 连接复用指同时处理多个活动套接字，不是并行处理，无关多线程
+
+示例代码：`./code/snippets/native_multiplexing.rb`
+
+## 12.1 select(2)
+- `IO.select` 的作用是接手若干个 `IO` 对象，告知哪个可以进行读写
+
+``` go
+# snippets/select_returns.rb
+for_reading = [<TCPSocket>, <TCPSocket>, <TCPSocket>]
+for_writing = [<TCPSocket>, <TCPSocket>, <TCPSocket>]
+
+ready = IO.select(for_reading, for_writing, for_writing)
+
+# 对于每个座位参数传入的数组均会返回一个数组
+# 在这里， for_writing 中没有连接可写，for_reading 中有一个连接可读
+p ready #=> [[<TCPSocket>], [], []]
+```
+
+- `IO.select` 可以使用 3 个数组作为参数：
+  - 第一个参数是希望从中进行读取的 IO 对象数组
+  - 第二个参数是希望进行写入的 IO 对象数组
+  - 第三个是在异常条件下使用的 IO 对象数组，可以被忽略
+  - `IO.select`  返回一个包含了3个元素的嵌套数组，分别对应它的参数列表
+
+- `IO.select` 会阻塞，是一个同步方法调用
+- `IO.select` 还有第四个参数，一个以秒为单位的超时值，可以避免 `IO.select` 永久的阻塞下去， 如果超时会返回 `nil`
+- 可以传递纯 ruby 对象给 `IO.select` ，只要它们实现了 `to_io` 方法并返回一个 IO 对象
+
+``` go
+# snippets/select_timeout.rb
+for_reading = [<TCPSocket>, <TCPSocket>, <TCPSocket>]
+for_writing = [<TCPSocket>, <TCPSocket>, <TCPSocket>]
+
+timeout = 10
+ready = IO.select(for_reading, for_writing, for_writing, timeout)
+
+# 在这里 `IO.select` 在 10 秒钟内没有检测到任何状态的改变
+# 因此返回 nil, 而非嵌套数组
+p ready #=> nil
+```
+
+## 12.2 读/写之外的事件
+`IO.select` 监视套接字的读写状态
+
+### 12.2.1 EOF
+`EOF` 是 `end of file` ，如果在监视可读性时，接到 `EOF` ，该套接字会作为可读套接字数组的一部分被返回
+
+### 12.2.2 accept
+
+- 监视服务器套接字可读性时，如果收到接入连接，套接字可作为可读套接字数组的一部分返回
+
+
+### 12.2.2 connect
+
+- `connect_nonblock` 是非阻塞式连接，如果不能立刻完成连接，则会产生 `Errno::EIGPROGRESS`
+- 使用 `IO.select` 了解后台连接是否已经完成
+端口扫描器代码见 `./code/snippets/port_scanner.rb`
+
+### 12.2.3 高性能复用
+
+- `IO.select` 是 ruby 核心代码库，他是 ruby 进行复用唯一手段
+- 大多数系统支持多种复用方法， `select(2)` 几乎是最古老，也是用的最少的
+- `IO.select` 同它所监视的连接数呈线性关系，监视连接数越多，性能就越差
+- `select(2)` 系统调用受到 `FD_SETSIZE`（文件描述符数量大小） 的限制，无法对编号大于 FD_SETSIZE(多数系统上是 1024)的文件描述符进行监视
+
+- `poll(2)` 系统调用与 `select(2)` 仅限于表面不同
+- `epoll(2)` 以及 BSD 的 `kqueue(2)` 系统调用比 `select(2)` 效果更好，性能更先进
+- `EvenMachine` 倾向于使用 `epoll(2)` 以及 BSD 的 `kqueue(2)`
+- ruby 的 gem `nio4r` 为 `select(2)`, `epoll(2)` 等提供了通用的接口
+
+--- 
+
+## 第 13 章：Nagle 算法
+
+- Nagle 算法是一种默认用于所有的 TCP 连接的优化
+- 这种优化适合那些不进行缓冲、每次只发送很小数据量的应用程序
+- ruby 有缓冲，所以在 TCP 上实现的大部分常见协议会希望禁用 Nagle 算法
+
+``` ruby
+server.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
+```
+
+---
+
+## 第 14 章：消息划分
+
+- 发送多条消息并复用连接，需要用某种方式表明消息之间的起止
+- 多消息重用连接与 `HTTP keep-alive` 特性背后的理念一致，在多个请求间保持连接开放(包括客户端和服务器协商的划分消息的方法)，通过避免打开新的连接来节省资源。
+
+**协议与消息**：
+
+- 协议定义了应该如何格式化消息
+- 比如：HTTP 协议既定义了消息边界(连续的新行)，也定义了用于消息内容(涉及请求行、头部等)的协议
+
+### 14.1 使用新行
+
+- 使用新行(newlines) 是一种划分消息的简单方法
+- 使用 ruby `IO#gets` 和 `IO#puts` 可以发送带新行的消息
+-  `IO#gets` 和 `IO#puts`  在不同的操作系统中使用的行分隔符不一样，需要注意兼容性问题
+- 现实中使用新行划分消息的协议是 HTTP，用 `\r\n`
+
+### 14.2 使用内容长度
+
+划分指定内容长度(content length):
+
+- 发送方先计算出消息的长度，使用 pack 将其转换成固定宽度的整数
+- 消息接收方首先读取这个长度值，知道了消息的大小
+- 然后接收方严格读取长度值所指定的字节数，获得完整的消息
+
+
+代码详细见 cloudhash/server2.rb  cloudhash/client2.rb
+
+---
+
+## 第 15 章： 超时
+
+如果套接字没能在 5 秒内完成数据写入，那就说明存在问题
+
+### 15.1 不可用的选项
+
+- ruby 标准库 `timeout` 提供了一种通用的超时机制 
+- 操作系统提供了自带的套接字超时处理机制, ruby 1.9 之后 不能会用
+- ruby 处理套接字超时建议使用 `IO.select`
+
+### 15.2 IO.select
+
+- 除了读取超时，连接/接收的超时都可以用 `IO.select` 处理
+
+代码见 `snippet/read_timeout.rb`
+
+``` ruby
+require 'socket'
+require 'timeout'
+
+timeout = 5 # 秒
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  begin
+    # 发起一个初始化 read(2)。这一点很重要
+    # 因为要求套接字上有被请求的数据，有数据可读时避免使用 select(2)
+    connection.read_nonblock(4096)
+
+  rescue Errno::EAGAIN
+    # 监视连接是否可读
+    if IO.select([connection], nil, nil, timeout)
+      # IO.select 会将套接字返回，不过我们并不关心返回值
+      # 不返回 nil 就意味着套接字可读
+      retry
+    else
+      raise Timeout::Error  # 使用 timeout 只是为了用 Timeout::Error 常量
+    end
+
+  end
+
+  connection.close
+end
+```
+
+---
+
+## 第 16 章： DNS 查询
+
+### MRI 和 GIL
+
+- `Global Interpreter Lock, GIL` 全局解释锁，确保 ruby 解释器只做一件有潜在危险的事。多线程环境中，当一个线程进行活动时，其它线程全部处于阻塞状态
+- 如果一个线程进行阻塞式 IO, （例如一个阻塞式 read）, GIL 会释放 GIL 并让另一个线程继续执行
+- 只要代码块用到了 C 语言扩展 API, GIL 会阻塞其它代码的运行
+- ruby 的 DNS 查询使用了一个 C 语言扩展，可能会被长时间阻塞，MRI 就不会释放 GIL
+
+
+resolv
+
+- resolv 为 DNS 查询提供了一套纯 Ruby 的替代方案，是的 MRI 能够为长期阻塞的 DNS 查询释放 GIL
+- ruby 标准库使用 `resolv-replace` 猴子不定来使用 resolv
+
+``` ruby
+require `resolv` # 库
+reequire `resolv-replace` # 猴子补丁
+```
+
+---
+
+## 第 17 章: SSL 套接字
+
+- SSL 使用公钥加密提供了一套用于在套接字上进行安全的数据交换的机制
+- 套接字可以升级为 SSL，但一个套接字不能同时进行 SSL 和非 SSL 通信
+- ruby 中使用标准库的 openssl 实现套接字转为 SSL 套接字
+
+
+## 第 18 章: SSL 套接字
+
+- TCP 套接字数据提供了一种有序的数据流。
+- 可以将 TCP 数据流想象成一个队列。套接字连接的一端向连接中写入数据，就相当于将数据入列。
+- 数据经过若干阶段（本地缓冲、网络传输、远程缓冲），然后在接收端的套接字出列。
+-  TCP 紧急数据，更多的时候被称作 “带外数据”(out-of-band data),支持将数据推到队列的前端，绕过其它已经在传输的数据，比便于另一端尽快接收
+
+### 发送紧急数据
+
+``` ruby
+require 'socket'
+
+socket = TCPSocket.new 'localhost', 4481
+
+# 会用标准方法发送数据
+socket.write 'first'
+socket.write 'second'
+
+# 发送紧急数据
+socket.send '!',Socket::MSG_OOB
+```
+- `Socket#send` 将 `Socket::MSG_OOB` 常量作为标志。 OOB 指的就是带外数据
+- 发送方和接收方需要合作才可以处理带外数据
+
+## 接收紧急数据
+
+``` ruby
+require 'socket'
+
+Socket.tcp_server_loop(4481) do |connection|
+
+  # 优先接收紧急数据
+  urgent_data = connection.recv(1, Socket::MSG_OOB)
+  data = connection.readpartial(1024)
+end
+```
+
+- 接收紧急数据，需要使用 `Socket#recv` 以及在发送紧急数据时用过的那个标志
+- 紧急数据会优先于 “普通” 数据使用，即使写入的比 “普通” 数据晚
+- 如果不存在未处理的紧急数据，调用 `connection.recv(1, Socket::MSG_OOB)` 会失败，并产生 `Errno::EINVAL`
+
+## 局限
+
+- TCP 实现对于紧急数据仅提供了有限的支持，一次只能发送一个字节的紧急数据。如果发送多个字节，只有最后一个字节会被视为紧急数据，之前的数据会被视为普通的 TCP 数据流
+
+## 紧急数据和 IO.select
+
+- 如果套接字接收到了紧急数据，它们会被包含在 `IO.select`  所返回数组的第三个元素中
+- `IO.select` 会不停的报告有紧急数据，即便是所有的紧急数据已经处理完毕，所以需要特殊处理
+
+## SO_OOBINLINE 选项
+
+`SO_OOBINLINE` 套接字选项，允许在带内接收带外数据，启用后回一句写入次序从队列读出
+
+
+## TCP Sockets 编程(20): 串行化
+
+串行化架构处理流程：
+
+1. 客户端连接
+2. 客户端/服务器交换请求及响应
+3. 客户端断开连接
+4. 返回到步骤(1)
+
+串行化的特点：简单化，没有锁，没有共享状态，处理完一个连接之后才能处理另一个，不能支持并发操作
+
+
+## TCP Sockets 编程(21): 单连接进程
+
+单连接进程事件流程：
+
+1. 一个连接抵达服务器
+2. 主服务器进程接受该练级
+3. 衍生出一个和服务器一模一样的新子进程
+4. 服务器进程返回步骤 1，由子进程并行处理连接
+
+优点：
+
+- 简单，能并行处理多个客户端
+- for 提供了一个父进程的所有东西的副本，没有锁和竞争条件
+
+缺点：
+
+- 对 fork 出的子进程的数量没有施加限制，如果超出系统限制会崩溃
+- 只有 Unix 系统才支持 fork，windows 或 JRuby 中没法使用 fork
+
+
+## TCP Sockets 编程(22): 单连接线程
+
+线程与进程：
+
+- 生成(`spawn`): 线程的成本低于进程，进程生成需创建原始进程所拥有的一切资源的副本，多个线程共享内存，不需要创建副本
+- 同步：因为线程共享内存，所以线程之间使用互斥量(mutex)、锁和同步访问。进程不需要这些
+- 并行：解释器对当前执行环境使用了一个全局解释锁 `GIL`,所以多线程无法实现真正的并行, 在 `MRI` 中，只有进程才能实现真正的并发
+  但ruby 中如果某个线程阻塞在 IO 上， ruby 能让其他的线程继续执行
+
+
+使用线程注意：
+
+- 套接字如果分配给一个实例变量，会在所有活动线程之间共享该实例的内部状态
+- 使用线程进行套接字编程，必须让每个线程获得它自己的连接对象，这样可以减少麻烦
+
+## TCP Sockets 编程(23): Preforking
+
+Preforking 处理流程：
+
+1. 主服务器进程创建一个侦听套接字
+2. 主服务器进程衍生出一大批子进程
+3. 每个子进程在共享套接字上接受连接，然后进行独立处理
+4. 主服务器进程随时关注子进程
+
+Preforking 优点：
+- 多进程处理连接的负载均衡由操作系统处理
+- 子进程完全隔离，每个进程都拥有包括 ruby 解释器在内的所有资源的副本，单个进程的故障不会影响其他进程。
+
+缺点:
+- 衍生进程越多，消耗的内存也越多
+
+## TCP Sockets 编程(24): 线程池
+
+- 线程池模式类似于 `preforking`
+- 线程池在服务器启动后生产一批线程，将处理连接的任务交给独立线程来完成
