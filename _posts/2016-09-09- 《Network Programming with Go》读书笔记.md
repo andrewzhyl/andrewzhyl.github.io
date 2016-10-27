@@ -5,7 +5,6 @@ date:   2016-09-09 20:20:00
 description: '《Network Programming with Go》学习笔记'
 ---
 
-# 《Network Programming with Go》学习笔记
 
 ~需要修改。。。。~
 

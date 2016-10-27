@@ -5,7 +5,6 @@ date:   2016-09-21 09:08:00
 description: '《Working With Ruby Threads》'
 ---
 
-# 《Working With Ruby Threads》学习笔记
 
 ## Introduction
 

@@ -5,8 +5,6 @@ date:   2016-03-29 09:06:00
 description: '《TCP Sockets 编程》读书笔记'
 ---
 
-# 《TCP Sockets 编程》读书笔记
-
 ## 第一章：建立套接字
 
 ### 1.1 ruby 的套接字库
