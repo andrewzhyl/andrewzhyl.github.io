@@ -1,99 +1,421 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="author" content="andrew" />
+<meta name="keywords" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Andrew's Blog</title>
+<link href="http://127.0.0.1/feed.xml" rel="alternate" title="Andrew's Blog" type="application/atom+xml" />
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/site.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/code/github.css" />
 
-  <title>Andrew's Blog</title>
-  <link rel="shortcut icon" href="/assets/images/favicon.ico">
-  <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="alternate" type="application/rss+xml" title="My Blog" href="/rss.xml">
-  <link rel="stylesheet" href="/assets/css/highlight.css">
 </head>
-<body>
 
-  <nav class="main-nav">
-    
-        <a href="/"> <span class="arrow">←</span> Home </a>
-    
+<body class="page-type-list">
 
-    
-        
-            <a href="/about">About </a>
-        
-    
-    <a class="cta" href="/feed.xml">Subscribe</a>
-</nav>
+<div class="main">
+	<!-- 博客分类列表 -->
+<!-- 首页即博客列表 -->
 
-  
-      <div class="profile">
-    <section id="wrapper">
-        <header id="header">
-        
-            <a href="/about">
-                <img id="avatar" class="2x" src="/assets/images/avatar.png"/>
-            </a>
-        
-            <h1>andrewzhyl</h1>
-            <h2>记录一些东西</h2>
-        </header>
-    </section>
-</div>
-  
 
-  <section id="wrapper" class="home">
-    <ul id="post-list">
-    
-        <li>
-            <a href="/2016/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><aside class="dates">Sep 08</aside></a>
-            <a href="/2016/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">《working with ruby threads 》学习笔记 <h2></h2></a>
-        </li>
-    
-        <li>
-            <a href="/2016/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><aside class="dates">Aug 13</aside></a>
-            <a href="/2016/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">《理解 UNIX 进程》学习笔记 <h2>《理解 UNIX 进程》</h2></a>
-        </li>
-    
-        <li>
-            <a href="/2016/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><aside class="dates">Aug 13</aside></a>
-            <a href="/2016/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">《理解 UNIX 进程》学习笔记 <h2>《理解 UNIX 进程》</h2></a>
-        </li>
-    
-        <li>
-            <a href="/2016/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712/"><aside class="dates">Jul 13</aside></a>
-            <a href="/2016/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712/">GO 指南笔记 <h2>go 指南笔记</h2></a>
-        </li>
-    
-        <li>
-            <a href="/2016/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><aside class="dates">Mar 29</aside></a>
-            <a href="/2016/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">《TCP Sockets 编程》读书笔记 <h2>《TCP Sockets 编程》读书笔记</h2></a>
-        </li>
-    
+<header>
+	<h1>Andrew's Blog</h1>
+	<p class="additional">记录一些东西</p>
+</header>
+
+
+
+<article content-loaded="1">
+	<h2><a href="/posts/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html">《Working With Ruby Threads》学习笔记</a></h2>
+	<p class="meta">
+	<span class="datetime">2016-09-21</span> posted in [<a href="/category/" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+		<h1 id="working-with-ruby-threads">《Working With Ruby Threads》学习笔记</h1>
+
+<h2 id="introduction">Introduction</h2>
+
+<h3 id="why-care">why care?</h3>
+
+<ul>
+  <li>在多核 CPU上，代码必须构建在充分利用多核的架构上才能跑的更快</li>
 </ul>
 
+<h3 id="the-promise-of-multi-threading">The promise of multi-threading</h3>
 
-<footer id="footer">
-    <p class="small">© Copyright 2016 andrewzhyl</p>
-</footer>
-  </section>
+<ul>
+  <li>多进程 copy 内存，多线程共享内存</li>
+  <li>多线程比多进程开销更小，多线程可以有更多的并发单元</li>
+  <li>多线程必须基于线程安全</li>
+</ul>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="/assets/js/main.js"></script>
-  <script src="/assets/js/highlight.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
+<h2 id="youre-always-in-a-thread">第1章: You’re Always in a Thread</h2>
 
-  <script>
-  //   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  //   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  //   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  //   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>irb
+<span class="gp">&gt; </span>Thread.main
+<span class="gp">=&gt; </span><span class="c">#&lt;Thread:0x007fdc830677c0 run&gt;</span>
+<span class="gp">&gt; </span>Thread.current <span class="o">==</span> Thread.main <span class="o">=</span>&gt; <span class="nb">true</span>
+</code></pre>
+</div>
 
-  //   ga('create', '', 'auto');
-  //   ga('send', 'pageview');
-  </script>
+<ul>
+  <li><code class="highlighter-rouge">Thread.main</code> 总是指向主线程</li>
+  <li>主线程退出，其它线程也会终止，并且 ruby 进程会退出</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>irb
+<span class="gp">&gt; </span>Thread.main
+<span class="gp">=&gt; </span><span class="c">#&lt;Thread:0x007fdc830677c0 run&gt;</span>
+<span class="gp">&gt; </span>Thread.current <span class="o">==</span> Thread.main <span class="o">=</span>&gt; <span class="nb">true</span>
+</code></pre>
+</div>
+
+<h2 id="threads-of-execution">第2章：Threads of Execution</h2>
+
+<h3 id="shared-address-space">Shared address space</h3>
+
+<ul>
+  <li>线程共享一个作用域</li>
+  <li>所有 ruby 的线程会映射为一个 native，操作系统线程</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>top -l1 -pid 8409 -stats pid,th
+</code></pre>
+</div>
+<p>以上命令可以查看进程 id 为 8409 的线程数量</p>
+
+<h3 id="non-deterministic-context-switching">Non-deterministic context switching(非确定的环境切换)</h3>
+
+<p>In order to provide fair access, the thread scheduler can ‘pause’ a thread at any time, suspending its current state
+为了提供公平的访问，线程调度能在任意时间 “暂停” 一个线程，暂停它的当前状态</p>
+
+<p><code class="highlighter-rouge">||=</code> 语句不是线程安全的，因为线程可能在任何时间被阻止，如果 A 线程运行 <code class="highlighter-rouge">||=</code> 获得了初始值并且暂停，可能会出现失去 B 线程赋值的情况</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># This statement</span>
+<span class="n">results</span> <span class="o">||=</span> <span class="no">Queue</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="c1"># when broken down, becomes something like</span>
+<span class="k">if</span> <span class="vi">@results</span><span class="p">.</span><span class="nf">nil?</span> 
+ <span class="n">temp</span> <span class="o">=</span> <span class="no">Queue</span><span class="p">.</span><span class="nf">new</span> 
+ <span class="vi">@results</span> <span class="o">=</span> <span class="n">temp</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>A race condition involves two threads racing to perform an operation on some shared state.
+一个竞争条件是在共享状态下，包含两个线程竞争去执行一个同样的操作</p>
+
+<ul>
+  <li><strong><code class="highlighter-rouge">重要原则：</code></strong>Any time that you have two or more threads trying to modify the same thing at the same time, you’re going to have issues.</li>
+  <li>This is because the thread scheduler can interrupt a thread at any time.</li>
+</ul>
+
+<p>针对重要原则的两个策略：</p>
+
+<p>1) don’t allow concurrent modification
+2) protect concurrent modification</p>
+
+<h2 id="lifecycle-of-a-thread">第三章：Lifecycle of a Thread</h2>
+
+<h3 id="threadnew">Thread.new</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="p">.</span><span class="nf">.</span><span class="o">.</span> <span class="p">}</span>
+<span class="no">Thread</span><span class="p">.</span><span class="nf">fork</span> <span class="p">{</span> <span class="p">.</span><span class="nf">.</span><span class="o">.</span> <span class="p">}</span> 
+<span class="no">Thread</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">|</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="p">}</span>
+</code></pre>
+</div>
+<p>Thread.new 及其别名方法</p>
+
+<h3 id="threadjoin">Thread#join</h3>
+
+<ul>
+  <li>Once you’ve spawned a thread, you can use #join to wait for it to finish</li>
+  <li>Without #join, the main thread would exit before the sub-thread can execute its block. Using #join provides a guarantee in this situation.</li>
+  <li>Calling #join on the spawned thread will join the current thread of execution with the spawned one</li>
+  <li>使用 #join 的时候，异常会在 #join 的时候才抛出，主线程也会执行但不会立即输出</li>
+</ul>
+
+<h3 id="threadstatus">Thread#status</h3>
+
+<p><code class="highlighter-rouge">Thread#value</code> 的几个可能值:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">run</code>: Threads currently running have this status.</li>
+  <li><code class="highlighter-rouge">sleep</code>: Threads currently sleeping, blocked waiting for a mutex, or waiting on
+IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，或者 IO)</li>
+  <li><code class="highlighter-rouge">false</code>: Threads that finished executing their block of code, or were successfully killed, have this status.(线程已经执行完毕，或者成功被杀掉)</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><code class="highlighter-rouge">nil</code>: Threads that raised an unhandled exception have this status. wwrt</td>
+          <td>33(线程抛出一个未处理的异常，会有返回状态)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><code class="highlighter-rouge">aborting</code>: Threads that are currently running, yet dying, have this status(线程当前运行中，但是死掉了了)</li>
+</ul>
+
+<h3 id="threadstop">Thread.stop</h3>
+
+<ul>
+  <li>这个方法会使线程进入 sleep 状态，然后告诉线程调度器去执行另一个线程</li>
+  <li>线程会一直处于 sleep 状态，直到调用 <code class="highlighter-rouge">Thread#wakeup</code></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'thread'</span>
+
+<span class="n">thread</span> <span class="o">=</span> <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+  <span class="no">Thread</span><span class="p">.</span><span class="nf">stop</span>
+  <span class="nb">puts</span> <span class="s2">"Hello there"</span>
+<span class="k">end</span>
+
+<span class="c1"># wait for the thread trigger its stop</span>
+<span class="nb">puts</span> <span class="s2">"----"</span> <span class="k">until</span> <span class="n">thread</span><span class="p">.</span><span class="nf">status</span> <span class="o">==</span> <span class="s1">'sleep'</span>
+
+<span class="n">thread</span><span class="p">.</span><span class="nf">wakeup</span>
+<span class="n">thread</span><span class="p">.</span><span class="nf">join</span>
+
+<span class="c1"># 输出------</span>
+<span class="c1"># ----</span>
+<span class="c1"># ----</span>
+<span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+<span class="c1"># ----</span>
+<span class="c1"># ----</span>
+<span class="c1"># ----</span>
+<span class="c1"># Hello there</span>
+<span class="c1"># [Finished in 1.6s]</span>
+</code></pre>
+</div>
+
+<h3 id="threadpass">Thread.pass</h3>
+
+<p><code class="highlighter-rouge">Thread.pass</code> 类似于 <code class="highlighter-rouge">Thread.stop</code> 但是他仅仅是让线程调度器去调度另一个线程，不会使当前线程处于 sleep</p>
+
+<h3 id="avoid-threadraise">Avoid Thread#raise</h3>
+
+<ul>
+  <li>不推荐使用这个方法，因为会有严重的问题</li>
+</ul>
+
+<h3 id="avoid-threadkill">Avoid Thread#kill</h3>
+
+<ul>
+  <li>不推荐使用这个方法，跟 <code class="highlighter-rouge">Thread#raise</code> 一样，会有严重的问题</li>
+</ul>
+
+<h2 id="concurrent--parallel">第四章：Concurrent != Parallel</h2>
+
+<ul>
+  <li>concurrent and parallel are not the same thing
+    <ol>
+      <li>Do multiple threads run your code concurrently? Yes.</li>
+      <li>Do multiple threads run your code in parallel? Maybe.</li>
+    </ol>
+  </li>
+  <li>单核 CPU 执行多个任务是并发的，但是并不一定有顺序执行快</li>
+  <li>多核 CPU 执行多个任务是并行的，但是也可以因为某个任务出现问题，然后由其它的线程或进程接管</li>
+  <li>并行一定是并发的，并发不一定是并行</li>
+</ul>
+
+<h3 id="you-cant-guarantee-anything-will-be-parallel">You can’t guarantee anything will be parallel</h3>
+
+<ul>
+  <li>making it execute in parallel is out of your hands. That responsibility is left to the underlying thread scheduler(你亲手让程序并行执行，但是具体的并行的责任是交给底层的调度器来执行的)</li>
+  <li>多核 CPU 系统中执行多线程程序，也有可能会在一个 CPU 内核执行，这是由线程调度器决定的</li>
+  <li>线程采用公平排队的方式，所有的线程都可以或多或少的使用可用的资源，但是不能有代码来决定</li>
+</ul>
+
+<p>扩展阅读
+- https://blog.golang.org/concurrency-is-not-parallelism
+- https://blog.engineyard.com/2011/ruby-concurrency-and-you</p>
+
+<h2 id="the-gil-and-mri">第五章：The GIL and MRI</h2>
+
+<ul>
+  <li>MRI allows concurrent execution of Ruby code, but prevents parallel execution of Ruby code</li>
+</ul>
+
+<h3 id="the-global-lock">The global lock</h3>
+
+<p><code class="highlighter-rouge">GIT</code> 别名：<code class="highlighter-rouge">Global Interpreter Lock</code>， <code class="highlighter-rouge">GVL (Global VM Lock)</code>，  <code class="highlighter-rouge">Global Lock</code></p>
+
+<ul>
+  <li>每个 MRI 进程都仅有一个 <code class="highlighter-rouge">GIL</code>,多个进程都有它自己的 <code class="highlighter-rouge">GIL</code></li>
+  <li>进程中产生多个线程，这些线程会共享 <code class="highlighter-rouge">GIL</code></li>
+  <li>ruby 多线程中，单一线程会在任意给定时间获得 <code class="highlighter-rouge">GIL</code>，其它线程需要等待它释放<code class="highlighter-rouge">GIT</code></li>
+  <li>MRI ruby 不能够实现并行</li>
+  <li>即使是没有 <code class="highlighter-rouge">GIL</code> 的语言，比如 JAVA,使用多线程也会需要有对相同的公共资源进行访问和修改，如果需要加锁控制，也不能利用到多核并行</li>
+  <li>利用多进程实现并行，是 ruby 常用的方式</li>
+</ul>
+
+<h3 id="the-special-case-blocking-ioio-">The special case: blocking IO(特殊情况：IO 阻塞)</h3>
+
+<ul>
+  <li>ruby 中有 <code class="highlighter-rouge">GIL</code> 会阻止并行执行，但是 <code class="highlighter-rouge">IO 阻塞</code> 会释放 <code class="highlighter-rouge">GIL</code></li>
+  <li>MRI doesn’t let a thread hog the GIL when it hits blocking IO(当它触发阻塞 IO 的时候，MRI 不会让线程贪婪占用 GIL)</li>
+  <li>因为 ruby 有 <code class="highlighter-rouge">GIL</code> ，所以它等于去除了操作系统并行执行的能力，但是等于所有的情况下都不能并行</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'open-uri'</span>
+<span class="mi">3</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> 
+  <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+    <span class="nb">open</span><span class="p">(</span><span class="s1">'http://zombo.com'</span><span class="p">)</span> 
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:value</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>运行以上代码，假设我们已经生成了所有的线程，他们都试图获取 <code class="highlighter-rouge">GIL</code> 来执行代码，Thread A 获得了 <code class="highlighter-rouge">GIL</code>,它创建了一个套接字并且试图打开一个连接到 <code class="highlighter-rouge">zombo.com</code>,这是线程 A 等待响应，并释放了 <code class="highlighter-rouge">GIL</code>, 线程 B 将获得 <code class="highlighter-rouge">GIL</code> 并且和线程 A 执行同样的步骤</p>
+
+<p>There are three reasons that the GIL exists(几种 GIL 存在的原因 ):</p>
+
+<ol>
+  <li>为了在竞争条件下保护 MRI 核心部件
+  竞争条件会引起很多问题，这同样的问题会出现在 MRI的 C 内核, ,最简单的办法就是减少竞争的数量，防止多个线程同时运行</li>
+  <li>To facilitate the C extension API(为了便于使用 C 扩展 API)
+ 只要代码块用到了 C 语言扩展 API, GIL 会阻塞其它代码的运行，因为 C 扩展可能不是线程安全的，GIL 的存在保证了线程安全</li>
+  <li>To reduce the likelihood of race conditions in your Ruby code(尽可能的减少竞争条件)</li>
+</ol>
+
+<p>…未完</p>
+
+	
+	</div>
+</article>
+
+<article>
+	<h2><a href="/posts/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html">《Network Programming with Go》学习笔记</a></h2>
+	<p class="meta">
+	<span class="datetime">2016-09-10</span> posted in [<a href="/category/" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+	</div>
+</article>
+
+<article>
+	<h2><a href="/posts/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html">《理解 UNIX 进程》学习笔记</a></h2>
+	<p class="meta">
+	<span class="datetime">2016-08-13</span> posted in [<a href="/category/" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+	</div>
+</article>
+
+<article>
+	<h2><a href="/posts/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712.html">GO 指南笔记</a></h2>
+	<p class="meta">
+	<span class="datetime">2016-07-13</span> posted in [<a href="/category/" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+	</div>
+</article>
+
+<article>
+	<h2><a href="/posts/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html">《TCP Sockets 编程》读书笔记</a></h2>
+	<p class="meta">
+	<span class="datetime">2016-03-29</span> posted in [<a href="/category/" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+	</div>
+</article>
+
+<article>
+	<h2><a href="/posts/my-tech-blogging-like-a-hacker.html">像黑客一样写自己的技术博客</a></h2>
+	<p class="meta">
+	<span class="datetime">2012-03-04</span> posted in [<a href="/category/thinking" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+	</div>
+</article>
+
+<article>
+	<h2><a href="/posts/hello-world.html">Hello world!</a></h2>
+	<p class="meta">
+	<span class="datetime">2012-03-04</span> posted in [<a href="/category/default" class="category"></a>]
+</p>
+	<div class="article-content">
+	
+	</div>
+</article>
+
+
+
+
+
+
+	<footer>
+		<p>&copy; Since 2012</p>
+	</footer>
+</div>
+
+<aside>
+	<h2><a href="/">Andrew's Blog</a><a href="/feed.xml" class="feed-link" title="Subscribe"><i class="fa fa-rss-square"></i></a></h2>
+	
+	<nav class="block">
+		<ul>
+		
+		</ul>
+	</nav>
+	
+	<form action="/search/" class="block block-search">
+		<h3>Search</h3>
+		<p><input type="search" name="q" placeholder="Search" /></p>
+	</form>
+	
+	<div class="block block-about">
+		<h3>About</h3>
+		<figure>
+			
+			<figcaption><strong>andrew</strong></figcaption>
+		</figure>
+		<p>Write something about yourself.</p>
+	</div>
+	
+	<div class="block block-license">
+		<h3>Copyright</h3>
+		<p><a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.5/cn/" target="_blank" class="hide-target-icon" title="Copyright declaration of site content"><img alt="知识共享许可协议" src="http://i.creativecommons.org/l/by-nc-nd/2.5/cn/88x31.png" /></a></p>
+	</div>
+	
+	
+	
+	<div class="block block-thank">
+		<h3>Powered by</h3>
+		<p>
+			<a href="http://disqus.com/" target="_blank">Disqus</a>,
+			<a href="http://elfjs.com/" target="_blank">elf+js</a>,
+			<a href="https://github.com/" target="_blank">GitHub</a>,
+			<a href="http://www.google.com/cse/" target="_blank">Google Custom Search</a>,
+			<a href="http://en.gravatar.com/" target="_blank">Gravatar</a>,
+			<a href="http://softwaremaniacs.org/soft/highlight/en/">HighlightJS</a>,
+			<a href="https://github.com/mojombo/jekyll" target="_blank">jekyll</a>,
+			<a href="https://github.com/mytharcher/SimpleGray" target="_blank">SimpleGray</a>
+		</p>
+	</div>
+</aside>
+
+<script src="http://elfjs.qiniudn.com/code/elf-0.5.0.min.js"></script>
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+
+<script src="/assets/js/site.js"></script>
+
+<script>
+site.URL_GOOGLE_API = 'http://www.google.com/jsapi';
+site.URL_DISCUS_COMMENT = '' ? 'http://.' : '';
+
+site.VAR_SITE_NAME = "Andrew's Blog";
+site.VAR_GOOGLE_CUSTOM_SEARCH_ID = '';
+site.TPL_SEARCH_TITLE = '#{0} / 搜索：#{1}';
+site.VAR_AUTO_LOAD_ON_SCROLL = 0;
+</script>
 </body>
 </html>
-
-
-

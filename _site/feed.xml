@@ -1,80 +1,3635 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <channel>
-    <title>Andrew's Blog</title>
-    <description>记录一些东西</description>
-    <link>http://andrewzhyl.github.io</link>
-    <atom:link href="http://andrewzhyl.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    
-      <item>
-        <title>《working with ruby threads 》学习笔记</title>
-        
-        
-          <description>
-&lt;hr /&gt;
-&lt;p&gt;title:  “《Working With Ruby Threads》学习笔记”
-date:   2016-09-21 09:08:00
-description: ‘《Working With Ruby Threads》’
-—&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<title>Andrew's Blog</title>
+	<link href="http://127.0.0.1/atom.xml" rel="self" />
+	<link href="http://127.0.0.1/" />
+	<updated>2016-10-27T10:47:14+08:00</updated>
+	<id>http://127.0.0.1/</id>
+	<author>
+		<name>andrew</name>
+		<email>andrew.zhyl@gmail.com</email>
+	</author>
+	
+	<entry>
+		<title>《Working With Ruby Threads》学习笔记</title>
+		<link href="http://127.0.0.1/posts/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" />
+		<updated>2016-09-21T17:08:00+08:00</updated>
+		<id>http://127.0.0.1/posts/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</id>
+		<content type="html"><![CDATA[<h1 id="working-with-ruby-threads">《Working With Ruby Threads》学习笔记</h1>
 
-</description>
-        
-        <pubDate>Thu, 08 Sep 2016 00:00:00 +0800</pubDate>
-        <link>http://andrewzhyl.github.io/2016/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-        <guid isPermaLink="true">http://andrewzhyl.github.io/2016/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      </item>
-    
-      <item>
-        <title>《理解 UNIX 进程》学习笔记</title>
-        
-        
-          <description>&lt;h1 id=&quot;network-programming-with-go&quot;&gt;《Network Programming with Go》学习笔记&lt;/h1&gt;
+<h2 id="introduction">Introduction</h2>
 
-</description>
-        
-        <pubDate>Sat, 13 Aug 2016 04:20:00 +0800</pubDate>
-        <link>http://andrewzhyl.github.io/2016/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-        <guid isPermaLink="true">http://andrewzhyl.github.io/2016/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      </item>
-    
-      <item>
-        <title>《理解 UNIX 进程》学习笔记</title>
-        
-        
-          <description>&lt;h1 id=&quot;unix-&quot;&gt;《理解 UNIX 进程》学习笔记&lt;/h1&gt;
+<h3 id="why-care">why care?</h3>
 
-</description>
-        
-        <pubDate>Sat, 13 Aug 2016 04:20:00 +0800</pubDate>
-        <link>http://andrewzhyl.github.io/2016/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
-        <guid isPermaLink="true">http://andrewzhyl.github.io/2016/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
-      </item>
-    
-      <item>
-        <title>GO 指南笔记</title>
-        
-        
-          <description>&lt;h1 id=&quot;go-&quot;&gt;GO 指南笔记&lt;/h1&gt;
+<ul>
+  <li>在多核 CPU上，代码必须构建在充分利用多核的架构上才能跑的更快</li>
+</ul>
 
-</description>
-        
-        <pubDate>Wed, 13 Jul 2016 02:30:00 +0800</pubDate>
-        <link>http://andrewzhyl.github.io/2016/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712/</link>
-        <guid isPermaLink="true">http://andrewzhyl.github.io/2016/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712/</guid>
-      </item>
-    
-      <item>
-        <title>《TCP Sockets 编程》读书笔记</title>
-        
-        
-          <description>&lt;h1 id=&quot;tcp-sockets-&quot;&gt;《TCP Sockets 编程》读书笔记&lt;/h1&gt;
+<h3 id="the-promise-of-multi-threading">The promise of multi-threading</h3>
 
-</description>
-        
-        <pubDate>Tue, 29 Mar 2016 17:06:00 +0800</pubDate>
-        <link>http://andrewzhyl.github.io/2016/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
-        <guid isPermaLink="true">http://andrewzhyl.github.io/2016/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
-      </item>
+<ul>
+  <li>多进程 copy 内存，多线程共享内存</li>
+  <li>多线程比多进程开销更小，多线程可以有更多的并发单元</li>
+  <li>多线程必须基于线程安全</li>
+</ul>
+
+<h2 id="youre-always-in-a-thread">第1章: You’re Always in a Thread</h2>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>irb
+<span class="gp">&gt; </span>Thread.main
+<span class="gp">=&gt; </span><span class="c">#&lt;Thread:0x007fdc830677c0 run&gt;</span>
+<span class="gp">&gt; </span>Thread.current <span class="o">==</span> Thread.main <span class="o">=</span>&gt; <span class="nb">true</span>
+</code></pre>
+</div>
+
+<ul>
+  <li><code class="highlighter-rouge">Thread.main</code> 总是指向主线程</li>
+  <li>主线程退出，其它线程也会终止，并且 ruby 进程会退出</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>irb
+<span class="gp">&gt; </span>Thread.main
+<span class="gp">=&gt; </span><span class="c">#&lt;Thread:0x007fdc830677c0 run&gt;</span>
+<span class="gp">&gt; </span>Thread.current <span class="o">==</span> Thread.main <span class="o">=</span>&gt; <span class="nb">true</span>
+</code></pre>
+</div>
+
+<h2 id="threads-of-execution">第2章：Threads of Execution</h2>
+
+<h3 id="shared-address-space">Shared address space</h3>
+
+<ul>
+  <li>线程共享一个作用域</li>
+  <li>所有 ruby 的线程会映射为一个 native，操作系统线程</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span>top -l1 -pid 8409 -stats pid,th
+</code></pre>
+</div>
+<p>以上命令可以查看进程 id 为 8409 的线程数量</p>
+
+<h3 id="non-deterministic-context-switching">Non-deterministic context switching(非确定的环境切换)</h3>
+
+<p>In order to provide fair access, the thread scheduler can ‘pause’ a thread at any time, suspending its current state
+为了提供公平的访问，线程调度能在任意时间 “暂停” 一个线程，暂停它的当前状态</p>
+
+<p><code class="highlighter-rouge">||=</code> 语句不是线程安全的，因为线程可能在任何时间被阻止，如果 A 线程运行 <code class="highlighter-rouge">||=</code> 获得了初始值并且暂停，可能会出现失去 B 线程赋值的情况</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># This statement</span>
+<span class="n">results</span> <span class="o">||=</span> <span class="no">Queue</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="c1"># when broken down, becomes something like</span>
+<span class="k">if</span> <span class="vi">@results</span><span class="p">.</span><span class="nf">nil?</span> 
+ <span class="n">temp</span> <span class="o">=</span> <span class="no">Queue</span><span class="p">.</span><span class="nf">new</span> 
+ <span class="vi">@results</span> <span class="o">=</span> <span class="n">temp</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>A race condition involves two threads racing to perform an operation on some shared state.
+一个竞争条件是在共享状态下，包含两个线程竞争去执行一个同样的操作</p>
+
+<ul>
+  <li><strong><code class="highlighter-rouge">重要原则：</code></strong>Any time that you have two or more threads trying to modify the same thing at the same time, you’re going to have issues.</li>
+  <li>This is because the thread scheduler can interrupt a thread at any time.</li>
+</ul>
+
+<p>针对重要原则的两个策略：</p>
+
+<p>1) don’t allow concurrent modification
+2) protect concurrent modification</p>
+
+<h2 id="lifecycle-of-a-thread">第三章：Lifecycle of a Thread</h2>
+
+<h3 id="threadnew">Thread.new</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span> <span class="p">.</span><span class="nf">.</span><span class="o">.</span> <span class="p">}</span>
+<span class="no">Thread</span><span class="p">.</span><span class="nf">fork</span> <span class="p">{</span> <span class="p">.</span><span class="nf">.</span><span class="o">.</span> <span class="p">}</span> 
+<span class="no">Thread</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">|</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="p">}</span>
+</code></pre>
+</div>
+<p>Thread.new 及其别名方法</p>
+
+<h3 id="threadjoin">Thread#join</h3>
+
+<ul>
+  <li>Once you’ve spawned a thread, you can use #join to wait for it to finish</li>
+  <li>Without #join, the main thread would exit before the sub-thread can execute its block. Using #join provides a guarantee in this situation.</li>
+  <li>Calling #join on the spawned thread will join the current thread of execution with the spawned one</li>
+  <li>使用 #join 的时候，异常会在 #join 的时候才抛出，主线程也会执行但不会立即输出</li>
+</ul>
+
+<h3 id="threadstatus">Thread#status</h3>
+
+<p><code class="highlighter-rouge">Thread#value</code> 的几个可能值:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">run</code>: Threads currently running have this status.</li>
+  <li><code class="highlighter-rouge">sleep</code>: Threads currently sleeping, blocked waiting for a mutex, or waiting on
+IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，或者 IO)</li>
+  <li><code class="highlighter-rouge">false</code>: Threads that finished executing their block of code, or were successfully killed, have this status.(线程已经执行完毕，或者成功被杀掉)</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><code class="highlighter-rouge">nil</code>: Threads that raised an unhandled exception have this status. wwrt</td>
+          <td>33(线程抛出一个未处理的异常，会有返回状态)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><code class="highlighter-rouge">aborting</code>: Threads that are currently running, yet dying, have this status(线程当前运行中，但是死掉了了)</li>
+</ul>
+
+<h3 id="threadstop">Thread.stop</h3>
+
+<ul>
+  <li>这个方法会使线程进入 sleep 状态，然后告诉线程调度器去执行另一个线程</li>
+  <li>线程会一直处于 sleep 状态，直到调用 <code class="highlighter-rouge">Thread#wakeup</code></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'thread'</span>
+
+<span class="n">thread</span> <span class="o">=</span> <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+  <span class="no">Thread</span><span class="p">.</span><span class="nf">stop</span>
+  <span class="nb">puts</span> <span class="s2">"Hello there"</span>
+<span class="k">end</span>
+
+<span class="c1"># wait for the thread trigger its stop</span>
+<span class="nb">puts</span> <span class="s2">"----"</span> <span class="k">until</span> <span class="n">thread</span><span class="p">.</span><span class="nf">status</span> <span class="o">==</span> <span class="s1">'sleep'</span>
+
+<span class="n">thread</span><span class="p">.</span><span class="nf">wakeup</span>
+<span class="n">thread</span><span class="p">.</span><span class="nf">join</span>
+
+<span class="c1"># 输出------</span>
+<span class="c1"># ----</span>
+<span class="c1"># ----</span>
+<span class="p">.</span><span class="nf">.</span><span class="o">.</span>
+<span class="c1"># ----</span>
+<span class="c1"># ----</span>
+<span class="c1"># ----</span>
+<span class="c1"># Hello there</span>
+<span class="c1"># [Finished in 1.6s]</span>
+</code></pre>
+</div>
+
+<h3 id="threadpass">Thread.pass</h3>
+
+<p><code class="highlighter-rouge">Thread.pass</code> 类似于 <code class="highlighter-rouge">Thread.stop</code> 但是他仅仅是让线程调度器去调度另一个线程，不会使当前线程处于 sleep</p>
+
+<h3 id="avoid-threadraise">Avoid Thread#raise</h3>
+
+<ul>
+  <li>不推荐使用这个方法，因为会有严重的问题</li>
+</ul>
+
+<h3 id="avoid-threadkill">Avoid Thread#kill</h3>
+
+<ul>
+  <li>不推荐使用这个方法，跟 <code class="highlighter-rouge">Thread#raise</code> 一样，会有严重的问题</li>
+</ul>
+
+<h2 id="concurrent--parallel">第四章：Concurrent != Parallel</h2>
+
+<ul>
+  <li>concurrent and parallel are not the same thing
+    <ol>
+      <li>Do multiple threads run your code concurrently? Yes.</li>
+      <li>Do multiple threads run your code in parallel? Maybe.</li>
+    </ol>
+  </li>
+  <li>单核 CPU 执行多个任务是并发的，但是并不一定有顺序执行快</li>
+  <li>多核 CPU 执行多个任务是并行的，但是也可以因为某个任务出现问题，然后由其它的线程或进程接管</li>
+  <li>并行一定是并发的，并发不一定是并行</li>
+</ul>
+
+<h3 id="you-cant-guarantee-anything-will-be-parallel">You can’t guarantee anything will be parallel</h3>
+
+<ul>
+  <li>making it execute in parallel is out of your hands. That responsibility is left to the underlying thread scheduler(你亲手让程序并行执行，但是具体的并行的责任是交给底层的调度器来执行的)</li>
+  <li>多核 CPU 系统中执行多线程程序，也有可能会在一个 CPU 内核执行，这是由线程调度器决定的</li>
+  <li>线程采用公平排队的方式，所有的线程都可以或多或少的使用可用的资源，但是不能有代码来决定</li>
+</ul>
+
+<p>扩展阅读
+- https://blog.golang.org/concurrency-is-not-parallelism
+- https://blog.engineyard.com/2011/ruby-concurrency-and-you</p>
+
+<h2 id="the-gil-and-mri">第五章：The GIL and MRI</h2>
+
+<ul>
+  <li>MRI allows concurrent execution of Ruby code, but prevents parallel execution of Ruby code</li>
+</ul>
+
+<h3 id="the-global-lock">The global lock</h3>
+
+<p><code class="highlighter-rouge">GIT</code> 别名：<code class="highlighter-rouge">Global Interpreter Lock</code>， <code class="highlighter-rouge">GVL (Global VM Lock)</code>，  <code class="highlighter-rouge">Global Lock</code></p>
+
+<ul>
+  <li>每个 MRI 进程都仅有一个 <code class="highlighter-rouge">GIL</code>,多个进程都有它自己的 <code class="highlighter-rouge">GIL</code></li>
+  <li>进程中产生多个线程，这些线程会共享 <code class="highlighter-rouge">GIL</code></li>
+  <li>ruby 多线程中，单一线程会在任意给定时间获得 <code class="highlighter-rouge">GIL</code>，其它线程需要等待它释放<code class="highlighter-rouge">GIT</code></li>
+  <li>MRI ruby 不能够实现并行</li>
+  <li>即使是没有 <code class="highlighter-rouge">GIL</code> 的语言，比如 JAVA,使用多线程也会需要有对相同的公共资源进行访问和修改，如果需要加锁控制，也不能利用到多核并行</li>
+  <li>利用多进程实现并行，是 ruby 常用的方式</li>
+</ul>
+
+<h3 id="the-special-case-blocking-ioio-">The special case: blocking IO(特殊情况：IO 阻塞)</h3>
+
+<ul>
+  <li>ruby 中有 <code class="highlighter-rouge">GIL</code> 会阻止并行执行，但是 <code class="highlighter-rouge">IO 阻塞</code> 会释放 <code class="highlighter-rouge">GIL</code></li>
+  <li>MRI doesn’t let a thread hog the GIL when it hits blocking IO(当它触发阻塞 IO 的时候，MRI 不会让线程贪婪占用 GIL)</li>
+  <li>因为 ruby 有 <code class="highlighter-rouge">GIL</code> ，所以它等于去除了操作系统并行执行的能力，但是等于所有的情况下都不能并行</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'open-uri'</span>
+<span class="mi">3</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> 
+  <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+    <span class="nb">open</span><span class="p">(</span><span class="s1">'http://zombo.com'</span><span class="p">)</span> 
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:value</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>运行以上代码，假设我们已经生成了所有的线程，他们都试图获取 <code class="highlighter-rouge">GIL</code> 来执行代码，Thread A 获得了 <code class="highlighter-rouge">GIL</code>,它创建了一个套接字并且试图打开一个连接到 <code class="highlighter-rouge">zombo.com</code>,这是线程 A 等待响应，并释放了 <code class="highlighter-rouge">GIL</code>, 线程 B 将获得 <code class="highlighter-rouge">GIL</code> 并且和线程 A 执行同样的步骤</p>
+
+<p>There are three reasons that the GIL exists(几种 GIL 存在的原因 ):</p>
+
+<ol>
+  <li>为了在竞争条件下保护 MRI 核心部件
+  竞争条件会引起很多问题，这同样的问题会出现在 MRI的 C 内核, ,最简单的办法就是减少竞争的数量，防止多个线程同时运行</li>
+  <li>To facilitate the C extension API(为了便于使用 C 扩展 API)
+ 只要代码块用到了 C 语言扩展 API, GIL 会阻塞其它代码的运行，因为 C 扩展可能不是线程安全的，GIL 的存在保证了线程安全</li>
+  <li>To reduce the likelihood of race conditions in your Ruby code(尽可能的减少竞争条件)</li>
+</ol>
+
+<p>…未完</p>
+]]></content>
+	</entry>
+	
+	<entry>
+		<title>《Network Programming with Go》学习笔记</title>
+		<link href="http://127.0.0.1/posts/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html" />
+		<updated>2016-09-10T04:20:00+08:00</updated>
+		<id>http://127.0.0.1/posts/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html</id>
+		<content type="html"><![CDATA[<h1 id="network-programming-with-go">《Network Programming with Go》学习笔记</h1>
+
+<p>~需要修改。。。。~</p>
+
+<h2 id="architecture">第一章： Architecture(体系结构)</h2>
+<p>### Protocol Layers（协议层）</p>
+
+<p><strong>ISO OSI Protocol</strong>
+<img src="./1473431812089.png" alt="Alt text" /></p>
+
+<p>每层的功能：
+- <code class="highlighter-rouge">网络层</code>提供交换及路由技术
+- <code class="highlighter-rouge">传输层</code>提供了终端系统之间的数据透明传输，并且负责端到端的错误恢复及流程控制
+- <code class="highlighter-rouge">会话层</code>用来建立、管理、以及终止应用程序之间的连接
+- <code class="highlighter-rouge">表现层</code>提供数据表现差异的独立性（例如加密）
+- <code class="highlighter-rouge">应用层</code>支持应用程序和用户程序</p>
+
+<p><strong>TCP/IP Protocol</strong></p>
+
+<p><img src="./1473431977093.png" alt="Alt text" /></p>
+
+<h3 id="gateways">Gateways（网关）</h3>
+
+<p>网关是一个统称，它用于连接起一个或多个网络。
+- 其中的<code class="highlighter-rouge">中继器</code>在物理层面上进行操作，它将信息从一个子网复制到另一个子网上。
+- <code class="highlighter-rouge">桥接</code>在数据连接层面上进行操作，它在网络之间复制帧。
+- <code class="highlighter-rouge">路由器</code>在网络层面上进行操作，它不仅在网络之间复制信息，还决定了信息的传输路线。</p>
+
+<h3 id="packet-encapsulation">Packet encapsulation（数据包封装）</h3>
+
+<ul>
+  <li>在OIS或TCP/IP协议栈层与层之间的通信，是通过将数据包从一个层发送到下一个层，最终穿过整个网络的。
+-每一层都有必须保持其自身层的管理信息。
+-从上层接收到的数据包在向下传递时，会添加头信息。</li>
+  <li>在接收端，这些头信息会在向上传递时移除。</li>
+</ul>
+
+<p>TFTP（普通文件传输协议）将文件从一台计算机移动到另一台上。它使用IP协议上的UDP协议，该协议可通过以太网发送。看起来就像这样：
+<img src="./1473434814430.png" alt="Alt text" /></p>
+
+<h3 id="connection-models">Connection Models(连接模型)</h3>
+
+<ul>
+  <li>Connection oriented 面向连接模型</li>
+  <li>Connectionless 无连接模型</li>
+  <li>面向连接模型即为会话建立单个连接，沿着连接进行双向通信，例如 TCP</li>
+  <li>在无连接系统中，消息的发送彼此独立。这类似于普通的邮件。无连接模型的消息可能不按顺序抵达。例子就是IP协议</li>
+  <li>面向连接的传输可通过无连接模型——基于IP的TCP协议建立。</li>
+  <li>无连接传输可通过面向连接模型——基于IP的HTTP协议建立。</li>
+</ul>
+
+<h3 id="communications-models">Communications Models(通信模型)</h3>
+
+<p><strong>Communications Models(消息传递)</strong>
+- 并发语言大多使用消息传递的机制，比如 Unix的管道
+- Parlog 能在并发的进程之间，将任意的逻辑数据结构当做消息来发送
+- 消息传递是分布式系统最基本的机制</p>
+
+<p><img src="./1473674193873.png" alt="Alt text" /></p>
+
+<h3 id="distributed-computing-models">Distributed Computing Models(分布式计算模型)</h3>
+
+<p><img src="./1473674216217.png" alt="Alt text" /></p>
+
+<p>考虑分布式系统的组件是否等价,三种模型：
+- 点对点（peer-to-peer）: 若两个组件等价，且均可发起并响应信息
+- 过滤器（filter）:有一个组件将信息传至另一个组件，它在修改该信息后会传至第三个组件。
+例如：中间组件通过SQL从数据库中获取信息，并将其转换为HTML表单提供给第三个组件（它可能是个浏览器）。
+- 客户端-服务器(客户端-服务器): 最常见的就是不对等的情况：客户端向服务器发送请求，然后服务端响应</p>
+
+<h3 id="clientserver-system">Client/Server System</h3>
+
+<p><img src="./1473674889739.png" alt="Alt text" /></p>
+
+<h3 id="clientserver-application">Client/Server Application</h3>
+<p><img src="./1473674904487.png" alt="Alt text" /></p>
+
+<h3 id="server-distribution">Server Distribution（服务器分布）</h3>
+
+<p>单一客户端，单个服务器：
+<img src="./1473675214266.png" alt="Alt text" /></p>
+
+<p>多个客户端，单一服务器：
+<img src="./1473675235161.png" alt="Alt text" />
+主站只需接收请求并处理一次，而无需将它们传递给其它服务器来处理。当客户端可能并发时，这就是个通用的模型</p>
+
+<p>单一客户端，多个服务器，例如当业务逻辑服务器从数据库服务器获取信息时
+<img src="./1473675269067.png" alt="Alt text" /></p>
+
+<h3 id="component-distribution">Component Distribution</h3>
+
+<p>分解一些应用的一个简单有效的方式就是把它们看做三部分：</p>
+
+<p>Presentation component 表现组件
+Application logic 应用逻辑
+Data access 数据访问</p>
+
+<p><strong>表现组件</strong>负责与用户进行交互，即显示数据和采集输入，可以是 GUI 界面，也可以是命令行界面
+<strong>应用逻辑组件</strong>负责解释用户的响应，根据应用业务规则，准备查询并管理来自其组件的响应
+<strong>数据访问组件</strong>负责存储并检索数据。这一般是通过数据库进行，不过也不一定</p>
+
+<p><img src="./1473676063281.png" alt="Alt text" /></p>
+
+<p>Example: Distributed Database：
+Gartner第一种分类
+<img src="./1473676645585.png" alt="Alt text" /></p>
+
+<p>例如 google map 会下载附近的地图为浏览器中的小型数据库，当用户移动了地图时，可以快速响应</p>
+
+<p>Example: Network File Service 网络文件服务
+<img src="./1473676805222.png" alt="Alt text" /></p>
+
+<p>Gartner第二种分类允许远程客户端访问已共享的文件系统
+这类系统的例子：NFS、Microsoft共享和DCE等等。</p>
+
+<p>Example: Web:
+<img src="./1473676919558.png" alt="Alt text" />
+Gartner第三种分类的一个例子就是Web上的小型Java应用</p>
+
+<p>Example: Terminal Emulation
+<img src="./1473677181590.png" alt="Alt text" /></p>
+
+<p>Gartner第四种分类就是终端仿真。这允许远程系统在本地系统上作为普通的终端：
+Telnet就是最常见的例子。</p>
+
+<p><strong>Three Tier Models</strong>:
+可以有三层、四层甚至多层。下图展示了一些可能的三层模型:
+<img src="./1473677365117.png" alt="Alt text" /></p>
+
+<h3 id="middleware-model-">Middleware model 中间件模型</h3>
+
+<p><img src="./1473677961430.png" alt="Alt text" /></p>
+
+<p>中间件示例</p>
+
+<ul>
+  <li>像终端模拟器、文件传输或电子邮件这样的基础服务</li>
+  <li>像RPC这样的基础服务</li>
+  <li>像DCE、网络O/S这样的一体化服务</li>
+  <li>像CORBA、OLE/ActiveX这样的分布式对象服务</li>
+  <li>像RMI、Jini这样的移动对象服务</li>
+  <li>万维网</li>
+</ul>
+
+<p>中间件的功能包括：</p>
+
+<ul>
+  <li>在不同计算机上初始化过程</li>
+  <li>进行会话管理</li>
+  <li>允许客户端定位服务器的目录服务</li>
+  <li>进行远程数据访问</li>
+  <li>允许服务器处理多个客户端的并发控制</li>
+  <li>保证安全性和完整性</li>
+  <li>监控</li>
+  <li>终止本地处理和远程处理</li>
+</ul>
+
+<h3 id="continuum-of-processing">Continuum of Processing</h3>
+<p>Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据处理。一个更细粒度的分解方式为:
+<img src="./1473678080293.png" alt="Alt text" /></p>
+
+<h3 id="points-of-failure">Points of Failure</h3>
+
+<p>分布式应用一般运行在复杂的环境中。这使得它比单一计算机上的独立应用更易发生故障。故障点包括：</p>
+
+<ul>
+  <li>The client side of the application could crash</li>
+  <li>The client system may have h/w problems</li>
+  <li>The client’s network card could fail</li>
+  <li>Network contention could cause timeouts</li>
+  <li>There may be network address conflicts</li>
+  <li>Network elements such as routers could fail</li>
+  <li>Transmission errors may lose messages</li>
+  <li>The client and server versions may be incompatable</li>
+  <li>The server’s network card could fail</li>
+  <li>The server system may have h/w problems</li>
+  <li>The server s/w may crash</li>
+  <li>The server’s database may become corrupted</li>
+</ul>
+
+<h3 id="acceptance-factors">Acceptance Factors</h3>
+
+<ul>
+  <li>Reliability</li>
+  <li>Performance</li>
+  <li>Responsiveness</li>
+  <li>Scalability</li>
+  <li>Capacity</li>
+  <li>Security</li>
+</ul>
+
+<h3 id="transparency">Transparency</h3>
+<p>分布式系统的“圣杯”就是提供以下几点：</p>
+
+<ul>
+  <li>access transparency</li>
+  <li>location transparency</li>
+  <li>migration transparency</li>
+  <li>replication transparency</li>
+  <li>concurrency transparency</li>
+  <li>scalability transparency</li>
+  <li>performance transparency</li>
+  <li>failure transparency</li>
+</ul>
+
+<h3 id="eight-fallacies-of-distributed-computing">Eight fallacies of distributed computing:分布式计算的八个误区</h3>
+
+<ul>
+  <li>The network is reliable.</li>
+  <li>Latency is zero.</li>
+  <li>Bandwidth is infinite.</li>
+  <li>The network is secure.</li>
+  <li>Topology doesn’t change.</li>
+  <li>There is one administrator.</li>
+  <li>Transport cost is zero.</li>
+  <li>The network is homogeneous.</li>
+</ul>
+
+<h2 id="socket-level-programming">第3章： Socket-level Programming(套接字层编程)</h2>
+
+<h3 id="the-tcpip-stack">The TCP/IP stack</h3>
+
+<p>The TCP/IP stack is shorter than the OSI one:
+<img src="./1473773483879.png" alt="Alt text" /></p>
+
+<ul>
+  <li>TCP is a connection-oriented protocol,</li>
+  <li>UDP (User Datagram Protocol) is a connectionless protocol.</li>
+</ul>
+
+<h4 id="ip-datagrams">IP datagrams</h4>
+
+<ul>
+  <li>IP 是无连接协议</li>
+  <li>IP datagrams 之间的关联必须由高层协议来提供支持</li>
+  <li>IP层包头支持数据校验，在包头包括源地址和目的地址</li>
+  <li>IP层包头支持数据校验，在包头包括源地址和目的地址</li>
+</ul>
+
+<h4 id="udptcp">UDP&amp;TCP</h4>
+
+<ul>
+  <li>UDP是无连接的，不可靠的。它包括IP数据报的内容和端口号的校验</li>
+  <li>TCP是构建于IP之上的面向链接的协议。它提供了一个虚电路使得两个应用进程可以通过它来通信。它通过端口号来识别主机上的服务</li>
+</ul>
+
+<h3 id="internet-addresses">Internet addresses</h3>
+
+<ul>
+  <li>IPV4 由四位数字组成，各自的范围在 0~255,每一组数字可以用 8 位二进制数字来表示，合计共需 32 位二进制</li>
+  <li>IPv6使用128位地址，即使表达同样的地址，字节数变得很麻烦，由’:’分隔的4位16进制组成。一个典型的例子如：2002:c0e8:82e7:0:0:0:c0e8:82e7。</li>
+</ul>
+
+<h3 id="ip-address-type">IP address type</h3>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">type</span><span class="x"> </span><span class="n">IPAddr</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">IP</span><span class="x"> </span><span class="n">IP</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<p>IPAddr 最主要的用法是 DNS 查询
+<code class="highlighter-rouge">go
+func ResolveIPAddr(net, addr string) (*IPAddr, os.Error)
+</code></p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="x">  </span><span class="n">addr</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">net</span><span class="o">.</span><span class="n">ResolveIPAddr</span><span class="p">(</span><span class="s">"ip"</span><span class="p">,</span><span class="s">"www.google.com"</span><span class="p">)</span><span class="x">
+  </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Resolution error"</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="o">.</span><span class="n">Error</span><span class="p">())</span><span class="x">
+    </span><span class="n">os</span><span class="o">.</span><span class="n">Exit</span><span class="p">(</span><span class="m">1</span><span class="p">)</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"Resolved address is "</span><span class="p">,</span><span class="x"> </span><span class="n">addr</span><span class="o">.</span><span class="n">String</span><span class="p">())</span><span class="x">
+  </span><span class="c">// 输出</span><span class="x">
+  </span><span class="c">// Resolved address is  243.185.187.39</span><span class="x">
+</span></code></pre>
+</div>
+
+<p><strong>Host lookup</strong></p>
+
+<p><code class="highlighter-rouge">ResolveIPAddr</code> 执行一个 DNS 查找，返回单个的 IP 地址</p>
+
+<p><code class="highlighter-rouge">LookupHost</code> 执行 DNS 查找，返回字符串切片，ipv4 和 ipv6 的 ip 地址</p>
+
+<p><code class="highlighter-rouge">LookupCNAME</code>返回公认的主机名称</p>
+
+<h3 id="services">3.4 Services</h3>
+
+<p>端口号：This is an unsigned integer between 1 and 65,535</p>
+
+<p>“standard” ports：</p>
+
+<ul>
+  <li>Telnet usually uses port 23 with the TCP protocol.</li>
+  <li>DNS uses port 53, either with TCP or with UDP.</li>
+  <li>FTP uses ports 21 and 20</li>
+  <li>HTTP usually uses port 80, but it often uses ports 8000, 8080 and 8088, all with TCP</li>
+  <li>The X Window System often takes ports 6000-6007, both on TCP and UDP.</li>
+</ul>
+
+<p>unix 系统中常用的端口列在 <code class="highlighter-rouge">/etc/services</code>
+<code class="highlighter-rouge">LookupPort</code> 方法查询整个端口
+<code class="highlighter-rouge">go
+func LookupPort(network, service string) (port int, err os.Error)
+</code></p>
+
+<p><strong>The type TCPAddr</strong>:</p>
+
+<p><code class="highlighter-rouge">TCPAddr</code> 是一个包含 IP 和 Port 的结构
+<code class="highlighter-rouge">go
+type TCPAddr struct {
+    IP   IP
+    Port int
+}
+</code></p>
+
+<p><code class="highlighter-rouge">ResolveTCPAddr</code> 创建一个 <code class="highlighter-rouge">TCPAddr</code>
+<code class="highlighter-rouge">go
+func ResolveTCPAddr(net, addr string) (*TCPAddr, os.Error)
+</code>
+<code class="highlighter-rouge">net</code> 可选： <code class="highlighter-rouge">tcp</code>, <code class="highlighter-rouge">tcp4</code> or <code class="highlighter-rouge">tcp6</code>
+<code class="highlighter-rouge">addr</code>:  主机名或 IP 地址，中间是 <code class="highlighter-rouge">:</code>,后面跟端口号，本机的话，可以简写 <code class="highlighter-rouge">:80</code></p>
+
+<h3 id="tcp-sockets">3.5 TCP Sockets</h3>
+
+<p><code class="highlighter-rouge"> net.TCPConn</code> 支持在客户端和服务端，全双工可读可写的通信</p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">TCPConn</span><span class="p">)</span><span class="x"> </span><span class="n">Write</span><span class="p">(</span><span class="n">b</span><span class="x"> </span><span class="p">[]</span><span class="kt">byte</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">n</span><span class="x"> </span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">TCPConn</span><span class="p">)</span><span class="x"> </span><span class="n">Read</span><span class="p">(</span><span class="n">b</span><span class="x"> </span><span class="p">[]</span><span class="kt">byte</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">n</span><span class="x"> </span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<p><strong>TCP client</strong>：</p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">DialTCP</span><span class="p">(</span><span class="n">net</span><span class="x"> </span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="n">laddr</span><span class="p">,</span><span class="x"> </span><span class="n">raddr</span><span class="x"> </span><span class="o">*</span><span class="n">TCPAddr</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">TCPConn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<ul>
+  <li><code class="highlighter-rouge">DialTCP</code> 函数可以建立 TCP 连接</li>
+  <li>客户端和服务器使用 <code class="highlighter-rouge">TCPConn</code>  交换信息，请求或者响应，直到关闭连接</li>
+  <li><code class="highlighter-rouge">laddr</code> 是本机地址， <code class="highlighter-rouge">raddr</code> 是远程服务地址</li>
+  <li><code class="highlighter-rouge">net</code> 是可选的  <code class="highlighter-rouge">tcp4</code>, <code class="highlighter-rouge">tcp6</code> or <code class="highlighter-rouge">tcp</code></li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">ListenTCP</span><span class="p">(</span><span class="n">net</span><span class="x"> </span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="n">laddr</span><span class="x"> </span><span class="o">*</span><span class="n">TCPAddr</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">l</span><span class="x"> </span><span class="o">*</span><span class="n">TCPListener</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">l</span><span class="x"> </span><span class="o">*</span><span class="n">TCPListener</span><span class="p">)</span><span class="x"> </span><span class="n">Accept</span><span class="p">()</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="n">Conn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<p><code class="highlighter-rouge">ListenTCP</code> 函数，侦听本地的地址在指定端口，<code class="highlighter-rouge">Accept</code> 阻塞，然后等待客户端连接</p>
+
+<h3 id="controlling-tcp-connections">3.6 Controlling TCP connections</h3>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">TCPConn</span><span class="p">)</span><span class="x"> </span><span class="n">SetTimeout</span><span class="p">(</span><span class="n">nsec</span><span class="x"> </span><span class="kt">int64</span><span class="p">)</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="x">
+</span></code></pre>
+</div>
+
+<p>客户端和服务器设置超时用 <code class="highlighter-rouge">SetTimeout</code>，函数在 “net” 包</p>
+
+<p><strong>Staying alive:</strong></p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">TCPConn</span><span class="p">)</span><span class="x"> </span><span class="n">SetKeepAlive</span><span class="p">(</span><span class="n">keepalive</span><span class="x"> </span><span class="kt">bool</span><span class="p">)</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="x">
+</span></code></pre>
+</div>
+<p><code class="highlighter-rouge">SetKeepAlive</code> 可以设置客户端保持连接，函数在 “net” 包</p>
+
+<h3 id="udp-datagrams">3.7 UDP Datagrams</h3>
+
+<p>UDP 的函数：</p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">ResolveUDPAddr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span><span class="x"> </span><span class="n">addr</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="o">*</span><span class="n">UDPAddr</span><span class="p">,</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="n">DialUDP</span><span class="p">(</span><span class="n">net</span><span class="x"> </span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="n">laddr</span><span class="p">,</span><span class="x"> </span><span class="n">raddr</span><span class="x"> </span><span class="o">*</span><span class="n">UDPAddr</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">UDPConn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="n">ListenUDP</span><span class="p">(</span><span class="n">net</span><span class="x"> </span><span class="kt">string</span><span class="p">,</span><span class="x"> </span><span class="n">laddr</span><span class="x"> </span><span class="o">*</span><span class="n">UDPAddr</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">UDPConn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">UDPConn</span><span class="p">)</span><span class="x"> </span><span class="n">ReadFromUDP</span><span class="p">(</span><span class="n">b</span><span class="x"> </span><span class="p">[]</span><span class="kt">byte</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">n</span><span class="x"> </span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">addr</span><span class="x"> </span><span class="o">*</span><span class="n">UDPAddr</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="o">*</span><span class="n">UDPConn</span><span class="p">)</span><span class="x"> </span><span class="n">WriteToUDP</span><span class="p">(</span><span class="n">b</span><span class="x"> </span><span class="p">[]</span><span class="kt">byte</span><span class="p">,</span><span class="x"> </span><span class="n">addr</span><span class="x"> </span><span class="o">*</span><span class="n">UDPAddr</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">n</span><span class="x"> </span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<h3 id="server-listening-on-multiple-sockets">3.8 Server listening on multiple sockets</h3>
+
+<ul>
+  <li>go 的底层利用的是系统调用 <code class="highlighter-rouge">select(2)</code></li>
+  <li><code class="highlighter-rouge">select(2)</code> 可以检测同时等待的多个 I/O,告诉哪个可以读写</li>
+</ul>
+
+<pre><code class="language-gcode">/* c 函数*/
+int select(int maxfd, fd_set *readfds, fd_set *writefds, fe_set *exceptfds, const struct timeval *timeout);
+</code></pre>
+<ul>
+  <li>select 的第一个参数是文件描述符集中要被检测的比特数，这个值必须至少比待检测的最大文件描述符大1</li>
+  <li>参数 readfds 指定了被读监控的文件描述符集</li>
+  <li>参数 writefds 指定了被写监控的文件描述符集</li>
+  <li>参数exceptfds指定了被例外条件监控的文件描述符集。</li>
+  <li>参数timeout起了定时器的作用：到了指定的时间，无论是否有设备准备好，都返回调用</li>
+</ul>
+
+<p>未完。。。。</p>
+]]></content>
+	</entry>
+	
+	<entry>
+		<title>《理解 UNIX 进程》学习笔记</title>
+		<link href="http://127.0.0.1/posts/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" />
+		<updated>2016-08-13T04:20:00+08:00</updated>
+		<id>http://127.0.0.1/posts/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</id>
+		<content type="html"><![CDATA[<h1 id="unix-">《理解 UNIX 进程》学习笔记</h1>
+
+<p>@(学习笔记)</p>
+
+<p><img src="/assets/images/working_with_unix_processes.png" alt="本书结构图" /></p>
+
+<h2 id="section">系统调用/命令/库函数</h2>
+
+<ol>
+  <li>用户在shell环境中可以操作的命令或可执行文件</li>
+  <li>系统内核可调用的函数与工具等</li>
+  <li>一些常用的函数（function）与函数库（library），大部分为C的函数库（libc）</li>
+  <li>设备文件的说明，通常是在/dev下的文件</li>
+  <li>配置文件或者是某些文件的格式</li>
+  <li>游戏（games）</li>
+  <li>惯例与协议等，例如Linux文件系统、网络协议、ASCII code等说明</li>
+  <li>系统管理员可用的管理命令</li>
+  <li>跟kernel有关的文件</li>
+</ol>
+
+<hr />
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">系统调用</th>
+      <th style="text-align: left">ruby</th>
+      <th style="text-align: center">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">select(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">getpid(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.pid</code> 或 全局变量 <code class="highlighter-rouge">$$</code></td>
+      <td style="text-align: center">获取当前进程的 pid</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">getppid(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.ppid</code></td>
+      <td style="text-align: center">获取当前父进程的 pid</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ps(1)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">进程状态</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">open(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">打开或创建一个文件</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">close(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">删除一个描述符(关闭一个打开的文件)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">read(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">write(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">fsync(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">stat(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">getrlimit(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.getrlimit</code></td>
+      <td style="text-align: center">查询资源限制，比如 <code class="highlighter-rouge">Process.getrlimit(:NOFILE)</code> 查询进程可以打开的最大文件数</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">setrlimit(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.setrlimit</code></td>
+      <td style="text-align: center">修改资源限制，比如 <code class="highlighter-rouge">Process.setrlimit(:NOFILE, 10000)</code> 修改可以打开的最大文件数到 10000</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">stat(2)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">setenv(3)</code>,<code class="highlighter-rouge">getenv(3)</code></td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: center">设置或获取环境变量</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">fork(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Kenel#fork</code></td>
+      <td style="text-align: center">允许运行中的进程已编程的方式衍生(forking)子进程，子进程和原进程一模一样</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">waitpid(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.wait</code>及其表亲</td>
+      <td style="text-align: center">阻塞并等待随机或指定子进程退出</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">kill(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.kill</code></td>
+      <td style="text-align: center">向pid所指进程发送信号。signal可以是信号编号或名称(字符串或Symbol)。若信号是负值(或信号名称前面带有-时), 则向进程组而非进程发送信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">sigaction(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Kernel#trap</code></td>
+      <td style="text-align: center">捕获信号并设置一个信号处理程序</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">pipe(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">IO.pipe</code></td>
+      <td style="text-align: center">创建一个管道</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">socketpair(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Socket.pair</code></td>
+      <td style="text-align: center">创建可以用过消息通信的 Unix 套接字</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">recv(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Socket#recv</code></td>
+      <td style="text-align: center">从TCP连接的另一端接收数据。该函数的第一个参数指定接收端套接字描述，第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">send(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Socket.send</code></td>
+      <td style="text-align: center">向TCP连接的另一端发送数据</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">setsid(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.setsid</code></td>
+      <td style="text-align: center">1. 将进程编程一个新会话的会话领导，2. 该进程变成一个新进程组的组长， 3. 该进程没有控制终端</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">getpgrp(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Process.getpgrp</code></td>
+      <td style="text-align: center">获取进程组 id</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">system(3)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Kernel#system</code></td>
+      <td style="text-align: center">系统调用函数，底层是 <code class="highlighter-rouge">fork(2)</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">execv2(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">Kernel#exec</code></td>
+      <td style="text-align: center">系统调用函数，底层是 <code class="highlighter-rouge">fork(2)</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">popen(3)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">IO.popen</code></td>
+      <td style="text-align: center">底层是 <code class="highlighter-rouge">fork+exec</code>,设置了一个管道，用于同生成进程进行通信</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">posix_spawn(2)</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">posix-spawn(2)</code></td>
+      <td style="text-align: center">会获得父进程已打开的所有文件描述符的副本，但不会获得内存中所有内容的副本</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="unix-2">理解 UNIX 进程（2）：基础知识</h2>
+
+<h3 id="section-1">2.4 系统调用</h3>
+
+<ul>
+  <li>UNIX 系统的组成：用户空间(userland) 和内核。</li>
+  <li>程序不可以直接访问内核，所有通信都是通过系统调用来完成</li>
+  <li>所有的程序都运行在用户空间。</li>
+  <li>系统调用允许你的用户空间程序通过内核间接地与计算机硬件进行交互</li>
+</ul>
+
+<h3 id="wtf2">2.5 命名法，wtf(2)</h3>
+
+<p>Linux 系统手册常用的节：</p>
+
+<ul>
+  <li>节1：一般命令(shell)</li>
+  <li>节2： 系统调用</li>
+  <li>节3：C 库函数</li>
+  <li>节4：特殊文件</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>man 2 getpid # 从节2 查看 getpid 使用说明
+man find # 等同于 man 1 find
+</code></pre>
+</div>
+
+<h3 id="unix--1">2.6 Unix 进程之本</h3>
+
+<ul>
+  <li>所有的代码都是在进程中执行的。</li>
+  <li>一个进程可以生成并管理其他多个进程</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-3">理解 UNIX 进程（3）：进程皆有标识</h2>
+
+<ul>
+  <li>进程都有一个唯一的进程标识符，称为 <code class="highlighter-rouge">pid</code></li>
+  <li><code class="highlighter-rouge">pid</code> 是一个顺序数字标识，不传达进程本身的任何信息</li>
+  <li>查看进程命令: ` ps -p <pid-of-irb-process>`</pid-of-irb-process></li>
+  <li>ruby 的 <code class="highlighter-rouge">Process.pid</code> 对应于系统调用 <code class="highlighter-rouge">getpid(2)</code></li>
+</ul>
+
+<hr />
+
+<h2 id="unix-4">理解 UNIX 进程（4）：进程皆有父</h2>
+<ul>
+  <li>系统中运行的每一个进程都有对应的父进程</li>
+  <li>每个进程都知道其父进程标识符（称为 ppid）</li>
+</ul>
+
+<p>ruby 获取父进程：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">puts</span> <span class="no">Process</span><span class="p">.</span><span class="nf">ppid</span>
+</code></pre>
+</div>
+
+<p><strong>实践领域</strong></p>
+
+<ul>
+  <li>ppid 一般用于检测守护进程</li>
+  <li>ruby 的 <code class="highlighter-rouge">Process.ppid</code> 对应系统调用 <code class="highlighter-rouge">getppid(2)</code></li>
+</ul>
+
+<hr />
+
+<h2 id="unix-5">理解 UNIX 进程（5）：进程皆有文件描述符</h2>
+
+<p>文件描述符代表打开的文件</p>
+
+<h3 id="section-2">5.1 万物皆为文件</h3>
+
+<ul>
+  <li>UNIX 中一切皆为文件，包括（设备、管道、套接字等），书中用 <code class="highlighter-rouge">资源</code> 表示</li>
+  <li>传统定义（文件系统中的文件）的时候，将使用 <code class="highlighter-rouge">文件</code> 表示</li>
+</ul>
+
+<h3 id="section-3">5.2 描述符代表资源</h3>
+
+<ul>
+  <li>在进程中打开一个资源，会获得一个文件描述符编号（<code class="highlighter-rouge">file descriptor number</code>）</li>
+  <li>文件描述符不会在无关进程之间共享，它只存在于其所属的进程之中。</li>
+  <li>进程结束后，文件描述符会和进程打开的资源一同被关闭</li>
+  <li>ruby 中，任何一个 IO 对象都有一个相关联的文件描述符编号，用 <code class="highlighter-rouge">IO#fileno</code> 访问</li>
+  <li>进程打开的所有资源都会获得一个用于标识的唯一数字。这是内核跟踪进程所用资源的方法</li>
+</ul>
+
+<h3 id="section-4">5.3 标准流</h3>
+
+<p>在通常情况下，UNIX每个程序在开始运行的时刻，都会有3个已经打开的 stream. 分别用来输入，输出，打印诊断和错误信息。通常他们会被连接到用户终端（tty(4)）. 但也可以改变到其它文件或设备。这取决于双亲进程的选择和设置。</p>
+
+<p>每个 UNIX 进程都有三个打开的资源：标准输入（STDIN）、标准输出(STDOUT) 和标准错误(STDERR)</p>
+
+<p><strong>STDIN</strong>:
+提供了一种从键盘或管道中读取输入的通用方法</p>
+
+<p><strong>STDOUT</strong> 和 <strong>STDERR</strong>
+提供了一种向显示器、文件、打印机等输出写入内容的通用方法</p>
+
+<p>每个进程的 <code class="highlighter-rouge">0,1,2</code> 三个文件描述符编号分别属于 <code class="highlighter-rouge">STDIN,STDOUT,STDERR</code></p>
+
+<h3 id="stdinstdoutstderrstdinstdoutstderr">STDIN、STDOUT、STDERR和$stdin、$stdout、$stderr的区别</h3>
+
+<ul>
+  <li>STDIN这一组以大写字母开头，是常量</li>
+  <li><code class="highlighter-rouge">$stdin</code> 这一组以$开头，是全局变量</li>
+  <li>常量不可变，STDOUT总指向屏幕显示（除非运行ruby时在命令行设置&gt;out 2&gt;err之类）</li>
+  <li>变量可变，所以 <code class="highlighter-rouge">$stdin</code> 可以替换成别的IO/File对象</li>
+  <li>全局的输出方法，如print puts等，总是向 <code class="highlighter-rouge">$stdout</code> 输出，而非向 <code class="highlighter-rouge">STDOUT </code>输出，如：</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>  <span class="nb">print</span> <span class="mi">1</span> <span class="c1"># 最开始时$stdout和STDOUT是一致的，输出到屏幕 </span>
+
+  <span class="vg">$stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'output_file'</span><span class="p">,</span><span class="s1">'w'</span><span class="p">)</span> <span class="c1"># $stdout指向另一个File对象</span>
+  <span class="nb">print</span> <span class="mi">2</span> <span class="c1"># 这时输出到output_file了 </span>
+
+  <span class="vg">$stdout</span> <span class="o">=</span> <span class="no">STDOUT</span>  <span class="c1"># $stdout和STDOUT又指向同一个对象了</span>
+  <span class="nb">print</span> <span class="mi">3</span> <span class="c1"># 又输出到屏幕了 </span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="unix-6">理解 UNIX 进程（6）：进程皆有资源限制</h2>
+<p>@(学习笔记)</p>
+
+<ul>
+  <li>文件描述符编号一直处理递增状态</li>
+  <li>内核为进程施加了某些资源限制</li>
+</ul>
+
+<h3 id="section-5">6.1 找出限制</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>p Process.getrlimit(:NOFILE) # 查询可打开的最大文件数
+# =&gt; [4864, 9223372036854775807]
+</code></pre>
+</div>
+
+<ul>
+  <li>返回值第一个元素是文件描述符数量的软限制(soft limit)，超过软限制将会产生异常</li>
+  <li>第二个元素是文件描述符数量的硬限制(hard limit),实际上表示无限制</li>
+</ul>
+
+<h3 id="section-6">6.3 提高软限制</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code> <span class="no">Process</span><span class="p">.</span><span class="nf">setrlimit</span><span class="p">(</span><span class="ss">:NOFILE</span><span class="p">,</span> <span class="mi">5886</span><span class="p">)</span>
+ <span class="nb">p</span> <span class="no">Process</span><span class="p">.</span><span class="nf">getrlimit</span><span class="p">(</span><span class="ss">:NOFILE</span><span class="p">)</span>
+ <span class="c1">#=&gt; [5886, 5886]</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>软限制和硬限制都被设置成了 5886</li>
+  <li>可以给 ` Process.setrlimit` 传递第 3 个参数来制定新的硬限制</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>P  Process.setrlimit(:NOFILE, Process.getrlimit(:NOFILE)[1])
+</code></pre>
+</div>
+<p>设置文件描述符数量限制为最大，其实我本机只能设置到 <code class="highlighter-rouge">10000</code> 左右</p>
+
+<h3 id="section-7">6.4 超出限制</h3>
+
+<p>打开 irb 输入：
+<code class="highlighter-rouge">
+Process.setrlimit(:NOFILE, 8)
+# 会出现 `output=': Too many open files - dup (Errno::EMFILE)
+</code>
+因为进程打开时默认已经使用了 8个文件描述符编号，这时再操作会有错误出现</p>
+
+<p>打开 irb 输入：
+<code class="highlighter-rouge">
+Process.setrlimit(:NOFILE, 9)
+ f = File.open('/dev/null')
+# 会出现 Errno::EMFILE: Too many open files @ rb_sysopen - /dev/null
+</code></p>
+
+<h3 id="section-8">6.5 其它资源限制</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># 当前用户所允许的最大并发进程数</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">getrlimit</span><span class="p">(</span><span class="ss">:NPROC</span><span class="p">)</span>
+
+<span class="c1"># 可以创建的最大的文件</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">getrlimit</span><span class="p">(</span><span class="ss">:FSIZE</span><span class="p">)</span>
+
+<span class="c1"># 用于进程栈的最大段的大小</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">getrlimit</span><span class="p">(</span><span class="ss">:STACK</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>请查看 Process.getrlimit 文档查看完整的可用选项列表</p>
+
+<h3 id="section-9">6.6 实践领域</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">httperf</code> 是一款多并发测试工具，需要提高系统的软限制才可以创建更多的并发</li>
+  <li>我们还可以在执行第三方代码的时候，对代码所属进程进行设置限制，并取消修改限制的权限，确保其无法超出徐克范围的资源数量</li>
+</ul>
+
+<h3 id="section-10">6.7 系统调用</h3>
+
+<p><code class="highlighter-rouge">Process.getrlimit</code> 对应系统调用的 <code class="highlighter-rouge">getrlimit(2)</code>
+<code class="highlighter-rouge">Process.setrlimit</code> 对应系统调用的 <code class="highlighter-rouge">setrlimit(2)</code></p>
+
+<hr />
+
+<h2 id="unix-7">理解 UNIX 进程（7）：进程皆有环境</h2>
+
+<ul>
+  <li>环境变量是包含进程数据的键-值对(<code class="highlighter-rouge">key-value pairs</code>)</li>
+  <li>每个进程都有环境变量，由父进程设置并由子进程继承</li>
+</ul>
+
+<h3 id="section-11">7.1 环境变量是散列吗？</h3>
+
+<ul>
+  <li>ENV 使用了散列式的存取器 API，但并非 HASH</li>
+  <li>它实现了 <code class="highlighter-rouge">Enumerable</code> 和部分 <code class="highlighter-rouge">Hash API</code>, 但不是全部，<code class="highlighter-rouge">merge</code> 就没有实现</li>
+  <li>系统调用不能直接操作环境变量，但 C 库函数 <code class="highlighter-rouge">setenv(3)</code> 和 <code class="highlighter-rouge">getenv(3)</code> 可以</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-8">理解 UNIX 进程（8）：进程皆有参数</h2>
+
+<ul>
+  <li>所有进程都可以访问 <code class="highlighter-rouge">ARGV</code> 的特殊数组</li>
+  <li>argv 是 argumant vector 的缩写，表示参数向量或数组</li>
+  <li>有些库会读取 <code class="highlighter-rouge">ARGV</code> 来解析命令行选项，我们可以在读取前修改它</li>
+</ul>
+
+<h3 id="section-12">实践领域</h3>
+
+<ul>
+  <li>ARGV 常用于将文件名作为参数传入程序</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-9">理解 UNIX 进程（9）：进程皆有名</h2>
+
+<p>进程的非自身通信方式：</p>
+
+<ul>
+  <li>通过文件系统，写入日志信息的方式来了解彼此的状态</li>
+  <li>借助网络来打开套接字通其它进程进行通过</li>
+</ul>
+
+<p>进程自身的通信机制：一个是进程名称，另一个是退出码</p>
+
+<h3 id="section-13">9.1 进程命名</h3>
+
+<ul>
+  <li>每个进程都要一个名称</li>
+  <li>进程可以在运行期间被修改作为一种通信手段</li>
+  <li>ruby 中用全局变量 <code class="highlighter-rouge">$PROGRAM_NAME</code> 或 <code class="highlighter-rouge">$0</code> 获得当前进程名称</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-10">理解 UNIX 进程（10）：进程皆有退出码</h2>
+
+<ul>
+  <li>进程在结束的时候都带有数字退出码(0~255), 用于指明进程是否顺利结束</li>
+  <li>退出码为 0 表示顺利结束，其它的表示各种错误</li>
+  <li>退出码也是一种进程的通信途径</li>
+</ul>
+
+<h3 id="section-14">如何退出进程</h3>
+
+<ul>
+  <li>ruby 中用 <code class="highlighter-rouge">kernel#exit</code> 来退出进程，退出码是 0，但是亦可以定制 `exit 22</li>
+  <li><code class="highlighter-rouge">kernel#exit</code>  被调用，退出之前，会调用 <code class="highlighter-rouge">at_exit</code> 定义的语句块</li>
+  <li>
+    <ul>
+      <li><code class="highlighter-rouge">kernel#exit！</code>  被调用，退出码设置为 1，不会调用 <code class="highlighter-rouge">at_exit</code></li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">kernel#abort</code> 从错误进程中退出的通用方法，会将当前进程的退出码设置为 1</li>
+  <li><code class="highlighter-rouge">kernel#abort</code> 退出码设置为 1， 也会调用 <code class="highlighter-rouge">at_exit</code></li>
+  <li><code class="highlighter-rouge">kernel#raise</code> 不会立即结束进程，只是抛出异常，会沿着调用栈向上传递，如果不处理，那么异常会终结该进程</li>
+  <li><code class="highlighter-rouge">kernel#raise</code> 退出码设置为 1，也会调用 <code class="highlighter-rouge">at_exit</code></li>
+</ul>
+
+<hr />
+
+<h2 id="unix-11">理解 UNIX 进程（11）：进程皆可衍生</h2>
+
+<h3 id="luke-fork2">11.1 Luke,使用 fork(2)</h3>
+
+<ul>
+  <li>衍生(forking) 是 Unix 编程中最强大的概念之一</li>
+  <li><code class="highlighter-rouge">fork(2)</code> 系统调用，允许运行中的进程以编程的形式创建新的进程，这个新进程和原始进程一模一样</li>
+</ul>
+
+<p>fork 工作原理：</p>
+
+<ul>
+  <li>调用 <code class="highlighter-rouge">fork(2)</code> 的进程是 “父进程”，新创建的进程是 “子进程”</li>
+  <li>子进程从父进程出集成了其所占用内存中的所有内容，以及所有属于父进程的已打开的文件描述符</li>
+  <li>子进程的 ppid 是父进程的 pid</li>
+  <li>子进程获得了父进程所有的文件描述符的编号，两个进程可以共享打开的文件、套接字等</li>
+  <li>子进程继承了父进程内存中的所有内容</li>
+  <li>fork 调用几乎瞬间就可以返回，速度很快，比分别载入 3 个应用程序实例要快的多</li>
+  <li>子进程可以随意更改其内存内容的副本，而不会对父进程造成任何影响</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="nb">fork</span>
+  <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="no">Process</span><span class="p">.</span><span class="nf">pid</span><span class="si">}</span><span class="s2"> entered the if block"</span>
+<span class="k">else</span>
+  <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="no">Process</span><span class="p">.</span><span class="nf">pid</span><span class="si">}</span><span class="s2"> entered the else block"</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>以上 if 和 else 都会被执行</li>
+  <li>在父进程中，fork 范湖新创建的子进程的 pid，整数值为真，执行 if 语句块</li>
+  <li>在子进程中，fork 返回 nil ，所以子进程执行了 else 语句块</li>
+</ul>
+
+<h3 id="section-15">11.2 多核编程</h3>
+
+<ul>
+  <li>通过生成新的进程，你的代码可以(不能完全保证)被分配到多个 CPU 核心中,实现多核并发</li>
+  <li>如果系统繁忙，可能 4 个进程都由一个 CPU 来处理</li>
+</ul>
+
+<p><strong><code class="highlighter-rouge">注意：</code></strong></p>
+
+<p><code class="highlighter-rouge">fork(2)</code> 创建了一个和旧进程一模一样的新进程，如果父进程使用了 500M 内存进行了衍生，那么就会有 1GB 的内存被占用了，重复同样的操作 10 次，很快会耗尽所有的内容，这通常被称为 “fork 炸弹”(for bomb)</p>
+
+<h3 id="block">11.3 使用 block</h3>
+
+<ul>
+  <li>将一个 block 传递给 fork 方法，那么 block 会在新的子进程中执行，而父进程会跳过 block 中的内容</li>
+  <li>子进程执行完 block 之后就会推出，不会像父进程那样执行随后的代码</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">fork</span> <span class="k">do</span>
+  <span class="c1"># 此处的代码仅在子进程中执行</span>
+<span class="k">end</span>
+<span class="c1"># 此处的代码仅在父进程中执行</span>
+</code></pre>
+</div>
+
+<h3 id="section-16">11.5 系统调用</h3>
+
+<p><code class="highlighter-rouge">kenel#fork</code> 对应系统调用 <code class="highlighter-rouge">fork(2)</code></p>
+
+<hr />
+
+<h2 id="unix-12">理解 UNIX 进程（12）：孤儿进程</h2>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">fork</span> <span class="k">do</span> 
+  <span class="mi">100</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+    <span class="nb">sleep</span> <span class="mi">1</span>
+    <span class="nb">puts</span> <span class="s2">"I'm an orphan! </span><span class="si">#{</span><span class="no">Process</span><span class="p">.</span><span class="nf">pid</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">abort</span> <span class="s2">"Parent process died..."</span>
+</code></pre>
+</div>
+<p>示例代码，父进程退出之后，子进程还没有退出，称为孤儿进程</p>
+
+<p>管理孤儿：</p>
+
+<ul>
+  <li>守护进程：守护进程是一种长期运行的进程，为了能够一直保持运行，他们有意作为孤儿进程存在</li>
+  <li>使用 Unix 信号来与脱离终端会话的进程进行通信</li>
+</ul>
+
+<hr />
+
+<h2 id="unix-13">理解 UNIX 进程（13）：友好的进程</h2>
+
+<ul>
+  <li>Unix 系统采用写时复制(copy-on-write, COW) 的方法来优化</li>
+  <li>CoW 是把子进程对父进程实际的内存复制操作推迟到了真正需要写入的时候</li>
+  <li>如果不支持 Cow,子进程需要复制父进程所占内存内容的完整副本</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="nb">fork</span> <span class="k">do</span> 
+  <span class="c1"># 此时子进程已经完成初始化</span>
+  <span class="c1"># 借助 COW，子进程不需要复制变量 arr,因为他没有修改任何共享变量</span>
+  <span class="c1"># 因此可以继续从和父进程同样的内存位置进行读取</span>
+  <span class="nb">p</span> <span class="n">arr</span>
+<span class="k">end</span>
+
+<span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="nb">fork</span> <span class="k">do</span>
+<span class="c1"># 此时子进程已经完成初始化</span>
+  <span class="c1"># 由于 COW，子进程不需要复制变量 arr</span>
+  <span class="n">arr</span> <span class="o">&lt;&lt;</span> <span class="mi">45</span>
+  <span class="c1"># 绗棉的代码修改了数组，因此在进行修改之前需要为子进程创建一个该数组的</span>
+  <span class="c1"># 副本。父进程中的这个数组并不会收到影响</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>使用 COW策略，fork(2) 的速度会很快，因为子进程只获取了它所需要的那部分数据的副本，其余部分依然可以共享</li>
+  <li>MRI 或 Rubinius 对其并不支持， Ruby2.0 以上版本会提供 Cow 友好的垃圾收集器</li>
+  <li>Ruby 企业版(Ruby Enterprise Edition) 是 COW 友好的 ruby 版本</li>
+</ul>
+
+<blockquote>
+  <p>MRI 的垃圾收集器会用 “标记-清除” (mark-and-sweep) 的算法，当垃圾收集器被调用时，它必须对每个已知的对象进行迭代并写入信息，指出该对象是否应该被回收。
+  因此在衍生之后，首次进行垃圾收集的时候，写时复制所带来的好处会被撤销</p>
+</blockquote>
+
+<hr />
+
+<h2 id="unix-14">理解 UNIX 进程（14）：进程可待</h2>
+
+<h3 id="babysitting">看顾(Babysitting)</h3>
+
+<ul>
+  <li>ruby 的 <code class="highlighter-rouge">Process.wait</code> 是一个阻塞调用，会一直等待父进程的某个子进程退出之后才继续执行</li>
+  <li><code class="highlighter-rouge">Process.wait</code> 的返回值是某个子进程的 pid</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>fork do 
+  5.times do 
+    sleep 1
+    puts "I am an orphan!"
+  end
+end
+
+puts Process.wait # 等待某个子进程执行完毕
+abort "Parent process died..."
+</code></pre>
+</div>
+
+<h3 id="processwait-">Process.wait 一家子</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">Process.wait</code> 返回的一个值是 pid,<code class="highlighter-rouge">Process.wait2</code> 返回的两个值是(pid, status)</li>
+  <li><code class="highlighter-rouge">Process.waitpid</code> 接收一个进程 pid 等待指定进程退出，pid 为 -1 时和 <code class="highlighter-rouge">Process.wait</code> 不带参数功能一样</li>
+  <li><code class="highlighter-rouge">Process.waitpid2</code>  和 <code class="highlighter-rouge">Process.wait2</code> 对应，  <code class="highlighter-rouge">Process.waitpid</code> 和 类似 <code class="highlighter-rouge">Process.wait</code> 对应</li>
+</ul>
+
+<h3 id="section-17">竞争条件</h3>
+
+<ul>
+  <li>内核会将退出的进程信息加入队列，这样一来父进程总是能够依靠子进程退出的顺序接收到信息(实际并不是按顺序，最好使用 <code class="highlighter-rouge">Process.waitpid</code> 指定 id</li>
+  <li>如果不存在子进程 <code class="highlighter-rouge">Process.wait</code> 会抛出 <code class="highlighter-rouge">Errno::ECHILD</code> 异常</li>
+</ul>
+
+<h2 id="section-18">14.6 实践领域</h2>
+
+<p>关注子进程是 unix 编程模型的核心，被称为 <code class="highlighter-rouge">看顾进程(Babysitting)</code>, <code class="highlighter-rouge">master/worker</code> 或 <code class="highlighter-rouge">preforking</code></p>
+
+<blockquote>
+  <p>如果你有一个衍生出多个并发子进程的进程，这个进程看管着这些子进程，确保他们能够保持响应，并对子进程的退出做出回应</p>
+</blockquote>
+
+<h2 id="section-19">14.7 系统调用</h2>
+
+<p>ruby 的 <code class="highlighter-rouge">Process.wait</code> 及其表亲都对应于系统调用 <code class="highlighter-rouge">waitpid(2)</code></p>
+
+<hr />
+
+<h2 id="unix-15">理解 UNIX 进程（15）：僵尸进程</h2>
+
+<h3 id="section-20">15.1 等待终有结果</h3>
+
+<p>使用 <code class="highlighter-rouge">Process.detach(pid)</code> 分离子进程，它会生成一个新线程，此线程 的唯一工作就是等待 pid 退出.
+这样可以保证内核不会一直保留不需要的的进程信息</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>  <span class="n">pid</span> <span class="o">=</span> <span class="nb">fork</span> <span class="k">do</span>
+    <span class="mi">5</span><span class="p">.</span><span class="nf">times</span> <span class="p">{</span>
+      <span class="nb">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">"thread..</span><span class="si">#{</span><span class="no">Process</span><span class="p">.</span><span class="nf">pid</span><span class="si">}</span><span class="s2">"</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+   
+<span class="c1"># 这行代码确保子进程不会变成僵尸</span>
+  <span class="no">Process</span><span class="p">.</span><span class="nf">detach</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="section-21">15.2 僵尸长什么样子</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1">#创建一个子进程， 1 秒钟之后推出</span>
+<span class="n">pid</span> <span class="o">=</span> <span class="nb">fork</span><span class="p">{</span> <span class="nb">sleep</span> <span class="mi">1</span><span class="p">}</span>
+<span class="c1">#打印子进程的 pid</span>
+<span class="nb">puts</span> <span class="n">pid</span>
+<span class="c1"># 让父进程长眠，以便于我们检查子进程的进程状态信息</span>
+<span class="nb">sleep</span>
+</code></pre>
+</div>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>ps -ho pid,state -p 7132
+</code></pre>
+</div>
+<p>终端输入以上代码，会显示僵尸进程的状态信息，7132 是进程 pid, 状态为 <code class="highlighter-rouge">z</code> 或 <code class="highlighter-rouge">Z+</code> 表示是僵尸进程</p>
+
+<h3 id="section-22">15.3 实践领域</h3>
+
+<ul>
+  <li>任何子进程在结束之时其父进程仍在运行，那么子进程会成为僵尸</li>
+  <li>一旦父进程读取了僵尸进程的状态信息，那么它将不复存在，也不会再消耗内核资源</li>
+</ul>
+
+<h3 id="section-23">15.4 系统调用</h3>
+
+<p><code class="highlighter-rouge">Process.detach(pid)</code> 没有对应系统调用，因为ruby 仅仅使用线程和 <code class="highlighter-rouge">Process.wait</code> 来实现它</p>
+
+<hr />
+
+<h2 id="unix-16">理解 UNIX 进程（16）：进程皆可获得信号</h2>
+
+<p><code class="highlighter-rouge">Process.wait</code> 是阻塞调用，知道子进程结束，调用才会返回(除非加第二个参数)</p>
+
+<h3 id="sigchld">16.1 捕获 SIGCHLD</h3>
+
+<ul>
+  <li>通过 <code class="highlighter-rouge">trap(:CHLD)</code> 可以捕获 :CHLD 信号</li>
+  <li>通过捕获 :CHLD, 内核会提醒父进程它的子进程何时退出</li>
+</ul>
+
+<p>代码见 snippet/signal_chld_native.rb</p>
+
+<h3 id="sigchld-">16.2 SIGCHLD 与并发</h3>
+
+<ul>
+  <li>信号投递是不可靠的</li>
+  <li>Process.wait 加入第二个参数，这样是非阻塞的调用,可用于确保统计每个子进程的</li>
+  <li>如果没有子进程存在，<code class="highlighter-rouge">Process.wait</code> 乃至其变量，将会抛出 <code class="highlighter-rouge">Errno::ECHILD</code> 异常</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">pid</span> <span class="o">=</span> <span class="no">Process</span><span class="p">.</span><span class="nf">wait</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="no">Process</span><span class="o">::</span><span class="no">WNOHANG</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>以上练习代码在 <code class="highlighter-rouge">snippets/signal_chld_nohang.rb</code></p>
+
+<h3 id="section-24">16.3 信号入门</h3>
+
+<p>信号是一种异步通信，进程从内核接收信号时，可以执行以下操作：</p>
+
+<ul>
+  <li>忽略该信号</li>
+  <li>执行特定的操作</li>
+  <li>执行默认的操作</li>
+</ul>
+
+<h3 id="section-25">16.4 信号来自何方</h3>
+
+<ul>
+  <li>信号由内核发送，但信号是从一个进程发送到另一个进程，只不过是借用内核作为中介。</li>
+  <li>信号最初的目的是用来指定终结进程的不同方式</li>
+</ul>
+
+<p><code class="highlighter-rouge">注意：ruby 的 Irb 环境,定义了自己的信号处理程序，跟系统本身和 ruby 程序本身不同</code></p>
+
+<p>启动两个 ruby 进程，使用信号来结束其中一个
+(1) 在第一个 ruby 会话中执行以下代码：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">puts</span> <span class="no">Process</span><span class="p">.</span><span class="nf">pid</span>
+<span class="nb">sleep</span> <span class="c1"># 休眠，以便于有时间发送信号</span>
+</code></pre>
+</div>
+
+<p>(2) 在第二个 ruby 会话中发送信号中介第一个会话：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Process</span><span class="p">.</span><span class="nf">kill</span><span class="p">(</span><span class="ss">:INT</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">pid</span> <span class="n">of</span> <span class="n">first</span> <span class="n">session</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>INT 是 <code class="highlighter-rouge">INTERRUPT</code>(中断)缩写，第二个进程会像第一个进程发送一个 <code class="highlighter-rouge">INT</code> 信号</p>
+
+<h3 id="section-26">16.5 信号一览</h3>
+
+<p>信号命名的时候，名字中的 <code class="highlighter-rouge">SIG</code> 部分是可选的。表中 <code class="highlighter-rouge">动作</code> 一列描述了每个信号的默认操作</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">动作</th>
+      <th style="text-align: left">描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">表示进程会立即结束</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">表示进程会立即结束并进行核心转储(栈跟踪)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Ign</td>
+      <td style="text-align: left">表示进程会忽略该信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">表示进程会停止运行(暂停)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Cont</td>
+      <td style="text-align: left">表示进程会恢复运行(继续)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Unix 系统通常支持的信号：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">信号</th>
+      <th style="text-align: left">值</th>
+      <th style="text-align: left">动作</th>
+      <th style="text-align: left">注释</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">HUP</code></td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">由控制终端或控制进程终止时发出</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">INT</code></td>
+      <td style="text-align: left">2</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">来自键盘的中断信号(通常是 <code class="highlighter-rouge">Ctrl-C</code> )</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">QUIT</code></td>
+      <td style="text-align: left">3</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">来自键盘的退出信号(通常是 <code class="highlighter-rouge">Ctrl-/</code> )</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">ILL</code></td>
+      <td style="text-align: left">4</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">非法指令</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">ABRT</code></td>
+      <td style="text-align: left">6</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">来自 abort(3) 的终止信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">FPE</code></td>
+      <td style="text-align: left">8</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">浮点数异常</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">KILL</code></td>
+      <td style="text-align: left">9</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">kill 信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">SEGV</code></td>
+      <td style="text-align: left">11</td>
+      <td style="text-align: left">Core</td>
+      <td style="text-align: left">非法内存地址引用</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">PIPE</code></td>
+      <td style="text-align: left">13</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">管道损坏(Broken pipe):向没有读取进程的管道写入信息</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">ALRM</code></td>
+      <td style="text-align: left">14</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">来自 alarm(2) 的计时器到时信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">TERM</code></td>
+      <td style="text-align: left">15</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">终止信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">USR1</code></td>
+      <td style="text-align: left">30,10,16</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">用户自定义信号 1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">USR2</code></td>
+      <td style="text-align: left">31,12,17</td>
+      <td style="text-align: left">Term</td>
+      <td style="text-align: left">用户自定义信号 2</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">CHLD</code></td>
+      <td style="text-align: left">20,17,18</td>
+      <td style="text-align: left">Ign</td>
+      <td style="text-align: left">子进程停止或终止</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">CONT</code></td>
+      <td style="text-align: left">19,18,25</td>
+      <td style="text-align: left">Cont</td>
+      <td style="text-align: left">如果停止，则继续执行</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">STOP</code></td>
+      <td style="text-align: left">17,19,23</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">停止进程执行(来自非终端)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">TSTP</code></td>
+      <td style="text-align: left">18,20,24</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">来自终端的停止信号</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">TTIN</code></td>
+      <td style="text-align: left">21,21,26</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">后台进程的终端输入</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">SIG<code class="highlighter-rouge">TTOU</code></td>
+      <td style="text-align: left">22,22,27</td>
+      <td style="text-align: left">Stop</td>
+      <td style="text-align: left">后台进程的终端输出</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>SIGKILL 和 SIGSTOP 信号不能被捕获、阻塞或忽略</li>
+  <li>SIGUSR1 和 SIGUSR2 这两个信号由你的进程来定义</li>
+</ul>
+
+<h3 id="section-27">16.6 重新定义信号的行为</h3>
+
+<p>（1）重新定义 INT 信号的行为：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">puts</span> <span class="no">Process</span><span class="p">.</span><span class="nf">pid</span>
+<span class="nb">trap</span><span class="p">(</span><span class="ss">:INT</span><span class="p">)</span> <span class="p">{</span> <span class="nb">print</span> <span class="s2">"Na na na, you can't get me"</span><span class="p">}</span>
+<span class="nb">sleep</span> <span class="c1"># 休眠，以便于有时间发送信号</span>
+</code></pre>
+</div>
+
+<p>（2）在第二个会话中发信号：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># Process.kill(:INT, &lt;pid of first session&gt;)</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">kill</span><span class="p">(</span><span class="ss">:INT</span><span class="p">,</span> <span class="mi">61852</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>（3）使用 Ctrl-C 来终结第一个会话，会发现结果还是一样</p>
+
+<p>（4）KILL  是不可以被重定义的</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Process</span><span class="p">.</span><span class="nf">kill</span><span class="p">(</span><span class="ss">:KILL</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">pid</span> <span class="n">of</span> <span class="n">first</span> <span class="n">session</span><span class="o">&gt;</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>或者在终端 kill -9 pid</p>
+
+<h3 id="section-28">16.7 忽略信号</h3>
+
+<p>修改 16.6 的代码，给 trap 加第二个参数，可以忽略信号
+<code class="highlighter-rouge">ruby
+puts Process.pid
+trap(:INT, "IGNORE")
+sleep # 休眠，以便于有时间发送信号
+</code>
+发送 <code class="highlighter-rouge">INT</code> 给以上代码的进程，进程不会退出</p>
+
+<h3 id="section-29">16.8 信号处理程序是全局性的</h3>
+
+<ul>
+  <li>捕获一个信号有点像使用一个全局变量</li>
+  <li>信号处理并没有命名空间</li>
+</ul>
+
+<h3 id="section-30">16.9 恰当地重定义信号处理程序</h3>
+
+<p>利用以下方式可以保留第一次的系统的默认行为
+``` ruby
+trap(:INT){ puts ‘This is the first signal handler’}</p>
+
+<p>old_handler = trap(:INT){
+  old_handler.call
+  puts ‘This is the second handler’
+  exit
+}
+sleep # 以便于有时间发送信号
+```</p>
+
+<p>从最佳时间的角度说，代码不应该定义任何信号处理程序，除非它是服务器</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># 一种 “友好的” 捕获信号的方法</span>
+
+<span class="n">old_handler</span> <span class="o">=</span> <span class="nb">trap</span><span class="p">(</span><span class="ss">:QUIT</span><span class="p">){</span>
+  <span class="c1"># 进行清理</span>
+  <span class="nb">puts</span> <span class="s2">"All done!"</span>
+
+  <span class="n">old_handler</span><span class="p">.</span><span class="nf">call</span> <span class="k">if</span> <span class="n">old_handler</span><span class="p">.</span><span class="nf">respond_to?</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>退出之前清理资源可以使用 <code class="highlighter-rouge">at_exit</code>，不需要获取信号来处理</p>
+
+<h3 id="section-31">16.10 何时接收不到信号？</h3>
+
+<p>进程可以从繁忙的 for 循环中解脱出来，转而使用信号处理程序，它总会执行完所有被调用的信号处理程序中的代码</p>
+
+<h3 id="section-32">16.11 实践领域</h3>
+
+<ul>
+  <li>常见用法是在 shell 中使用 <code class="highlighter-rouge">kill(1)</code> 发送信号</li>
+  <li>信号是有长期运行的进程使用，例如服务器和守护进程。</li>
+  <li>多数情况下，发信号的是人类用户而非自动化程序</li>
+</ul>
+
+<p>web 服务器 <code class="highlighter-rouge">Unicorn</code> ：</p>
+
+<ul>
+  <li>通过终止其所有进程并立即关闭来响应 <code class="highlighter-rouge">INT</code> 信号</li>
+  <li>通过重新执行来响应 <code class="highlighter-rouge">USR2</code> 信号，从而实现零关闭时间重启(热部署)</li>
+  <li>通过增加运行的工作进程数量来响应 <code class="highlighter-rouge">TTIN</code> 信号</li>
+  <li>unicorn 的信号：https://unicorn.bogomips.org/SIGNALS.html</li>
+</ul>
+
+<h3 id="section-33">16.12 系统调用</h3>
+
+<p>ruby 的 <code class="highlighter-rouge">Process.kill</code> 对应于 <code class="highlighter-rouge">kill(2)</code>
+<code class="highlighter-rouge">Kernal#trap</code> 基本对应于 <code class="highlighter-rouge">sigaction(2)</code></p>
+
+<hr />
+
+<h2 id="unix-17">理解 UNIX 进程（17）：进程皆可互通</h2>
+
+<p>进程通信(简称  IPC),常见的两个实用方法：管道和套接字对(<code class="highlighter-rouge">socket pairs</code>)</p>
+
+<h3 id="section-34">17.1 我们的第一个管道</h3>
+
+<ul>
+  <li>管道是一个数据流</li>
+  <li>一端可读，一端可写，管道的两端可以被不同的进程使用</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">reader</span><span class="p">,</span> <span class="n">writer</span> <span class="o">=</span> <span class="no">IO</span><span class="p">.</span><span class="nf">pipe</span> <span class="c1">#=&gt; [#&lt;IO:fd 7&gt;, #&lt;IO:fd 8&gt;]</span>
+</code></pre>
+</div>
+<ul>
+  <li>IO.pipe 返回两个 IO 对象，对象类似匿名文件， 没有 #path</li>
+  <li>ruby 的 IO 类是 File, TCPSocket, UDPSocket 等的超类，所有的这些资源都有一个通用的接口</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">reader</span><span class="p">,</span> <span class="n">writer</span> <span class="o">=</span> <span class="no">IO</span><span class="p">.</span><span class="nf">pipe</span>
+<span class="n">writer</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s2">"Into the pipe I go ..."</span><span class="p">)</span>
+<span class="n">writer</span><span class="p">.</span><span class="nf">close</span>
+<span class="nb">puts</span> <span class="n">reader</span><span class="p">.</span><span class="nf">read</span>
+<span class="c1"># =&gt; 'Into the pipe I go ...'</span>
+</code></pre>
+</div>
+<p>关闭 writer 会发送一个 EOF，这样 reader 就不会被一直阻塞
+<code class="highlighter-rouge">IO#read</code> 会不停的从管道中读取数据，直到读到一个 <code class="highlighter-rouge">EOF(end of file)</code>文件结束标志</p>
+
+<h3 id="section-35">17.2 管道是单向的</h3>
+
+<p><code class="highlighter-rouge">reader</code> 只能从文件读取
+<code class="highlighter-rouge">writer</code> 只能向文件写入</p>
+
+<h3 id="section-36">17.3 共享管道</h3>
+
+<ul>
+  <li>管道也是一种资源，有自己的文件描述符及其他的一切，因此可以和子进程共享</li>
+  <li>fork 衍生子进程也会复制管道两端的 IO 对象，管道会被进程和子进程共享</li>
+  <li>管道中流淌的是数据流</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">reader</span><span class="p">,</span> <span class="n">writer</span> <span class="o">=</span> <span class="no">IO</span><span class="p">.</span><span class="nf">pipe</span>
+
+<span class="nb">puts</span> <span class="s2">"--</span><span class="si">#{</span><span class="n">reader</span><span class="p">.</span><span class="nf">fileno</span><span class="si">}</span><span class="s2">"</span>
+<span class="nb">puts</span> <span class="s2">"--</span><span class="si">#{</span><span class="n">writer</span><span class="p">.</span><span class="nf">fileno</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="nb">fork</span> <span class="k">do</span>     
+  <span class="nb">puts</span> <span class="n">reader</span><span class="p">.</span><span class="nf">fileno</span>
+  <span class="nb">puts</span> <span class="n">writer</span><span class="p">.</span><span class="nf">fileno</span>
+
+  <span class="n">reader</span><span class="p">.</span><span class="nf">close</span>
+
+  <span class="mi">10</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+    <span class="c1">#写入数据</span>
+    <span class="n">writer</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"Another one bites the dust"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">writer</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">while</span> <span class="n">message</span> <span class="o">=</span> <span class="n">reader</span><span class="p">.</span><span class="nf">gets</span>
+  <span class="vg">$stdout</span><span class="p">.</span><span class="nf">puts</span> <span class="n">message</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+<p><code class="highlighter-rouge">IO#puts</code> 和 <code class="highlighter-rouge">IO#gets</code> 是使用行终止符作为分隔符</p>
+
+<h3 id="section-37">17.4 流与消息</h3>
+<p><strong>关于流</strong>：</p>
+
+<ul>
+  <li>使用管道或 TCP 套接字这样的 IO 流是，并没有开始和结束的概念，数据写入流中，之后跟着一些特定的分隔符(delimiter)</li>
+  <li>从 IO 流中读取数据的时候，一次读取一块，遇到分隔符就停止。</li>
+  <li>HTTP 使用一连串的终止符来分割头部和主体。</li>
+</ul>
+
+<p><code class="highlighter-rouge">UNIX 套接字</code></p>
+
+<ul>
+  <li>一种只能用于在同一台物理机中进行通信的套接字，它比 TCP 套接字快很多，非常适合 <code class="highlighter-rouge">IPC</code></li>
+  <li>使用数据包通信(datagram)通信</li>
+  <li>一个套接字写入整个消息，另一个读取整个消息，不需要分隔符</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="no">Socket</span><span class="p">.</span><span class="nf">pair</span><span class="p">(</span><span class="ss">:UNIX</span><span class="p">,</span> <span class="ss">:DGRAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="c1">#=&gt;[#&lt;Socket:fd 15&gt;,#&lt;Socket:fd 16&gt;]</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Socket#recv</code> 从TCP连接的另一端接收数据。该函数的第一个参数指定接收端套接字描述，第二个参数指明一个缓冲区，该缓冲区用来存放recv函数接收到的数据</p>
+
+<ul>
+  <li>管道提供单向通信</li>
+  <li>套接字提供双向通信</li>
+</ul>
+
+<p>代码示例看 <code class="highlighter-rouge">snippets/unix_socket.rb</code></p>
+
+<h3 id="ipcrpc">远程IPC（RPC）</h3>
+<p>RPC 通信方式：
+- 通过 TCP 套接字通信
+- RPC 远程调用，如消息队列，分布式系统</p>
+
+<p>IPC 进程通信方式：
+- 管道(PIPE)
+- FIFO(有名管道)
+- XSI 消息队列
+- XSI 信号量
+- XSI 共享内存
+- POSIX 信号量
+- 域套接字(Domain Socket)
+- 信号(Signal)
+- 互斥量(Mutex)</p>
+
+<h3 id="section-38">17.6 实践领域</h3>
+
+<p>管道和套接字都是快速的通信方式，管道是单向的，套接字是双向的</p>
+
+<hr />
+
+<h2 id="unix-18">理解 UNIX 进程（18）：守护进程</h2>
+
+<ul>
+  <li>守护进程是后台运行的集成，不受终端用户控制</li>
+  <li>web 服务器和数据库服务器都属于常见的守护进程</li>
+</ul>
+
+<h3 id="section-39">18.1 首个进程</h3>
+
+<ul>
+  <li>当内核被引导时会产生一个叫做 <code class="highlighter-rouge">init</code> 的进程。</li>
+  <li>这个进程的 <code class="highlighter-rouge">ppid</code> 是 0，作为所有进程的祖父。</li>
+  <li>它是首个进程，没有祖先，它的 pid 是 1</li>
+</ul>
+
+<h3 id="section-40">18.2 创建第一个守护进程</h3>
+
+<p>rack 的 rackup 有一个选项，可以将服务器变成守护进程并置于后台运行</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">rackup</span> <span class="o">-</span><span class="no">D</span>  <span class="c1"># 会将服务器作为 daemon 进程启动</span>
+</code></pre>
+</div>
+
+<h3 id="rack">18.3 深入 Rack</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">daemonize_app</span>
+  <span class="k">if</span> <span class="no">RUBY_VERSION</span> <span class="o">&lt;</span> <span class="s2">"1.9"</span>
+
+    <span class="c1"># 衍生一个子进程，父进程退出</span>
+    <span class="c1"># 但衍生的子进程仍然有从父进程继承的组 id 和会话 id</span>
+    <span class="nb">exit</span> <span class="k">if</span> <span class="nb">fork</span>
+
+    <span class="c1"># 因为终端与衍生进程之间仍有牵连，如果终端发出信号到衍生进程的会话组，这个信号仍会被当前子进程接收到</span>
+    <span class="c1"># Process.setsid 会使衍生进程成为一个新进程组和新会话组的组长兼领导，这里的子进程没有控制终端</span>
+    <span class="c1"># 注意：在已是进程组长的进程中调用 Process.setsid 会失败</span>
+    <span class="no">Process</span><span class="p">.</span><span class="nf">setsid</span>
+
+    <span class="c1"># 已成为进程组和会话组组长的衍生进程再次进行衍生，然后退出</span>
+    <span class="c1"># 因为终端只能分配给会话领导，所以在这里新衍生的进程，不是进程组组长，也不是会话领导</span>
+    <span class="c1"># 也没有控制终端,确保进程脱离了控制终端并且可以独自运行</span>
+    <span class="nb">exit</span> <span class="k">if</span> <span class="nb">fork</span>
+
+    <span class="c1"># 设置代码的工作目录为系统根目录，是为了确保守护进程的当前工作目录在执行中不会消失</span>
+    <span class="no">Dir</span><span class="p">.</span><span class="nf">chdir</span> <span class="s2">"/"</span> 
+
     
-  </channel>
-</rss>
+    <span class="no">STDIN</span><span class="p">.</span><span class="nf">reopen</span> <span class="s2">"/dev/null"</span>
+    <span class="no">STDOUT</span><span class="p">.</span><span class="nf">reopen</span> <span class="s2">"/dev/null"</span><span class="p">,</span> <span class="s2">"a"</span> 
+    <span class="no">STDERR</span><span class="p">.</span><span class="nf">reopen</span> <span class="s2">"/dev/null"</span><span class="p">,</span> <span class="s2">"a"</span> 
+  <span class="k">else</span>
+    <span class="no">Process</span><span class="p">.</span><span class="nf">daemon</span>
+  <span class="k">end</span> 
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>ruby 1.9x 带有 <code class="highlighter-rouge">Process.daemon</code> 的方法，可以将当前进程变成守护进程</p>
+
+<h3 id="section-41">18.4 逐步将进程变成守护进程</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>    <span class="nb">exit</span> <span class="k">if</span> <span class="nb">fork</span>
+</code></pre>
+</div>
+
+<p>以上代码父进程会退出，因为 <code class="highlighter-rouge">fork</code> 会返回两次，在父进程中返回子进程的 pid,在子进程中返回 nil
+子进程会成为孤儿进程照常运行，孤儿进程的父进程 id 始终是 1, 也就是内核引导时的 <code class="highlighter-rouge">init</code> 进程</p>
+
+<p>创建守护进程时，必须将主进程退出，这样会使得调用此脚本的终端认为该命令已经执行完毕，于是将控制返回终端</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>    <span class="no">Process</span><span class="p">.</span><span class="nf">setsid</span>
+</code></pre>
+</div>
+<p>调用 <code class="highlighter-rouge">Process.setsid</code> 完成了以下三件事：
+(1) 该进程变成一个新会话的会话领导
+(2) 该进程变成一个新进程组的组长
+(3) 该进程没有控制终端</p>
+
+<h3 id="section-42">18.5 进程组和会话组</h3>
+
+<p><strong>进程组</strong></p>
+
+<ul>
+  <li>每一个进程都属于某个组，每一个组都有唯一的整数 id</li>
+  <li>子进程的组 id 继承自父进程，父子进程都是同一个进程组的成员。</li>
+  <li>如果父进程由终端控制，并被信号终止的话，父进程的子进程也会同样终止，这是因为终端接收信号，并将其转发给前台进程组中的所有进程。，同一个进程组的组员，会被同一个信号终止。</li>
+</ul>
+
+<p>ruby 的 <code class="highlighter-rouge">Process.getpgrp</code> 可以获得进程组的 id</p>
+
+<p><strong>会话组</strong></p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>git log | grep shipped | less
+</code></pre>
+</div>
+<p>以上例子解释：</p>
+
+<ul>
+  <li>每个命令都有自己的进程组，因为每个命令都可以创建子进程</li>
+  <li>这些命令都是同一个会话组的成员，shell 中的每次调用都会获得自己的会话组</li>
+  <li>一个会话组可以依附一个终端，也可以不依附任何终端，比如守护进程</li>
+  <li>终端用一种特殊的方法来处理会话组：发送给会话领导的信号被转发到该会话中的所有进程组内，然后再被转发到这些进程组内的所有进程。</li>
+</ul>
+
+<p>系统调用 <code class="highlighter-rouge">getdis(2)</code> 可以查到当前的会话组 id, ruby 没有对应实现
+但 ruby 的 <code class="highlighter-rouge">Process.setsid</code> 会返回其新创建的会话组 id</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code>    <span class="no">STDIN</span><span class="p">.</span><span class="nf">reopen</span> <span class="s2">"/dev/null"</span>
+    <span class="no">STDOUT</span><span class="p">.</span><span class="nf">reopen</span> <span class="s2">"/dev/null"</span><span class="p">,</span> <span class="s2">"a"</span> 
+    <span class="no">STDERR</span><span class="p">.</span><span class="nf">reopen</span> <span class="s2">"/dev/null"</span><span class="p">,</span> <span class="s2">"a"</span> 
+</code></pre>
+</div>
+<p>以上代码将所有的标准流设置到 /dev/null， 也就是将其忽略
+因为守护进程不依附于某个终端会话，那么标准流也就没什么用了呃</p>
+
+<h3 id="section-43">18.6 实践领域</h3>
+
+<p><code class="highlighter-rouge">rackup</code> 有一个命令行选项可以将进程变为守护进程，对于任何流行的 ruby web 服务器来说都是这样</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">rackup</span> <span class="o">-</span><span class="no">D</span>  <span class="c1"># 会将服务器作为 daemon 进程启动</span>
+</code></pre>
+</div>
+
+<h3 id="section-44">18.7 系统调用</h3>
+
+<p>ruby 的 <code class="highlighter-rouge">Proces.setsid</code> 对应于 <code class="highlighter-rouge">setsid(2)</code>
+<code class="highlighter-rouge">Process.getpgrp</code> 对应于 <code class="highlighter-rouge">getpgrp(2)</code></p>
+
+<hr />
+
+<h2 id="unix-19">理解 UNIX 进程（19）：生成终端进程</h2>
+
+<p>ruby 程序常见的交互是在程序中通过 <code class="highlighter-rouge">shelling out</code> 的方式在终端执行某个命令。</p>
+
+<h3 id="fork--exec">19.1 fork + exec</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">exec(2)</code> 允许使用另一个进程来替换当前进程。</li>
+  <li>使用 <code class="highlighter-rouge">exec(2)</code>  的缺点是，当前进程再也无法恢复了，所以可以用 <code class="highlighter-rouge">fork + exec</code> 的组合替代</li>
+  <li><code class="highlighter-rouge">exec(2)</code> 不会关闭任何打开的文件描述符(默认情况下)或是进行内存清理</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">exec</span> <span class="s1">'ls'</span><span class="p">,</span> <span class="s1">'--help'</span>
+</code></pre>
+</div>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">puts</span> <span class="no">Process</span><span class="p">.</span><span class="nf">pid</span>
+
+<span class="nb">fork</span> <span class="k">do</span> 
+  <span class="c1"># exec 输出结果</span>
+ <span class="n">res</span> <span class="o">=</span> <span class="nb">exec</span> <span class="s1">'ls'</span>
+ <span class="no">Process</span><span class="p">.</span><span class="nf">wait</span>
+ <span class="nb">puts</span> <span class="n">res</span><span class="p">.</span><span class="nf">inspect</span>
+<span class="k">end</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">wait</span>
+</code></pre>
+</div>
+
+<h3 id="exec-">19.2 exec 的参数</h3>
+
+<p>exec 两种参数传递方式：</p>
+
+<ul>
+  <li>把字符串传递给 exec,实际上它会启动一个 shell 进程，然后再将这个字符串交由 shell 解释</li>
+  <li>传递一个数组的话，它会跳过 shell, 直接将此数组座位新进程的 ARGV</li>
+</ul>
+
+<p><code class="highlighter-rouge">Kernel#system</code>:</p>
+
+<p><code class="highlighter-rouge">Kernel#system</code> 的返回值，如果终端命令的退出码是 0，它就返回 true，否则返回 false
+借助 <code class="highlighter-rouge">fork(2)</code> 的魔力，终端命令与当前进程共享标准流，因此来自终端命令的任何输出同样也会出现在当前进程中</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">system</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">)</span>
+<span class="nb">system</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">,</span><span class="s1">'--help'</span><span class="p">)</span>
+<span class="nb">system</span><span class="p">(</span><span class="s1">'git log | tail -10'</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p><strong>Kernel#`</strong>:</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="sb">`ls`</span>
+<span class="sb">`ls --help`</span>
+<span class="sx">%x[git log | tail -10]</span>
+</code></pre>
+</div>
+<p><strong>Kernel#`</strong> 的返回值由终端程序的 STDOUT 汇集而成的一个字符串</p>
+
+<p><code class="highlighter-rouge">Process.spawn</code>:</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1">#仅适用于 ruby 1.9!</span>
+
+<span class="c1"># 此调用会启动 rails server 进程并将环境变量 RAILS_ENV 设置为 test</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">spawn</span><span class="p">({</span><span class="s1">'RAILS_ENV'</span> <span class="o">=&gt;</span> <span class="s1">'test'</span><span class="p">},</span> <span class="s1">'rails server'</span><span class="p">)</span>
+
+<span class="c1"># 该调用在执行 ls --help 阶段将 STDERR 与 STDOUT 进行合并</span>
+<span class="no">Process</span><span class="p">.</span><span class="nf">spawn</span><span class="p">(</span><span class="s2">"ls"</span><span class="p">,</span> <span class="s1">'--help'</span><span class="p">,</span> <span class="no">STDERR</span> <span class="o">=&gt;</span> <span class="no">STDOUT</span><span class="p">)</span>
+</code></pre>
+</div>
+<p><code class="highlighter-rouge">Process.spawn</code> 是非阻塞的，<code class="highlighter-rouge">Kernel#system</code> 会阻塞到命令执行完毕</p>
+
+<p><strong>IO.popen</strong></p>
+
+<ul>
+  <li><code class="highlighter-rouge">IO.popen</code> 是用纯 ruby 来实现 unix 管道</li>
+  <li>底层使用 <code class="highlighter-rouge">fork+exec</code> 实现，设置一个管道用于同生成进程进行通信</li>
+</ul>
+
+<p><strong>Open3</strong></p>
+
+<p>Open3 允许同时访问一个生成进程的 STDIN，STDOUT 和 STDERR</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># open3 是标准库的一员</span>
+<span class="nb">require</span> <span class="s1">'open3'</span>
+
+<span class="no">Open3</span><span class="p">.</span><span class="nf">popen3</span><span class="p">(</span><span class="s1">'grep'</span><span class="p">,</span> <span class="s1">'data'</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">|</span>
+  <span class="n">stdin</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"some</span><span class="se">\n</span><span class="s2">datadgdsg</span><span class="se">\n</span><span class="s2">data"</span>
+  <span class="n">stdin</span><span class="p">.</span><span class="nf">close</span>
+  <span class="nb">puts</span> <span class="n">stdout</span><span class="p">.</span><span class="nf">read</span>
+<span class="k">end</span>
+
+<span class="c1"># 在可行的情况下，Open3 会使用 Process.spawn</span>
+<span class="c1"># 可以像这样把选项传递给 Process.spawn</span>
+<span class="no">Open3</span><span class="p">.</span><span class="nf">popen3</span><span class="p">(</span><span class="s1">'ls'</span><span class="p">,</span> <span class="s1">'-uhh'</span><span class="p">,</span> <span class="ss">:err</span> <span class="o">=&gt;</span> <span class="ss">:out</span><span class="p">)</span> <span class="k">do</span>  <span class="o">|</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">stdout</span><span class="p">.</span><span class="nf">read</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="section-45">19.3 实践领域</h3>
+
+<p>本章的所有方法的缺点就是都依赖 <code class="highlighter-rouge">fork(2)</code>，因为 <code class="highlighter-rouge">fork(2)</code> 会引发由进程衍生所带来的成本。
+利用 shell out 执行简单的 <code class="highlighter-rouge">ls(1)</code> 调用，内核仍需要保证新的 <code class="highlighter-rouge">ls(1)</code> 进程可以使用 ruby 进程的全部内存。</p>
+
+<ul>
+  <li>ruby 语言核心库不支持系统调用 <code class="highlighter-rouge">posix_spawn(2)</code> 等不会带来 <code class="highlighter-rouge">fork(2)</code> 所引发的开销的系统调用。</li>
+  <li><code class="highlighter-rouge">posix-spawn</code> gem 提供了对 <code class="highlighter-rouge">posix_spawn(2)</code> 的访问，此调用在大多数 <code class="highlighter-rouge">Unix</code> 系统中都可用</li>
+  <li><code class="highlighter-rouge">posix-spawn</code> gem 模拟了 <code class="highlighter-rouge">Process.spawn</code> API,并且会速度更快，有资源利用效率更高的进程生成</li>
+  <li>系统调用 <code class="highlighter-rouge">posix_spawn(2)</code> 是 <code class="highlighter-rouge">fork(2)</code> 的一个子集</li>
+</ul>
+
+<p><code class="highlighter-rouge">fork(2)</code> 生成进程的两个独特属性：</p>
+
+<ul>
+  <li>1）获取了一份父进程在内存中的所有内容的副本</li>
+  <li>2) 获得了父进程已打开的所有文件描述符的副本</li>
+  <li>而系统调用 <code class="highlighter-rouge">posix_spawn(2)</code> 只实现了以上的 (1)，并不会有属性(2)，不会获取父进程在内存中的所有内容的副本</li>
+</ul>
+
+<h3 id="section-46">19.4 系统调用</h3>
+
+<ul>
+  <li>ruby 的 <code class="highlighter-rouge">Kenel#system</code> 对应于 <code class="highlighter-rouge">system(3)</code></li>
+  <li><code class="highlighter-rouge">Kenel#exec</code> 对应于 <code class="highlighter-rouge">execve(2)</code></li>
+  <li><code class="highlighter-rouge">IO.popen</code> 对应于 <code class="highlighter-rouge">popen(3)</code></li>
+  <li><code class="highlighter-rouge">posix-spawn</code> 这个 gem 使用 <code class="highlighter-rouge">posix_spawn(2)</code></li>
+</ul>
+]]></content>
+	</entry>
+	
+	<entry>
+		<title>GO 指南笔记</title>
+		<link href="http://127.0.0.1/posts/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712.html" />
+		<updated>2016-07-13T02:30:00+08:00</updated>
+		<id>http://127.0.0.1/posts/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712.html</id>
+		<content type="html"><![CDATA[<h1 id="go-">GO 指南笔记</h1>
+
+<p>@(学习笔记)</p>
+
+<h3 id="section"><strong>零值</strong></h3>
+<ul>
+  <li>数值类型为 <code class="highlighter-rouge">0</code></li>
+  <li>布尔类型为 <code class="highlighter-rouge">false</code></li>
+  <li>字符串为 “” (空字符串)</li>
+</ul>
+
+<h3 id="section-1"><strong>常量</strong></h3>
+<ul>
+  <li>常量定义与变量类似，只不过使用 <code class="highlighter-rouge">const</code> 关键字</li>
+  <li>常量不能用 <code class="highlighter-rouge">:=</code> 语法定义</li>
+</ul>
+
+<h3 id="section-2"><strong>数值常量</strong></h3>
+<ul>
+  <li>数值常量是高精度的 值 。</li>
+  <li>一个未指定类型的常量由上下文来决定其类型。</li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">const</span><span class="x"> </span><span class="p">(</span><span class="x">
+  </span><span class="n">Big</span><span class="x">   </span><span class="o">=</span><span class="x"> </span><span class="m">1</span><span class="x"> </span><span class="o">&lt;&lt;</span><span class="x"> </span><span class="m">100</span><span class="x">
+  </span><span class="n">Small</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">Big</span><span class="x"> </span><span class="o">&gt;&gt;</span><span class="x"> </span><span class="m">99</span><span class="x">
+</span><span class="p">)</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="n">needInt</span><span class="p">(</span><span class="n">x</span><span class="x"> </span><span class="kt">int</span><span class="p">)</span><span class="x"> </span><span class="kt">int</span><span class="x"> </span><span class="p">{</span><span class="x"> </span><span class="k">return</span><span class="x"> </span><span class="n">x</span><span class="o">*</span><span class="m">10</span><span class="x"> </span><span class="o">+</span><span class="x"> </span><span class="m">1</span><span class="x"> </span><span class="p">}</span><span class="x">
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">needFloat</span><span class="p">(</span><span class="n">Big</span><span class="p">))</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<h3 id="switch"><strong>switch</strong></h3>
+<ul>
+  <li>除非以 <code class="highlighter-rouge">fallthrough</code> 语句结束，否则分支会自动终止。</li>
+</ul>
+
+<h3 id="defer"><strong>defer</strong></h3>
+<ul>
+  <li>defer 语句会延迟函数的执行直到上层函数返回。</li>
+  <li>延迟调用的参数会立刻生成，但是在上层函数返回前函数都不会被调用。</li>
+  <li>延迟的函数调用被压入一个栈中。当函数返回时， 会按照后进先出的顺序调用被延迟的函数调用。</li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">i</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="m">1</span><span class="x">
+  </span><span class="k">defer</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"world"</span><span class="p">,</span><span class="x"> </span><span class="n">i</span><span class="p">)</span><span class="x">
+
+  </span><span class="n">i</span><span class="o">++</span><span class="x">
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"hello"</span><span class="p">,</span><span class="x"> </span><span class="n">i</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="c">//hello 2</span><span class="x">
+</span><span class="c">//world 1</span><span class="x">
+</span></code></pre>
+</div>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"counting"</span><span class="p">)</span><span class="x">
+
+  </span><span class="k">for</span><span class="x"> </span><span class="n">i</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="m">0</span><span class="p">;</span><span class="x"> </span><span class="n">i</span><span class="x"> </span><span class="o">&lt;</span><span class="x"> </span><span class="m">10</span><span class="p">;</span><span class="x"> </span><span class="n">i</span><span class="o">++</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="k">defer</span><span class="x"> </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="x">
+  </span><span class="p">}</span><span class="x">
+
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="s">"done"</span><span class="p">)</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<h3 id="section-3">指针</h3>
+
+<ul>
+  <li>指针保存了变量的内存地址</li>
+  <li>类型 *T 是指向类型 T 的值的指针。其零值是 nil 。</li>
+  <li>&amp; 符号会生成一个指向其作用对象的指针。</li>
+  <li>符号表示指针指向的底层的值</li>
+</ul>
+
+<h3 id="section-4"><strong>结构体</strong></h3>
+
+<ul>
+  <li>结构体字段可以通过结构体指针来访问</li>
+  <li>指针简介的访问时透明的</li>
+  <li>前缀 <code class="highlighter-rouge">&amp;</code> 返回一个指向结构体的指针</li>
+</ul>
+
+<h3 id="section-5"><strong>数组</strong></h3>
+
+<ul>
+  <li>类型 <code class="highlighter-rouge">[n]T</code> 是一个有 <code class="highlighter-rouge">n</code> 个类型为 <code class="highlighter-rouge">T</code> 的值的数组</li>
+  <li>数组不能改变大小</li>
+</ul>
+
+<h3 id="slice"><strong>slice</strong></h3>
+
+<ul>
+  <li>一个 slice 会指向一个序列的值，并且包含了长度信息</li>
+  <li><code class="highlighter-rouge">[]T</code> 是一个元素类型为 <code class="highlighter-rouge">T</code> 的 <code class="highlighter-rouge">slice</code></li>
+  <li><code class="highlighter-rouge">len(s)</code> 返回 slice s 的长度</li>
+  <li>作为变长数组的替代方案，可以管理底层数组的局部或全部</li>
+</ul>
+
+<p><strong>对 slice 切片</strong></p>
+
+<ul>
+  <li><code class="highlighter-rouge">s[lo:hi]</code> 表示从 lo 到 hi-1 的 slice 元素，含开始下标，不包含结束下标</li>
+  <li><code class="highlighter-rouge">make</code> 创建 slice,会分配一个全是零值的数组并且返回一个 slice 指向这个数组</li>
+  <li>第三个参数是制定容量</li>
+  <li>slice 的零值是 nil</li>
+  <li>一个 nil 的 slice 的长度和容量是 0。</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>b := make([]int, 0, 5) // len(b)=0, cap(b)=5
+</code></pre>
+</div>
+
+<h3 id="range"><strong>range</strong></h3>
+
+<p>for 循环的 range 格式可以对 slice 或者 map 进行迭代循环</p>
+
+<h3 id="map"><strong>map</strong></h3>
+
+<p>在 map m 中插入或修改一个元素: <code class="highlighter-rouge">m[key] = elem</code>
+获得元素：<code class="highlighter-rouge">elem = m[key]</code>
+删除元素：<code class="highlighter-rouge">delete(m, key)</code>
+通过双赋值检测某个键存在：<code class="highlighter-rouge">elem, ok = m[key]</code></p>
+
+<h3 id="section-6"><strong>函数</strong></h3>
+
+<ul>
+  <li>函数值可以作为函数的参数或者返回值</li>
+  <li>Go 函数可以是一个闭包</li>
+</ul>
+
+<h3 id="section-7"><strong>方法</strong></h3>
+
+<p>有两个原因需要使用指针接收者。
+ - 首先避免在每个方法调用中拷贝值（如果值类型是大的结构体的话会更有效率）。
+ - 其次，方法可以修改接收者指向的值</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>type Vertex struct {
+  X, Y float64
+}
+
+// 使用指针接收者，是为了避免在调用方法中拷贝值，其次是可以修改接受者指向的值
+// 因为值类型可能是大的结构体，拷贝的话性能不好
+// 如果 v 是一个值（非指针），方法看到的是 Vertex 的副本，并且无法修改原始值
+func (v *Vertex) Abs() float64 { 
+  return math.Sqrt(v.X*v.X + v.Y*v.Y) 
+}
+
+func main() {
+  v := &amp;Vertex{3, 4}
+  fmt.Println(v.Abs())
+}
+</code></pre>
+</div>
+
+<h3 id="section-8"><strong>接口</strong></h3>
+<ul>
+  <li>接口类型是由一组方法定义的集合。</li>
+  <li>接口类型的值可以存放实现这些方法的任何值。</li>
+</ul>
+
+<p><strong>Stringers</strong>
+Stringer 是一个可以用字符串描述自己的类型。<code class="highlighter-rouge">fmt</code>包 （还有许多其他包）使用这个来进行输出。</p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">type</span><span class="x"> </span><span class="n">Stringer</span><span class="x"> </span><span class="k">interface</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="n">String</span><span class="p">()</span><span class="x"> </span><span class="kt">string</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<p><strong>错误</strong></p>
+
+<p>与 fmt.Stringer 类似， error 类型是一个内建接口：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>type error interface {
+    Error() string
+}
+</code></pre>
+</div>
+
+<h3 id="goroutine"><strong>Goroutine</strong></h3>
+
+<p>goroutine 是由 Go 运行时环境管理的轻量级线程。</p>
+
+<p><strong>channel</strong>
+- channel 是有类型的管道
+- 可以用 channel 操作符 &lt;- 对其发送或者接收值。
+- 默认情况下，在另一端准备好之前，发送和接收都会阻塞。这使得 goroutine 可以在没有明确的锁或竞态变量的情况下进行同步</p>
+
+<p><strong>缓冲 channel</strong>
+- channel 可以是 带缓冲的。为 make 提供第二个参数作为缓冲长度来初始化一个缓冲 
+- 向带缓冲的 channel 发送数据的时候，只有在缓冲区满的时候才会阻塞。 
+- 而当缓冲区为空的时候接收操作会阻塞。</p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="x">  </span><span class="n">ch</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="nb">make</span><span class="p">(</span><span class="k">chan</span><span class="x"> </span><span class="kt">int</span><span class="p">,</span><span class="x"> </span><span class="m">2</span><span class="p">)</span><span class="x">
+  </span><span class="n">ch</span><span class="x"> </span><span class="o">&lt;-</span><span class="x"> </span><span class="m">1</span><span class="x">
+  </span><span class="n">ch</span><span class="x"> </span><span class="o">&lt;-</span><span class="x"> </span><span class="m">2</span><span class="x">
+  </span><span class="n">ch</span><span class="x"> </span><span class="o">&lt;-</span><span class="x"> </span><span class="m">3</span><span class="x"> </span><span class="c">//因为缓存区比填满，fatal error: all goroutines are asleep - deadlock!</span><span class="x">
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="o">&lt;-</span><span class="n">ch</span><span class="p">)</span><span class="x">
+  </span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="o">&lt;-</span><span class="n">ch</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<p><strong>range 和 close</strong></p>
+
+<ul>
+  <li>发送者可以 close 一个 channel</li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="x"> </span><span class="n">v</span><span class="p">,</span><span class="x"> </span><span class="n">ok</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="o">&lt;-</span><span class="n">ch</span><span class="x">
+</span></code></pre>
+</div>
+<ul>
+  <li>接收者可以通过赋值语句的第二参数来测试 channel 是否被关闭</li>
+  <li>当没有值可以接收并且 channel 已经被关闭，那么取值之后 ok 会被设置为 false</li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="x"> </span><span class="k">for</span><span class="x"> </span><span class="n">i</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="k">range</span><span class="x"> </span><span class="n">c</span><span class="x">
+</span></code></pre>
+</div>
+<ul>
+  <li>循环 会不断从 channel 接收值，直到它被关闭</li>
+</ul>
+
+<p><strong><code class="highlighter-rouge">注意事项</code></strong>
+- 只有发送者才能关闭 channel，而不是接收者
+- 向一个已经关闭的 channel 发送数据会引起 panic
+- channel 与文件不同；通常情况下无需关闭它们
+- 只有在需要告诉接收者没有更多的数据的时候才有必要进行关闭，例如中断一个 range</p>
+
+<p><strong>select</strong>
+- select 语句使得一个 goroutine 在多个通讯操作上等待。</p>
+
+]]></content>
+	</entry>
+	
+	<entry>
+		<title>《TCP Sockets 编程》读书笔记</title>
+		<link href="http://127.0.0.1/posts/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html" />
+		<updated>2016-03-29T17:06:00+08:00</updated>
+		<id>http://127.0.0.1/posts/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html</id>
+		<content type="html"><![CDATA[<h1 id="tcp-sockets-">《TCP Sockets 编程》读书笔记</h1>
+
+<h2 id="section">第一章：建立套接字</h2>
+
+<h3 id="ruby-">1.1 ruby 的套接字库</h3>
+<p>socket 库是 ruby 标准库的组成，包含各种用于 TCP 套接字、UDP 套接字的类</p>
+
+<h3 id="section-1">1.2 创建首个套接字</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Socket</span><span class="o">::</span><span class="no">AF_INET</span><span class="p">,</span> <span class="no">Socket</span><span class="o">::</span><span class="no">SOCK_STREAM</span><span class="p">)</span>
+</code></pre>
+</div>
+<ul>
+  <li>INET 是 internet 的缩写，特别用于指代 IPv4 版本的套接字。</li>
+  <li>STREAM 表示用数据流通信，由 TCP 提供。</li>
+  <li>DGRAM(datagram 的缩写，数据报),则表示 UDP 套结字</li>
+</ul>
+
+<h3 id="section-2">1.3 什么是端点</h3>
+
+<ul>
+  <li>套接字使用 IP 地址将消息指向特定的主机。</li>
+  <li>主机由唯一的 IP 地址来标识</li>
+</ul>
+
+<h3 id="section-3">1.4 环回地址</h3>
+
+<ul>
+  <li>环回接口(loopback interface)。与硬件无关、完全虚拟的接口。发送到环回接口的数据立即会在同一个接口上被接收。</li>
+  <li>环回接口对应的主机名是 localhost, 对应的 IP 地址通常是 127.0.0.1，定义在 hosts 文件中</li>
+</ul>
+
+<h3 id="ipv6">1.5 IPv6</h3>
+<ul>
+  <li>IPv4 由 4 组数字组成，各自的范围在 0 ~ 255, 每组数字可以用 8 位二进制数字来表示，合计共需 32 位进制，意味着有 2的32次方或 43亿个地址。</li>
+  <li>IPv6 用另一个不同的格式，可以拥有天文数字级别的独立 IP 地址。</li>
+</ul>
+
+<h3 id="section-4">1.6 端口</h3>
+<p>套接字的 IP 地址和端口号的组合必须是唯一，端口号就是套接字端点的 “分机号”。</p>
+
+<h3 id="section-5">1.7 创建第二个套接字</h3>
+
+<p><strong>IPv6 域中的套接字</strong>:</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># ./code/snippets/create_socket_memoized.rb</span>
+
+<span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET6</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="section-6">1.8 系统调用</h3>
+
+<p><code class="highlighter-rouge">Socket.new -&gt; socket(2)</code></p>
+
+<hr />
+
+<h2 id="section-7">第二章：建立连接</h2>
+
+<ul>
+  <li>TCP 在两个端点之间建立连接。端点可以处在同一台主机或不同主机</li>
+  <li>套接字必须担任以下角色之一：
+    <ol>
+      <li>发起者(initiator)</li>
+      <li>侦听者(listener)</li>
+    </ol>
+  </li>
+  <li>网络编程中，从事侦听的套接字称为 “服务器”，发起连接的套接字称为 “客户端”</li>
+</ul>
+
+<hr />
+
+<h3 id="section-8">第三章：服务器套接字生命周期</h3>
+<p>用于侦听连接而非发起连接，其典型的生命周期如下：</p>
+
+<ol>
+  <li>创建</li>
+  <li>绑定</li>
+  <li>侦听</li>
+  <li>接受</li>
+  <li>关闭</li>
+</ol>
+
+<h3 id="section-9">3.1 服务器绑定</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="c1"># 首先创建一个新的 TCP 套接字</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+
+<span class="c1"># 创建一个 C 结构体来保存用于侦听的地址。</span>
+<span class="n">addr</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">pack_sockaddr_in</span><span class="p">(</span><span class="mi">4481</span><span class="p">,</span> <span class="s1">'0.0.0.0'</span><span class="p">)</span>
+
+<span class="c1">#执行绑定</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">bingd</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>这个套接字已绑定到本机的 4481 端口，其它套接字不可用此端口，否则会产生异常 <code class="highlighter-rouge">Errno::EADDRINUSE</code></p>
+
+<h3 id="section-10">3.1.1 该绑定到哪个端口</h3>
+
+<ul>
+  <li>规则1: 不要使用  0~1024 之间的端口。这些端口是保留给系统使用的。 
+http: 80，SMTP: 25，RSYNC: 873，绑定这些端口需要 root 权限。</li>
+  <li>规则2：不要使用 49 000 ~ 65 535 之间的端口。
+这些是临时(tphemeral)端口。通常是用于临时之需的服务使用。</li>
+  <li>除此之外,1025~48 999 的端口使用时一视同仁的。可以参考 <a href="http://www.iana.org/assignments/port-numbers">IANA 的注册端口列表</a>，确保不与其他流行的服务器冲突。</li>
+</ul>
+
+<h3 id="section-11">3.1.2 该绑定到哪个地址</h3>
+
+<ul>
+  <li>绑定环回地址(127.0.0.1) ，仅限于本地连接使用。无法用于外部连接，只有 localhost 或 127.0.0.1 的连接才会被服务器套接字接受</li>
+  <li>绑定 <code class="highlighter-rouge">192.168.0.5</code> ，套接字只侦听此接口，无法用于本地连接</li>
+  <li>使用用 0.0.0.0，会侦听所有可用接口、环回地址等</li>
+</ul>
+
+<h3 id="section-12">3.2 服务器侦听</h3>
+
+<p>创建套接字绑定到端口之后，需要进行侦听.</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="c1"># 创建套接字并绑定到端口 4481</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+<span class="n">addr</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">pack_sockadd_in</span><span class="p">(</span><span class="mi">4481</span><span class="p">,</span> <span class="s1">'0.0.0.0'</span><span class="p">)</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+<span class="c1">#告诉套接字侦听接入的连接</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="section-13">3.2.1 侦听队列</h3>
+
+<ul>
+  <li>listen 方法传递了一个整数类型的参数，表示服务器套接字能容纳的待处理的最大连接数</li>
+  <li>待处理的连接列表被称为侦听队列。</li>
+  <li>如果客户端连接到达且侦听队列已满，客户端会产生 Errno::ECONNREFUSED</li>
+</ul>
+
+<h3 id="section-14">3.2.2 侦听队列的长度</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">Socket::SOMAXCONN</code> 可以获知当前锁允许的最大的侦听队列长度，Mac 上是 128</li>
+  <li>需要 root 权限来增加系统级别限制。</li>
+  <li>可使用 server.listen(Socket::SOMAXCONN) 将侦听队列长度设置为允许的最大值。</li>
+</ul>
+
+<h3 id="section-15">3.3 接受连接</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="c1"># 创建套接字并绑定到端口 4481</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+<span class="n">addr</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">pack_sockadd_in</span><span class="p">(</span><span class="mi">4481</span><span class="p">,</span> <span class="s1">'0.0.0.0'</span><span class="p">)</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+<span class="c1">#告诉套接字侦听接入的连接</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">#接受连接</span>
+<span class="n">connection</span><span class="p">,</span> <span class="o">-</span> <span class="o">=</span> <span class="n">server</span><span class="p">.</span><span class="nf">accept</span>
+</code></pre>
+</div>
+<p>用 netcat 发起一个连接, 运行后 nc 和 ruby 程序都会顺利退出</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="gp">$ </span><span class="nb">echo </span>ohai | nc localhost 4481
+</code></pre>
+</div>
+
+<h4 id="accept">accept</h4>
+
+<ul>
+  <li>accept 调用时阻塞式的，没有接收到新的连接，它会一直阻塞当前线程。</li>
+  <li>accept 调用返回一个数组，第一个是建立好的连接，第二个元素是 Addrinfo 对象，该对象描述客户端连接的远程地址</li>
+</ul>
+
+<h4 id="addrinfo">Addrinfo</h4>
+
+<ul>
+  <li>Addrinfo 类描述了一台主机机器端口号</li>
+  <li>有用的方法包括 #ip_address 和 #ip_port</li>
+  <li>构建例子：Addrinfo.tcp(‘localhost’, 4481)</li>
+</ul>
+
+<h3 id="section-16">连接详解</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="c1"># 创建套接字并绑定到端口 4481</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+<span class="n">addr</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">pack_sockadd_in</span><span class="p">(</span><span class="mi">4481</span><span class="p">,</span> <span class="s1">'0.0.0.0'</span><span class="p">)</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+<span class="c1">#告诉套接字侦听接入的连接</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="c1">#接受连接</span>
+<span class="n">connection</span><span class="p">,</span> <span class="o">-</span> <span class="o">=</span> <span class="n">server</span><span class="p">.</span><span class="nf">accept</span>
+
+<span class="nb">print</span> <span class="s1">'Connection class:'</span>
+<span class="nb">p</span> <span class="n">connection</span><span class="p">.</span><span class="nf">class</span>
+
+<span class="nb">print</span> <span class="s1">'Server fileno:'</span>
+<span class="nb">p</span> <span class="n">server</span><span class="p">.</span><span class="nf">fileno</span>
+
+<span class="nb">print</span> <span class="s1">'Connection fileno:'</span>
+<span class="nb">p</span> <span class="n">connection</span><span class="p">.</span><span class="nf">fileno</span>
+
+<span class="nb">print</span> <span class="s1">'Local address:'</span>
+<span class="nb">p</span> <span class="n">connection</span><span class="p">.</span><span class="nf">local_address</span>
+
+<span class="nb">print</span> <span class="s1">'Remote address:'</span>
+<span class="nb">p</span> <span class="n">connection</span><span class="p">.</span><span class="nf">remote_address</span> <span class="c1"># accept 第二个返回值相同</span>
+</code></pre>
+</div>
+
+<p>使用 netcat 命令发起连接后会输出：
+<code class="highlighter-rouge"> ruby
+Connection class: Socket
+Server fileno: 7
+Connection fileno: 8
+Local address: #&lt;Addrinfo: 127.0.0.1:4481 TCP&gt;
+Remote address: #&lt;Addrinfo: 127.0.0.1:50488 TCP&gt;
+Addrinfo"#&lt;Addrinfo: 127.0.0.1:50488 TCP&gt;"
+</code>
+#### 3.3.3 连接类
+- 连接类是 Socket 表示一个连接就是一个 Socket 的实例</p>
+
+<h4 id="section-17">3.3.4 文件描述符</h4>
+
+<ul>
+  <li>fileno(文件描述符编号)是内核用于跟踪当前进程所打开文件的一种方法。</li>
+  <li>在 Unix 世界中，所有的一些都被视为文件。包括文件系统中的文件以及管道、套接字和打印机，等等。</li>
+  <li>accept 返回了一个不同于服务器套接字的全新 Socket，每个连接都是一个全新的 Socket 对象描述</li>
+</ul>
+
+<h4 id="section-18">3.3.5 连接地址</h4>
+
+<ul>
+  <li>本地地址：本地主机、本地端口</li>
+  <li>远程地址：远程主机、远程端口</li>
+  <li>以上 4 个属性的组合必须是唯一的</li>
+</ul>
+
+<h4 id="accept-">3.3.6 accept 循环</h4>
+<p>accept 返回一个连接</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="c1"># 创建套接字并绑定到端口 4481</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+<span class="n">addr</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">pack_sockadd_in</span><span class="p">(</span><span class="mi">4481</span><span class="p">,</span> <span class="s1">'0.0.0.0'</span><span class="p">)</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">bind</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+<span class="c1">#告诉套接字侦听接入的连接</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">listen</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="c1">#进入无限循环，接受并处理连接</span>
+<span class="kp">loop</span> <span class="k">do</span>
+  <span class="c1">#接受连接</span>
+  <span class="n">connection</span><span class="p">,</span> <span class="o">-</span> <span class="o">=</span> <span class="n">server</span><span class="p">.</span><span class="nf">accept</span> <span class="c1"># 返回连接，第二个 - 是远程地址</span>
+  <span class="c1"># 处理连接</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="section-19">3.4 关闭服务器</h3>
+<p>服务器接受某个连接并处理完毕，那么最后需要关闭该连接。这样才算完成一个连接的
+“创建-处理-关闭” 的生命周期。</p>
+
+<h4 id="section-20">3.4.1 退出时关闭</h4>
+<p>关闭连接的理由：</p>
+
+<ul>
+  <li>资源使用</li>
+  <li>打开文件的数量限制</li>
+</ul>
+
+<blockquote>
+  <p><code class="highlighter-rouge">Process.getrlimit(:NOFILE)</code>，获知当前进程所需要打开文件的数量。
+返回值是数组，包含软限制(用户配置的设置)和硬限制(系统限制)。
+<code class="highlighter-rouge">Process.setrlimit(Process.getrlimit(:NOFILE)[1])</code> 将进程的打开文件限制改为最大值</p>
+</blockquote>
+
+<h4 id="section-21">3.4.2 不同的关闭方式</h4>
+<p>套接字允许双向通信(读/写)，实际上可以只关闭其中一个通道。</p>
+
+<ul>
+  <li><code class="highlighter-rouge">Socket#close_write</code>  关闭写操作流 (wite stream) 会发送一个EOF到套接字的另一端。</li>
+  <li><code class="highlighter-rouge">Socket#close_read</code> 关闭读操作流</li>
+  <li><code class="highlighter-rouge">Socket#close_write</code>  <code class="highlighter-rouge">Socket#close_read</code> 方法在底层都利用 <code class="highlighter-rouge">shutdown(2)</code></li>
+  <li><code class="highlighter-rouge">Socket#close</code> 关闭套接字实例并回收所用资源，但不会关闭副本，副本所占用资源也不会被回收。</li>
+  <li><code class="highlighter-rouge">Socket#shutdown</code>  会关闭当前套接字及其副本上的通信，但不会回收所用资源。每个套接字都需要使用 close 结束它的生命周期。</li>
+  <li><code class="highlighter-rouge">Socket#dup</code> 创建文件描述符副本</li>
+  <li><code class="highlighter-rouge">Process.fork</code> 可以获得一个文件描述符副本，该方法创建了一个全新的进程(仅在 Unix 环境中)，这个进程和当前进程一模一样，除了拥有当前进程在内存中的所有内容外，新进程还通过 <code class="highlighter-rouge">dup</code> 获得了所有已打开的文件描述符的副本</li>
+</ul>
+
+<h3 id="ruby--1">3.5 Ruby 包装器</h3>
+
+<h4 id="section-22">3.5.1 服务器创建</h4>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">server</span> <span class="o">=</span> <span class="no">TCPServer</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>简便的服务器创建方式</p>
+
+<ul>
+  <li><code class="highlighter-rouge">TCPServer#accept</code> 值返回连接</li>
+  <li><code class="highlighter-rouge">TCPServer</code> 默认的侦听队列长度是 5, 可以用 <code class="highlighter-rouge">TCPSrver#listen</code> 修改侦听队列长度</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">servers</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_sockets</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>以上代码同时返回两个套接字，IPv4 和 IPv6</p>
+
+<h4 id="section-23">3.5.2 连接处理</h4>
+
+<p><code class="highlighter-rouge">accept_loop</code> 无限循环，并且还可以接受多个侦听套接字</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="c1"># 创建侦听套接字</span>
+<span class="n">server</span> <span class="o">=</span> <span class="no">TCPServer</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span>
+
+<span class="c1"># 进入无线循环接手并处理连接</span>
+<span class="no">Socket</span><span class="p">.</span><span class="nf">accept_loop</span><span class="p">(</span><span class="n">server</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+  <span class="c1"># 处理连接</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>多个套接字处理
+```
+# 创建侦听套接字
+servers = Socket.tcp_server_sockets(4481) # 创建两个套接字 IPv4 和 IPv6</p>
+
+<h1 id="section-24">进入无线循环接手并处理连接</h1>
+<p>Socket.accept_loop(servers) do |connection|
+  # 处理连接
+  connection.close
+end
+```</p>
+
+<h4 id="section-25">3.5.3 合而为一</h4>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+  <span class="c1"># 处理连接</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="section-26">3.6 系统调用</h3>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>Socket#bind -&gt; <span class="nb">bind</span><span class="o">(</span>2<span class="o">)</span>
+Socket#listen -&gt; listen<span class="o">(</span>2<span class="o">)</span>
+Socket#accept -&gt; accept<span class="o">(</span>2<span class="o">)</span>
+Socket#local_address -&gt; getsockname<span class="o">(</span>2<span class="o">)</span>
+Socket#remote_address -&gt; getpeername<span class="o">(</span>2<span class="o">)</span>
+Socket#close -&gt; close<span class="o">(</span>2<span class="o">)</span>
+Socket#close_write -&gt; shutdown<span class="o">(</span>2<span class="o">)</span>
+Socket#shutdown -&gt; shutdown<span class="o">(</span>2<span class="o">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="section-27">第四章：客户端生命周期</h2>
+
+<p><strong>网络连接两部分：</strong></p>
+
+<ul>
+  <li>服务器负责侦听及处理接入的连接</li>
+  <li>客户端负责向服务器发起连接</li>
+</ul>
+
+<p><strong>客户端的生命周期</strong></p>
+
+<ul>
+  <li>(1) 创建</li>
+  <li>(2)  绑定</li>
+  <li>(3)  连接</li>
+  <li>(4)  关闭</li>
+</ul>
+
+<h3 id="section-28">4.1 客户端绑定</h3>
+
+<ul>
+  <li>建议：不要给客户端绑定端口</li>
+  <li>客户端不需要调用 bind，他会从临时端口范围内获得一个随机端口号</li>
+</ul>
+
+<h3 id="section-29">4.2 客户端连接</h3>
+
+<ul>
+  <li>connect 调用默认有一段较长时间的超时</li>
+  <li>出现超时，会产生一个 <code class="highlighter-rouge">Errno::ETIMEOUT</code> 异常</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">:INET</span><span class="p">,</span> <span class="ss">:STREAM</span><span class="p">)</span>
+
+<span class="c1"># 发起到 baidu.com 端口 80 的连接</span>
+<span class="n">remote_addr</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">pack_sockaddr_in</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s1">'baidu.com'</span><span class="p">)</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="n">remote_addr</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="ruby--2">4.3 ruby 包装器</h3>
+
+<p>客户端创建简写版本：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'baidu.com'</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>代码块：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp</span><span class="p">(</span><span class="s1">'baidu.com'</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">write</span> <span class="s2">"GET / HTTP/1.1</span><span class="se">\r\n</span><span class="s2">"</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<p>省略代码块:</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="no">Socket</span><span class="p">.</span><span class="nf">tcp</span><span class="p">(</span><span class="s1">'baidu.com'</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="section-30">4.4 系统调用</h3>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>Socket#bind -&gt; <span class="nb">bind</span><span class="o">(</span>2<span class="o">)</span>
+Socket#connect -&gt; connect<span class="o">(</span>2<span class="o">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="section-31">第五章：交换数据</h2>
+
+<ul>
+  <li>TCP 连接如同遗传连接了本地套接字和远程套接字的管子，可以通过管子发送数据</li>
+  <li>所有的数据都被编码成 TCP/IP 分组</li>
+</ul>
+
+<h3 id="section-32">流</h3>
+
+<ul>
+  <li>TCP 是一个基于流的协议</li>
+  <li>创建套接字，需要传入 :STREAM 选项</li>
+  <li>TCP 连接提供了一个不间断的、有序的通信流。</li>
+</ul>
+
+<p>演示伪代码：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># 下面的代码会在网络上发送 3 份数据，一次一份</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">,</span><span class="s1">'b'</span><span class="p">,</span><span class="s1">'c'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">piece</span> <span class="k">in</span> <span class="n">data</span>
+  <span class="n">write_to_connection</span><span class="p">(</span><span class="n">piece</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c1"># 下面的代码在一次做作中读取全部数据</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">read_from_connection</span> <span class="c1">#=&gt; ['a','b','c']</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">流并没有消息边界的概念</code>：</p>
+
+<ul>
+  <li>客户端分别发送 3 份数据，服务器读取，是将其作为一份数据来接手，并不知道客户端是分批发送的数据</li>
+</ul>
+
+<hr />
+
+<h2 id="section-33">第六章：套接字读取</h2>
+
+<p>学习如何在套接字上传送数据</p>
+
+<h3 id="section-34">6.1 简单的读操作</h3>
+
+<ul>
+  <li>Ruby 的各种套接字以及 File 在 IO 中都有一个共同的父类。</li>
+  <li>Ruby 中所有的 IO 对象(套接字、管道、文件…)都有一套通用的接口，支持 read、write、flush 等方法</li>
+  <li>抽象源自操作系统核心本身，底层的 <code class="highlighter-rouge">read(2)</code> <code class="highlighter-rouge">write(2)</code> 等系统调用都可以作用域文件、套接字、管道等之上</li>
+</ul>
+
+<p>服务端：
+``` ruby
+require ‘socket’</p>
+
+<p>Socket.tcp_server_loop(4481) do |connection|
+  # 从连接中读取数据最简单的方法
+  puts connection.read</p>
+
+<p># 完成读取之后关闭连接，让客户端知道不用再等待数据返回
+  connection.close
+end
+```</p>
+
+<p>客户端调用：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">echo </span>ohi | nc lcoalhost 4481
+</code></pre>
+</div>
+
+<h3 id="section-35">6.2 没那么简单</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">EOF</code>:  end-of-file, 表示数据结尾</li>
+  <li>服务器的 read 会一直阻塞，直到客户端发完数据为止</li>
+</ul>
+
+<p>客户端：</p>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code> tail -f /var/log/system.log | nc -v localhost 4481
+</code></pre>
+</div>
+
+<h3 id="section-36">6.3 读取长度</h3>
+<ul>
+  <li>解决阻塞的办法是，指定最小的读取长度，告诉服务器读取(read)特定的数据量</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">one_kb</span> <span class="o">=</span> <span class="mi">1024</span> <span class="c1"># 字节数</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+
+  <span class="c1"># 以 1kb 为单位进行读取</span>
+  <span class="k">while</span> <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">one_kb</span><span class="p">)</span> <span class="k">do</span> 
+    <span class="nb">puts</span> <span class="n">data</span>
+  <span class="k">end</span>
+
+  <span class="c1"># 完成读取之后关闭连接，让客户端知道不用再等待数据返回</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="section-37">6.4 阻塞的本质</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">read</code> 调用会一直阻塞，直到获取了完整长度的数据为止</li>
+</ul>
+
+<p>解决 <code class="highlighter-rouge">read</code> 死锁的办法：</p>
+
+<ol>
+  <li>客户端发完 500B 后再发送一个 ·EOF·</li>
+  <li>服务器采用部分读取 (partial read) 的方式</li>
+</ol>
+
+<h3 id="eof-">6.5 EOF 事件</h3>
+
+<ul>
+  <li>当在连接上调用 <code class="highlighter-rouge">read</code> 并接收到 EOF 事件时，就可以确定不会再有数据，可以停止读取了。</li>
+  <li><code class="highlighter-rouge">EOF</code> 代表 <code class="highlighter-rouge">end of file</code>(文件结束)</li>
+  <li><code class="highlighter-rouge">EOF</code> 并不代表某种字符序列，它更新一个状态事件(state even)</li>
+  <li>如果一个套接字没有数据可写，可以调用 <code class="highlighter-rouge">shutdown</code> 或 <code class="highlighter-rouge">close</code> 表示不再需要写入数据。这发送一个 <code class="highlighter-rouge">EOF</code> 事件给另一端进行读操作的进程</li>
+  <li>调用 <code class="highlighter-rouge">File#read</code> 时(同 <code class="highlighter-rouge">Socket#read</code> 的行为方式类似)，会一直进行数据读取，直到无数据为止。一旦读完文件，会受到一个 <code class="highlighter-rouge">EOF</code> 事件并返回已读取到的数据</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># ./code/snippets/read_with_length.rb</span>
+
+<span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">one_hundred_kb</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">100</span> <span class="c1"># 字节数</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+  <span class="k">begin</span>
+    <span class="c1"># 以 1kb 为单位进行读取</span>
+    <span class="k">while</span> <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="nf">readpartial</span><span class="p">(</span><span class="n">one_hundred_kb</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">puts</span> <span class="n">data</span>
+      <span class="k">end</span>
+    <span class="k">rescue</span> <span class="no">EOFError</span>
+    <span class="k">end</span>
+
+    <span class="c1"># 完成读取之后关闭连接，让客户端知道不用再等待数据返回</span>
+    <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+
+</code></pre>
+</div>
+
+<p>客户端连接：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># ./code/snippets/write_with_eof.rb</span>
+
+<span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">client</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">4481</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s1">'gekko'</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">close</span>
+</code></pre>
+</div>
+
+<h3 id="section-38">6.6 部分读取</h3>
+
+<ul>
+  <li>调用 <code class="highlighter-rouge">readpartial</code> 不会阻塞，而是立即返回可用数据</li>
+  <li><code class="highlighter-rouge">readpartial</code> 必须传递一个整数作为参数，来指定最大的长度</li>
+  <li><code class="highlighter-rouge">readpartial</code> 最多读取到指定长度。如果指明 1kb 数据，但客户端发送了 500B，并不会阻塞，会立即将读到的数据返回</li>
+  <li>当接收到 <code class="highlighter-rouge">EOF</code> 时 <code class="highlighter-rouge">read</code> 仅仅是返回， 而 <code class="highlighter-rouge">readpartial</code> 则会产生一个 <code class="highlighter-rouge">EOFError</code> 异常</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># ./code/snippets/readpartial_with_length.rb</span>
+
+<span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">one_hundred_kb</span> <span class="o">=</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">100</span> <span class="c1"># 字节数</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+  <span class="k">begin</span>
+    <span class="c1"># 以 1kb 为单位进行读取</span>
+    <span class="k">while</span> <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="nf">readpartial</span><span class="p">(</span><span class="n">one_hundred_kb</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">puts</span> <span class="n">data</span>
+      <span class="k">end</span>
+    <span class="k">rescue</span> <span class="no">EOFError</span>
+    <span class="k">end</span>
+
+    <span class="c1"># 完成读取之后关闭连接，让客户端知道不用再等待数据返回</span>
+    <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+
+</code></pre>
+</div>
+
+<h3 id="section-39">6.7 系统调用</h3>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>Socket#read -&gt; <span class="nb">read</span><span class="o">(</span>2<span class="o">)</span>,行为类似 fread<span class="o">(</span>3<span class="o">)</span>
+Socket#readpartial -&gt; <span class="nb">read</span><span class="o">(</span>2<span class="o">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="section-40">第七章：套接字写操作</h2>
+
+<ul>
+  <li>套接字写入数据，需要调用 <code class="highlighter-rouge">write</code> 方法</li>
+  <li>系统调用: <code class="highlighter-rouge">Socket#write</code> -&gt; <code class="highlighter-rouge">write(2)</code></li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+
+  <span class="c1"># 向连接中写入数据的最简单的方法</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="s1">'Welcome!'</span><span class="p">)</span>
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="section-41">第八章：缓冲</h2>
+
+<h3 id="section-42">8.1 写缓冲</h3>
+
+<ul>
+  <li>调用 <code class="highlighter-rouge">write</code> 并返回，不代表数据已通过网络发送并被客户端套接字接收</li>
+  <li>调用 <code class="highlighter-rouge">write</code> 并返回，只表明已将数据提交给了 <code class="highlighter-rouge">Ruby</code> 的 <code class="highlighter-rouge">IO</code> 系统和底层的操作系统内核</li>
+  <li>在应用程序代码和实际的网络硬件之间至少还存在一个缓冲层</li>
+  <li>TCP 套接字morning将 sync 设置为 true, 跳过了 ruby 的内部缓冲</li>
+  <li>IO 缓冲是为了更好的性能</li>
+</ul>
+
+<h3 id="section-43">8.2 读写入多少数据</h3>
+
+<ul>
+  <li>因为有缓冲区，我们可以一次写入所有的数据，由内核决定如何对数据进行分割或合并来调节性能</li>
+  <li>如果数据量很大的 write，可以将自己将数据分割，避免全部载入内存中</li>
+</ul>
+
+<h3 id="section-44">8.3 读缓冲</h3>
+
+<ul>
+  <li>读操作同样会被缓冲</li>
+  <li>用 <code class="highlighter-rouge">read</code> 读取指定长度的数据，ruby 实际会接收大于制定长度的数据, ruby 多读的数据会被存储在 ruby 内部的读缓冲区</li>
+  <li>下次调用 <code class="highlighter-rouge">read</code>,ruby 会查看内部缓冲区数据，然后再通过内核请求更多的数据</li>
+</ul>
+
+<h3 id="section-45">8.4 该读取多少数据</h3>
+
+<ul>
+  <li>TCP 提供的是数据流，无法得知发送方到底发送了多少数据，读取长度只能靠猜测</li>
+  <li>指定读取长度时，内核会分配一定的内存</li>
+  <li>指定读取长度太大，会浪费内存资源；指定长度太小，会有大量系统调用开销</li>
+  <li>Mongrel、Unicorn、Puma、Passenger 以及 Net::HTTP，采 <code class="highlighter-rouge">readpartial(1024*16)</code> 16KB 作为读取长度</li>
+  <li><code class="highlighter-rouge">redis-rb</code> 使用 1KB 作为读取长度</li>
+</ul>
+
+<hr />
+
+<h2 id="section-46">第 10 章：套接字选项</h2>
+
+<h3 id="sotype">10.1 SO_TYPE</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'google.com'</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+
+<span class="c1"># 获得一个描述套接字类型的 Socket::Option 实例</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="nf">getsockopt</span><span class="p">(</span><span class="no">Socket</span><span class="o">::</span><span class="no">SOL_SOCKET</span><span class="p">,</span> <span class="no">Socket</span><span class="o">::</span><span class="no">SO_TYPE</span><span class="p">)</span>
+
+<span class="c1"># 将描述该选项的整数值同存储在 Socket::SOCK_STREAM 中的整数值进行比较</span>
+<span class="nb">puts</span> <span class="n">opt</span><span class="p">.</span><span class="nf">int</span> <span class="o">==</span> <span class="no">Socket</span><span class="o">::</span><span class="no">SOCK_STREAM</span> <span class="c1">#=&gt; true</span>
+<span class="nb">puts</span> <span class="n">opt</span><span class="p">.</span><span class="nf">int</span> <span class="o">==</span> <span class="no">Socket</span><span class="o">::</span><span class="no">SOCK_DGRAM</span> <span class="c1">#=&gt; false</span>
+</code></pre>
+</div>
+
+<p>简便方式：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">socket</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'google.com'</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+
+<span class="c1"># 使用符号名,而不是常量</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">socket</span><span class="p">.</span><span class="nf">getsockopt</span><span class="p">(</span><span class="ss">:SOCKET</span><span class="p">,</span> <span class="ss">:TYPE</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="soreuseaddr">10.2 SO_REUSE_ADDR</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">SO_REUSE_ADDR</code> 选项告诉内核：如果服务器当前处于 TCP 的 <code class="highlighter-rouge">TIME_WAIT</code> 状态，即便另一个套接字要绑定(<code class="highlighter-rouge">bind</code>) 到服务器目前所使用的本地地址也无妨.</li>
+  <li>TCPServer.new、Socket.tcp_server_loop 及其类似的方法默认都打开了此选项</li>
+</ul>
+
+<p>示例代码：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="n">server</span> <span class="o">=</span> <span class="no">TCPServer</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">4481</span><span class="p">)</span>
+<span class="n">server</span><span class="p">.</span><span class="nf">setsockopt</span><span class="p">(</span><span class="ss">:SOCKET</span><span class="p">,</span> <span class="ss">:REUSEADDR</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
+
+<span class="n">server</span><span class="p">.</span><span class="nf">getsockopt</span><span class="p">(</span><span class="ss">:SOCKET</span><span class="p">,</span> <span class="ss">:REUSEADDR</span><span class="p">)</span> <span class="c1">#=&gt; true</span>
+</code></pre>
+</div>
+
+<h3 id="section-47">10.3 系统调用</h3>
+
+<div class="language-bash highlighter-rouge"><pre class="highlight"><code>Socket#setsockopt -&gt; setsockopt<span class="o">(</span>2<span class="o">)</span>
+Socket#getsockopt -&gt; getsockopt<span class="o">(</span>2<span class="o">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="io">第11章：非阻塞式 IO</h2>
+
+<h3 id="section-48">11.1 非阻塞式读操作</h3>
+
+<p><strong>两种阻塞的读操作</strong>
+- <code class="highlighter-rouge">read</code> 会一直保持阻塞，直到接收到 <code class="highlighter-rouge">EOF</code> 或是获得指定的最小字节数为止
+- <code class="highlighter-rouge">readpartial</code> 会立即返回所有的可用数据，但如果没有数据可用，那么 <code class="highlighter-rouge">readpartial</code>仍会陷入阻塞</p>
+
+<p>**<code class="highlighter-rouge">Socket#read_nonblock</code> **:</p>
+
+<ul>
+  <li>非阻塞读操作，需要指定整数值，作为读取的最大字节数</li>
+  <li>如果可用数据小于最大字节数，则返回可用数据</li>
+  <li>没有数据可读，<code class="highlighter-rouge">read_nonblock</code> 调用仍然会立即返回，并产生一个 <code class="highlighter-rouge">Errno::EAGAIN</code>异常</li>
+  <li><code class="highlighter-rouge">Errno::EAGAIN</code>: 文件被标记用于非阻塞式 IO，无数据可读</li>
+</ul>
+
+<blockquote>
+  <p><code class="highlighter-rouge">read_nonblock</code> 方法首先检查 <code class="highlighter-rouge">ruby</code> 的内部缓冲区中是否还有未处理的数据，如果有，则立即返回
+   <code class="highlighter-rouge">read_nonblock</code> 会询问内核是否有其他可用的数据可供 <code class="highlighter-rouge">select(2)</code>  读取,如果有，不管这些数据是在内核缓冲区还是网络中，他们都会被读取并返回
+  其他情况都会使 <code class="highlighter-rouge">read(2)</code> 阻塞并在 <code class="highlighter-rouge">read_nonblock</code> 中引发异常</p>
+</blockquote>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+  <span class="k">begin</span>
+    <span class="nb">puts</span> <span class="n">connection</span><span class="p">.</span><span class="nf">read_nonblock</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span>
+  <span class="k">rescue</span> <span class="no">Errno</span><span class="o">::</span><span class="no">EAGAIN</span> <span class="o">=&gt;</span> <span class="n">e</span>
+    <span class="no">IO</span><span class="p">.</span><span class="nf">select</span><span class="p">([</span><span class="n">connection</span><span class="p">])</span>
+    <span class="k">retry</span>
+  <span class="k">rescue</span> <span class="no">EOFError</span>
+    <span class="k">break</span>
+  <span class="k">end</span>
+
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="section-49">11.2 非阻塞式写操作</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">write_nonblock</code> 会在出现阻塞的时候，返回部分写入的结果</li>
+  <li><code class="highlighter-rouge">write_nonblock</code> 的行为和系统调用 <code class="highlighter-rouge">write(2)</code>一样， 尽可能多的写入数据并返回写入的数量</li>
+  <li><code class="highlighter-rouge">write</code> 和 <code class="highlighter-rouge">write_nonblock</code> 不同，<code class="highlighter-rouge">write</code> 会多次调用 <code class="highlighter-rouge">write(2)</code> 写入所有请求的数据</li>
+  <li><code class="highlighter-rouge">write_nonblock</code> 如果遇到阻塞会得到一个 <code class="highlighter-rouge">Errno::EAGAIN</code> 异常</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">/</span><span class="n">code</span><span class="o">/</span><span class="n">snippets</span><span class="o">/</span><span class="n">write_nonblock</span><span class="p">.</span><span class="nf">rb</span>
+<span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">4481</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="s1">'Lorem ipsum'</span> <span class="o">*</span> <span class="mi">100_000</span>
+
+<span class="n">written</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">write_nonblock</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">written</span> <span class="o">&lt;</span> <span class="n">payload</span><span class="p">.</span><span class="nf">size</span> 
+</code></pre>
+</div>
+
+<p>非阻塞，多次写入：</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="p">.</span><span class="nf">/</span><span class="n">code</span><span class="o">/</span><span class="n">snippets</span><span class="o">/</span><span class="n">retry_partial_write</span><span class="p">.</span><span class="nf">rb</span>
+
+<span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">4481</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="s1">'Lorem ipsum'</span> <span class="o">*</span> <span class="mi">100_000</span>
+
+<span class="k">begin</span>
+  <span class="kp">loop</span> <span class="k">do</span>
+    <span class="n">bytes</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">write_nonblock</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="k">break</span> <span class="k">if</span> <span class="n">bytes</span> <span class="o">&gt;=</span> <span class="n">payload</span><span class="p">.</span><span class="nf">size</span>
+    <span class="nb">puts</span> <span class="s2">"----</span><span class="si">#{</span><span class="n">bytes</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">payload</span><span class="p">.</span><span class="nf">slice!</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytes</span><span class="p">)</span> <span class="c1"># 删除已经写入的数据</span>
+    <span class="no">IO</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="kp">nil</span><span class="p">,</span> <span class="p">[</span><span class="n">client</span><span class="p">])</span>
+  <span class="k">end</span>
+
+<span class="k">rescue</span> <span class="no">Errno</span><span class="o">::</span><span class="no">EAGAIN</span>
+  <span class="no">IO</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="kp">nil</span><span class="p">,</span> <span class="p">[</span><span class="n">client</span><span class="p">])</span>
+  <span class="k">retry</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="section-50">11.3 非拥塞式接收</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">accept</code> 只是从侦听队列中弹出一个连接</li>
+  <li><code class="highlighter-rouge">accept_nonblock</code> 在侦听队列为空时不会阻塞，只是产生一个 <code class="highlighter-rouge">Errno::EAGAIN</code></li>
+</ul>
+
+<h3 id="section-51">11.4 非拥塞式连接</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">connect_nonblock</code> 不能立即发起到远程主机的连接，他会在后台继续执行操作并产生 <code class="highlighter-rouge">Errno::EINPROGRESS</code></li>
+</ul>
+
+<hr />
+
+<h2 id="section-52">第 12 章：连接复用</h2>
+
+<ul>
+  <li>连接复用指同时处理多个活动套接字，不是并行处理，无关多线程</li>
+</ul>
+
+<p>示例代码：<code class="highlighter-rouge">./code/snippets/native_multiplexing.rb</code></p>
+
+<h2 id="select2">12.1 select(2)</h2>
+<ul>
+  <li><code class="highlighter-rouge">IO.select</code> 的作用是接手若干个 <code class="highlighter-rouge">IO</code> 对象，告知哪个可以进行读写</li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="err">#</span><span class="x"> </span><span class="n">snippets</span><span class="o">/</span><span class="n">select_returns</span><span class="o">.</span><span class="n">rb</span><span class="x">
+</span><span class="n">for_reading</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="p">[</span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">]</span><span class="x">
+</span><span class="n">for_writing</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="p">[</span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">]</span><span class="x">
+
+</span><span class="n">ready</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">IO</span><span class="o">.</span><span class="k">select</span><span class="p">(</span><span class="n">for_reading</span><span class="p">,</span><span class="x"> </span><span class="n">for_writing</span><span class="p">,</span><span class="x"> </span><span class="n">for_writing</span><span class="p">)</span><span class="x">
+
+</span><span class="err">#</span><span class="x"> </span><span class="n">对于每个座位参数传入的数组均会返回一个数组</span><span class="x">
+</span><span class="err">#</span><span class="x"> </span><span class="n">在这里</span><span class="err">，</span><span class="x"> </span><span class="n">for_writing</span><span class="x"> </span><span class="n">中没有连接可写</span><span class="err">，</span><span class="n">for_reading</span><span class="x"> </span><span class="n">中有一个连接可读</span><span class="x">
+</span><span class="n">p</span><span class="x"> </span><span class="n">ready</span><span class="x"> </span><span class="err">#</span><span class="o">=&gt;</span><span class="x"> </span><span class="p">[[</span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">],</span><span class="x"> </span><span class="p">[],</span><span class="x"> </span><span class="p">[]]</span><span class="x">
+</span></code></pre>
+</div>
+
+<ul>
+  <li><code class="highlighter-rouge">IO.select</code> 可以使用 3 个数组作为参数：
+    <ul>
+      <li>第一个参数是希望从中进行读取的 IO 对象数组</li>
+      <li>第二个参数是希望进行写入的 IO 对象数组</li>
+      <li>第三个是在异常条件下使用的 IO 对象数组，可以被忽略</li>
+      <li><code class="highlighter-rouge">IO.select</code>  返回一个包含了3个元素的嵌套数组，分别对应它的参数列表</li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">IO.select</code> 会阻塞，是一个同步方法调用</li>
+  <li><code class="highlighter-rouge">IO.select</code> 还有第四个参数，一个以秒为单位的超时值，可以避免 <code class="highlighter-rouge">IO.select</code> 永久的阻塞下去， 如果超时会返回 <code class="highlighter-rouge">nil</code></li>
+  <li>可以传递纯 ruby 对象给 <code class="highlighter-rouge">IO.select</code> ，只要它们实现了 <code class="highlighter-rouge">to_io</code> 方法并返回一个 IO 对象</li>
+</ul>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="err">#</span><span class="x"> </span><span class="n">snippets</span><span class="o">/</span><span class="n">select_timeout</span><span class="o">.</span><span class="n">rb</span><span class="x">
+</span><span class="n">for_reading</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="p">[</span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">]</span><span class="x">
+</span><span class="n">for_writing</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="p">[</span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">,</span><span class="x"> </span><span class="o">&lt;</span><span class="n">TCPSocket</span><span class="o">&gt;</span><span class="p">]</span><span class="x">
+
+</span><span class="n">timeout</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="m">10</span><span class="x">
+</span><span class="n">ready</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">IO</span><span class="o">.</span><span class="k">select</span><span class="p">(</span><span class="n">for_reading</span><span class="p">,</span><span class="x"> </span><span class="n">for_writing</span><span class="p">,</span><span class="x"> </span><span class="n">for_writing</span><span class="p">,</span><span class="x"> </span><span class="n">timeout</span><span class="p">)</span><span class="x">
+
+</span><span class="err">#</span><span class="x"> </span><span class="n">在这里</span><span class="x"> </span><span class="s">`IO.select`</span><span class="x"> </span><span class="n">在</span><span class="x"> </span><span class="m">10</span><span class="x"> </span><span class="n">秒钟内没有检测到任何状态的改变</span><span class="x">
+</span><span class="err">#</span><span class="x"> </span><span class="n">因此返回</span><span class="x"> </span><span class="no">nil</span><span class="p">,</span><span class="x"> </span><span class="n">而非嵌套数组</span><span class="x">
+</span><span class="n">p</span><span class="x"> </span><span class="n">ready</span><span class="x"> </span><span class="err">#</span><span class="o">=&gt;</span><span class="x"> </span><span class="no">nil</span><span class="x">
+</span></code></pre>
+</div>
+
+<h2 id="section-53">12.2 读/写之外的事件</h2>
+<p><code class="highlighter-rouge">IO.select</code> 监视套接字的读写状态</p>
+
+<h3 id="eof">12.2.1 EOF</h3>
+<p><code class="highlighter-rouge">EOF</code> 是 <code class="highlighter-rouge">end of file</code> ，如果在监视可读性时，接到 <code class="highlighter-rouge">EOF</code> ，该套接字会作为可读套接字数组的一部分被返回</p>
+
+<h3 id="accept-1">12.2.2 accept</h3>
+
+<ul>
+  <li>监视服务器套接字可读性时，如果收到接入连接，套接字可作为可读套接字数组的一部分返回</li>
+</ul>
+
+<h3 id="connect">12.2.2 connect</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">connect_nonblock</code> 是非阻塞式连接，如果不能立刻完成连接，则会产生 <code class="highlighter-rouge">Errno::EIGPROGRESS</code></li>
+  <li>使用 <code class="highlighter-rouge">IO.select</code> 了解后台连接是否已经完成
+端口扫描器代码见 <code class="highlighter-rouge">./code/snippets/port_scanner.rb</code></li>
+</ul>
+
+<h3 id="section-54">12.2.3 高性能复用</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">IO.select</code> 是 ruby 核心代码库，他是 ruby 进行复用唯一手段</li>
+  <li>大多数系统支持多种复用方法， <code class="highlighter-rouge">select(2)</code> 几乎是最古老，也是用的最少的</li>
+  <li><code class="highlighter-rouge">IO.select</code> 同它所监视的连接数呈线性关系，监视连接数越多，性能就越差</li>
+  <li>
+    <p><code class="highlighter-rouge">select(2)</code> 系统调用受到 <code class="highlighter-rouge">FD_SETSIZE</code>（文件描述符数量大小） 的限制，无法对编号大于 FD_SETSIZE(多数系统上是 1024)的文件描述符进行监视</p>
+  </li>
+  <li><code class="highlighter-rouge">poll(2)</code> 系统调用与 <code class="highlighter-rouge">select(2)</code> 仅限于表面不同</li>
+  <li><code class="highlighter-rouge">epoll(2)</code> 以及 BSD 的 <code class="highlighter-rouge">kqueue(2)</code> 系统调用比 <code class="highlighter-rouge">select(2)</code> 效果更好，性能更先进</li>
+  <li><code class="highlighter-rouge">EvenMachine</code> 倾向于使用 <code class="highlighter-rouge">epoll(2)</code> 以及 BSD 的 <code class="highlighter-rouge">kqueue(2)</code></li>
+  <li>ruby 的 gem <code class="highlighter-rouge">nio4r</code> 为 <code class="highlighter-rouge">select(2)</code>, <code class="highlighter-rouge">epoll(2)</code> 等提供了通用的接口</li>
+</ul>
+
+<hr />
+
+<h2 id="nagle-">第 13 章：Nagle 算法</h2>
+
+<ul>
+  <li>Nagle 算法是一种默认用于所有的 TCP 连接的优化</li>
+  <li>这种优化适合那些不进行缓冲、每次只发送很小数据量的应用程序</li>
+  <li>ruby 有缓冲，所以在 TCP 上实现的大部分常见协议会希望禁用 Nagle 算法</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">server</span><span class="p">.</span><span class="nf">setsockopt</span><span class="p">(</span><span class="no">Socket</span><span class="o">::</span><span class="no">IPPROTO_TCP</span><span class="p">,</span> <span class="no">Socket</span><span class="o">::</span><span class="no">TCP_NODELAY</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="section-55">第 14 章：消息划分</h2>
+
+<ul>
+  <li>发送多条消息并复用连接，需要用某种方式表明消息之间的起止</li>
+  <li>多消息重用连接与 <code class="highlighter-rouge">HTTP keep-alive</code> 特性背后的理念一致，在多个请求间保持连接开放(包括客户端和服务器协商的划分消息的方法)，通过避免打开新的连接来节省资源。</li>
+</ul>
+
+<p><strong>协议与消息</strong>：</p>
+
+<ul>
+  <li>协议定义了应该如何格式化消息</li>
+  <li>比如：HTTP 协议既定义了消息边界(连续的新行)，也定义了用于消息内容(涉及请求行、头部等)的协议</li>
+</ul>
+
+<h3 id="section-56">14.1 使用新行</h3>
+
+<ul>
+  <li>使用新行(newlines) 是一种划分消息的简单方法</li>
+  <li>使用 ruby <code class="highlighter-rouge">IO#gets</code> 和 <code class="highlighter-rouge">IO#puts</code> 可以发送带新行的消息</li>
+  <li><code class="highlighter-rouge">IO#gets</code> 和 <code class="highlighter-rouge">IO#puts</code>  在不同的操作系统中使用的行分隔符不一样，需要注意兼容性问题</li>
+  <li>现实中使用新行划分消息的协议是 HTTP，用 <code class="highlighter-rouge">\r\n</code></li>
+</ul>
+
+<h3 id="section-57">14.2 使用内容长度</h3>
+
+<p>划分指定内容长度(content length):</p>
+
+<ul>
+  <li>发送方先计算出消息的长度，使用 pack 将其转换成固定宽度的整数</li>
+  <li>消息接收方首先读取这个长度值，知道了消息的大小</li>
+  <li>然后接收方严格读取长度值所指定的字节数，获得完整的消息</li>
+</ul>
+
+<p>代码详细见 cloudhash/server2.rb  cloudhash/client2.rb</p>
+
+<hr />
+
+<h2 id="section-58">第 15 章： 超时</h2>
+
+<p>如果套接字没能在 5 秒内完成数据写入，那就说明存在问题</p>
+
+<h3 id="section-59">15.1 不可用的选项</h3>
+
+<ul>
+  <li>ruby 标准库 <code class="highlighter-rouge">timeout</code> 提供了一种通用的超时机制</li>
+  <li>操作系统提供了自带的套接字超时处理机制, ruby 1.9 之后 不能会用</li>
+  <li>ruby 处理套接字超时建议使用 <code class="highlighter-rouge">IO.select</code></li>
+</ul>
+
+<h3 id="ioselect">15.2 IO.select</h3>
+
+<ul>
+  <li>除了读取超时，连接/接收的超时都可以用 <code class="highlighter-rouge">IO.select</code> 处理</li>
+</ul>
+
+<p>代码见 <code class="highlighter-rouge">snippet/read_timeout.rb</code></p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+<span class="nb">require</span> <span class="s1">'timeout'</span>
+
+<span class="n">timeout</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># 秒</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+
+  <span class="k">begin</span>
+    <span class="c1"># 发起一个初始化 read(2)。这一点很重要</span>
+    <span class="c1"># 因为要求套接字上有被请求的数据，有数据可读时避免使用 select(2)</span>
+    <span class="n">connection</span><span class="p">.</span><span class="nf">read_nonblock</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span>
+
+  <span class="k">rescue</span> <span class="no">Errno</span><span class="o">::</span><span class="no">EAGAIN</span>
+    <span class="c1"># 监视连接是否可读</span>
+    <span class="k">if</span> <span class="no">IO</span><span class="p">.</span><span class="nf">select</span><span class="p">([</span><span class="n">connection</span><span class="p">],</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+      <span class="c1"># IO.select 会将套接字返回，不过我们并不关心返回值</span>
+      <span class="c1"># 不返回 nil 就意味着套接字可读</span>
+      <span class="k">retry</span>
+    <span class="k">else</span>
+      <span class="k">raise</span> <span class="no">Timeout</span><span class="o">::</span><span class="no">Error</span>  <span class="c1"># 使用 timeout 只是为了用 Timeout::Error 常量</span>
+    <span class="k">end</span>
+
+  <span class="k">end</span>
+
+  <span class="n">connection</span><span class="p">.</span><span class="nf">close</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="dns-">第 16 章： DNS 查询</h2>
+
+<h3 id="mri--gil">MRI 和 GIL</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">Global Interpreter Lock, GIL</code> 全局解释锁，确保 ruby 解释器只做一件有潜在危险的事。多线程环境中，当一个线程进行活动时，其它线程全部处于阻塞状态</li>
+  <li>如果一个线程进行阻塞式 IO, （例如一个阻塞式 read）, GIL 会释放 GIL 并让另一个线程继续执行</li>
+  <li>只要代码块用到了 C 语言扩展 API, GIL 会阻塞其它代码的运行</li>
+  <li>ruby 的 DNS 查询使用了一个 C 语言扩展，可能会被长时间阻塞，MRI 就不会释放 GIL</li>
+</ul>
+
+<p>resolv</p>
+
+<ul>
+  <li>resolv 为 DNS 查询提供了一套纯 Ruby 的替代方案，是的 MRI 能够为长期阻塞的 DNS 查询释放 GIL</li>
+  <li>ruby 标准库使用 <code class="highlighter-rouge">resolv-replace</code> 猴子不定来使用 resolv</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="sb">`resolv`</span> <span class="c1"># 库</span>
+<span class="n">reequire</span> <span class="sb">`resolv-replace`</span> <span class="c1"># 猴子补丁</span>
+</code></pre>
+</div>
+
+<hr />
+
+<h2 id="ssl-">第 17 章: SSL 套接字</h2>
+
+<ul>
+  <li>SSL 使用公钥加密提供了一套用于在套接字上进行安全的数据交换的机制</li>
+  <li>套接字可以升级为 SSL，但一个套接字不能同时进行 SSL 和非 SSL 通信</li>
+  <li>ruby 中使用标准库的 openssl 实现套接字转为 SSL 套接字</li>
+</ul>
+
+<h2 id="ssl--1">第 18 章: SSL 套接字</h2>
+
+<ul>
+  <li>TCP 套接字数据提供了一种有序的数据流。</li>
+  <li>可以将 TCP 数据流想象成一个队列。套接字连接的一端向连接中写入数据，就相当于将数据入列。</li>
+  <li>数据经过若干阶段（本地缓冲、网络传输、远程缓冲），然后在接收端的套接字出列。</li>
+  <li>TCP 紧急数据，更多的时候被称作 “带外数据”(out-of-band data),支持将数据推到队列的前端，绕过其它已经在传输的数据，比便于另一端尽快接收</li>
+</ul>
+
+<h3 id="section-60">发送紧急数据</h3>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="n">socket</span> <span class="o">=</span> <span class="no">TCPSocket</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">4481</span>
+
+<span class="c1"># 会用标准方法发送数据</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">write</span> <span class="s1">'first'</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">write</span> <span class="s1">'second'</span>
+
+<span class="c1"># 发送紧急数据</span>
+<span class="n">socket</span><span class="p">.</span><span class="nf">send</span> <span class="s1">'!'</span><span class="p">,</span><span class="no">Socket</span><span class="o">::</span><span class="no">MSG_OOB</span>
+</code></pre>
+</div>
+<ul>
+  <li><code class="highlighter-rouge">Socket#send</code> 将 <code class="highlighter-rouge">Socket::MSG_OOB</code> 常量作为标志。 OOB 指的就是带外数据</li>
+  <li>发送方和接收方需要合作才可以处理带外数据</li>
+</ul>
+
+<h2 id="section-61">接收紧急数据</h2>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'socket'</span>
+
+<span class="no">Socket</span><span class="p">.</span><span class="nf">tcp_server_loop</span><span class="p">(</span><span class="mi">4481</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">connection</span><span class="o">|</span>
+
+  <span class="c1"># 优先接收紧急数据</span>
+  <span class="n">urgent_data</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="nf">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="no">Socket</span><span class="o">::</span><span class="no">MSG_OOB</span><span class="p">)</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="nf">readpartial</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>接收紧急数据，需要使用 <code class="highlighter-rouge">Socket#recv</code> 以及在发送紧急数据时用过的那个标志</li>
+  <li>紧急数据会优先于 “普通” 数据使用，即使写入的比 “普通” 数据晚</li>
+  <li>如果不存在未处理的紧急数据，调用 <code class="highlighter-rouge">connection.recv(1, Socket::MSG_OOB)</code> 会失败，并产生 <code class="highlighter-rouge">Errno::EINVAL</code></li>
+</ul>
+
+<h2 id="section-62">局限</h2>
+
+<ul>
+  <li>TCP 实现对于紧急数据仅提供了有限的支持，一次只能发送一个字节的紧急数据。如果发送多个字节，只有最后一个字节会被视为紧急数据，之前的数据会被视为普通的 TCP 数据流</li>
+</ul>
+
+<h2 id="ioselect-1">紧急数据和 IO.select</h2>
+
+<ul>
+  <li>如果套接字接收到了紧急数据，它们会被包含在 <code class="highlighter-rouge">IO.select</code>  所返回数组的第三个元素中</li>
+  <li><code class="highlighter-rouge">IO.select</code> 会不停的报告有紧急数据，即便是所有的紧急数据已经处理完毕，所以需要特殊处理</li>
+</ul>
+
+<h2 id="sooobinline-">SO_OOBINLINE 选项</h2>
+
+<p><code class="highlighter-rouge">SO_OOBINLINE</code> 套接字选项，允许在带内接收带外数据，启用后回一句写入次序从队列读出</p>
+
+<h2 id="tcp-sockets-20-">TCP Sockets 编程(20): 串行化</h2>
+
+<p>串行化架构处理流程：</p>
+
+<ol>
+  <li>客户端连接</li>
+  <li>客户端/服务器交换请求及响应</li>
+  <li>客户端断开连接</li>
+  <li>返回到步骤(1)</li>
+</ol>
+
+<p>串行化的特点：简单化，没有锁，没有共享状态，处理完一个连接之后才能处理另一个，不能支持并发操作</p>
+
+<h2 id="tcp-sockets-21-">TCP Sockets 编程(21): 单连接进程</h2>
+
+<p>单连接进程事件流程：</p>
+
+<ol>
+  <li>一个连接抵达服务器</li>
+  <li>主服务器进程接受该练级</li>
+  <li>衍生出一个和服务器一模一样的新子进程</li>
+  <li>服务器进程返回步骤 1，由子进程并行处理连接</li>
+</ol>
+
+<p>优点：</p>
+
+<ul>
+  <li>简单，能并行处理多个客户端</li>
+  <li>for 提供了一个父进程的所有东西的副本，没有锁和竞争条件</li>
+</ul>
+
+<p>缺点：</p>
+
+<ul>
+  <li>对 fork 出的子进程的数量没有施加限制，如果超出系统限制会崩溃</li>
+  <li>只有 Unix 系统才支持 fork，windows 或 JRuby 中没法使用 fork</li>
+</ul>
+
+<h2 id="tcp-sockets-22-">TCP Sockets 编程(22): 单连接线程</h2>
+
+<p>线程与进程：</p>
+
+<ul>
+  <li>生成(<code class="highlighter-rouge">spawn</code>): 线程的成本低于进程，进程生成需创建原始进程所拥有的一切资源的副本，多个线程共享内存，不需要创建副本</li>
+  <li>同步：因为线程共享内存，所以线程之间使用互斥量(mutex)、锁和同步访问。进程不需要这些</li>
+  <li>并行：解释器对当前执行环境使用了一个全局解释锁 <code class="highlighter-rouge">GIL</code>,所以多线程无法实现真正的并行, 在 <code class="highlighter-rouge">MRI</code> 中，只有进程才能实现真正的并发
+但ruby 中如果某个线程阻塞在 IO 上， ruby 能让其他的线程继续执行</li>
+</ul>
+
+<p>使用线程注意：</p>
+
+<ul>
+  <li>套接字如果分配给一个实例变量，会在所有活动线程之间共享该实例的内部状态</li>
+  <li>使用线程进行套接字编程，必须让每个线程获得它自己的连接对象，这样可以减少麻烦</li>
+</ul>
+
+<h2 id="tcp-sockets-23-preforking">TCP Sockets 编程(23): Preforking</h2>
+
+<p>Preforking 处理流程：</p>
+
+<ol>
+  <li>主服务器进程创建一个侦听套接字</li>
+  <li>主服务器进程衍生出一大批子进程</li>
+  <li>每个子进程在共享套接字上接受连接，然后进行独立处理</li>
+  <li>主服务器进程随时关注子进程</li>
+</ol>
+
+<p>Preforking 优点：
+- 多进程处理连接的负载均衡由操作系统处理
+- 子进程完全隔离，每个进程都拥有包括 ruby 解释器在内的所有资源的副本，单个进程的故障不会影响其他进程。</p>
+
+<p>缺点:
+- 衍生进程越多，消耗的内存也越多</p>
+
+<h2 id="tcp-sockets-24-">TCP Sockets 编程(24): 线程池</h2>
+
+<ul>
+  <li>线程池模式类似于 <code class="highlighter-rouge">preforking</code></li>
+  <li>线程池在服务器启动后生产一批线程，将处理连接的任务交给独立线程来完成</li>
+</ul>
+]]></content>
+	</entry>
+	
+	<entry>
+		<title>像黑客一样写自己的技术博客</title>
+		<link href="http://127.0.0.1/posts/my-tech-blogging-like-a-hacker.html" />
+		<updated>2012-03-04T00:00:00+08:00</updated>
+		<id>http://127.0.0.1/posts/my-tech-blogging-like-a-hacker.html</id>
+		<content type="html"><![CDATA[<p>说实话，我发现自己的确是个形式主义者，工具癖，规划控……就是不想静下来仔细思考认真沉淀最后生产出点有质量的内容，而且从小就是（我曾多次准备好一个练习本规划好用来如何写组词造句等，但第一页都没写完过）。再加上重度的拖延症，偶尔稍微纠结下，曾经写点技术积累的想法就彻底夭折了。</p>
+
+<p>但在用了<a href="https://github.com/">GitHub</a>这么一段时间后，对<a href="http://daringfireball.net/projects/markdown/">Markdown</a>语法和<a href="https://github.com/mojombo/jekyll">jekyll</a>建站托管的迷恋一发不可收拾，基本上达到了手里拿着一把榔头就准备到处去敲钉子的地步。于是琢磨着用这些东西再次开个博客稍微的积累点技术方面东西，自然的，也是对<a href="http://wordpress.org/">WordPress</a>时代的一个告别：</p>
+
+<ul>
+  <li>其实我不想维护数据库</li>
+  <li>其实我只想生成静态的html</li>
+  <li>其实我不需要什么CMS</li>
+  <li>其实我讨厌富文本编辑器</li>
+  <li>其实我希望最好可以像使用svn一样维护版本</li>
+</ul>
+
+<p>其实，我只希望一切都很简单。</p>
+
+<p>然后我通过<a href="https://github.com/">GitHub</a>遇见了<a href="https://github.com/mojombo/jekyll">jekyll</a>，加上<a href="https://github.com/">Github</a>本身支持对网站项目的托管和域名指向，以及以前用的各种云服务，整个世界瞬间变的美好了！</p>
+
+<p>现在，我可以：</p>
+
+<ul>
+  <li>使用纯文本的<a href="http://daringfireball.net/projects/markdown/">Markdown</a>编辑文章</li>
+  <li>使用git维护文章的版本</li>
+  <li>不用租一个虚拟空间和数据库服务，而就在<a href="https://github.com/">GitHub</a>上托管整个网站</li>
+  <li>自定义域名指向</li>
+  <li>使用<a href="http://disqus.com/">Disqus</a>的云评论服务</li>
+  <li>一如既往的使用<a href="https://picasaweb.google.com/">Google Picasa</a>作为我的图片外链服务</li>
+  <li>用<a href="http://www.google.com/cse/">Google Custom Search</a>自定义站内搜索</li>
+  <li><a href="https://github.com/mojombo/jekyll">jekyll</a>自带的或者用<a href="http://softwaremaniacs.org/soft/highlight/en/">HighlightJS</a>做代码高亮</li>
+  <li><a href="http://en.gravatar.com/">Gravatar</a>统一头像标识服务</li>
+  <li>……</li>
+</ul>
+
+<p>感谢这个有云的时代！可以让我们通过一件件简单的工具打造属于每个程序员自己的站点，<a href="http://kyle.xlau.org/posts/blogging-like-a-hacker.html">像黑客一样写博客</a>（原文：<a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">Blogging Like a Hacker</a>）。于是我可以把精力只放在文章的内容上，这一定会更有效率。</p>
+
+<p>今后，我会在这里记录开发中遇到和解决的各种问题，与技术有关的思考，姑且就当做一个代码笔记本了。不过回到开始说的，不管形式如何，努力坚持产出才是王道。</p>
+
+]]></content>
+	</entry>
+	
+	<entry>
+		<title>Hello world!</title>
+		<link href="http://127.0.0.1/posts/hello-world.html" />
+		<updated>2012-03-04T00:00:00+08:00</updated>
+		<id>http://127.0.0.1/posts/hello-world.html</id>
+		<content type="html"><![CDATA[<p>这是一篇测试文章，你可以在<code class="highlighter-rouge">_posts</code>目录修改或删除它。</p>
+
+<p>现在，我可以：</p>
+
+<ul>
+  <li>使用纯文本的<a href="http://daringfireball.net/projects/markdown/">Markdown</a>编辑文章</li>
+  <li>使用git维护文章的版本</li>
+  <li>不用租一个虚拟空间和数据库服务，而就在<a href="https://github.com/">GitHub</a>上托管整个网站</li>
+  <li>自定义域名指向</li>
+  <li>使用<a href="http://disqus.com/">Disqus</a>的云评论服务</li>
+  <li>一如既往的使用<a href="https://picasaweb.google.com/">Google Picasa</a>作为我的图片外链服务</li>
+  <li>用<a href="http://www.google.com/cse/">Google Custom Search</a>自定义站内搜索</li>
+  <li><a href="https://github.com/mojombo/jekyll">jekyll</a>自带的或者用<a href="http://softwaremaniacs.org/soft/highlight/en/">HighlightJS</a>做代码高亮</li>
+  <li><a href="http://gravatar.com/">Gravatar</a>统一头像标识服务</li>
+  <li>……</li>
+</ul>
+
+<p>感谢这个有云的时代！可以让我们通过一件件简单的工具打造属于每个程序员自己的站点，<a href="http://kyle.xlau.org/posts/blogging-like-a-hacker.html">像黑客一样写博客</a>（原文：<a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">Blogging Like a Hacker</a>）。</p>
+
+]]></content>
+	</entry>
+	
+</feed>

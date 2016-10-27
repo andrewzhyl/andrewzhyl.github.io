@@ -1,4 +1,5 @@
 ---
+layout: post
 title:  "《TCP Sockets 编程》读书笔记"
 date:   2016-03-29 09:06:00
 description: '《TCP Sockets 编程》读书笔记'

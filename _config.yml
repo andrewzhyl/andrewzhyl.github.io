@@ -1,42 +1,34 @@
+safe: false
+permalink: /posts/:title.html
+exclude:
+  - README.md
+
 name: Andrew's Blog
-description: 记录一些东西
-meta_description: "欲与何人言"
+# host: localhost
+desc: "记录一些东西"
 
-aboutPage: true
+custom:
+    category:
+        default: "默认分类"
+        reading_notes: "读书笔记"
+    categories:
+      - name:  default
+        title: "默认分类"
 
-gems: [jekyll-paginate] 
-highlighter: pygments
+      - name:  reading_notes
+        title: "读书笔记"
 
-paginate: 20
-baseurl: /
-domain_name: 'http://andrewzhyl.github.io'
-# google_analytics: 'UA-XXXXXXXX-X'
-disqus: false
-disqus_shortname: 'your-disqus-shortname'
+    scrollingLoadCount: 0                          # 滚屏自动加载文章数量，“0”为关闭
 
-# Details for the RSS feed generator
-url:            'http://andrewzhyl.github.io'
-author:         'andrewzhyl'
-authorTwitter:  'andrewzhyl'
+meta:
+    author:
+        name: andrew
+        email: andrew.zhyl@gmail.com
+    #     disqus: your-disqus-short-name              # Disqus缩略标识
+    #     gcse: 000346898720731947188:13h55x32l0y     # Google自定义搜索标识ID
+    #     github: your-github-account                 # GitHub账号
+    #     gravatar: 1cd8c12591616d8c22aaa624f8c07834  # Gravatar头像标识
 
-permalink:       /:year/:title/
-
-defaults:
-    -
-        scope:
-            path: "" # empty string for all files
-            type: pages
-        values:
-            layout: default
-    -
-        scope:
-            path: "" # empty string for all files
-            type: posts
-        values:
-            layout: post
-    -
-        scope:
-            path: ""
-            type: drafts
-        values:
-            layout: post
+    # disqus: disqus.com/embed.js                     # Disqus评论的JS地址
+    gapi: http://www.google.com/jsapi               # Google API地址
+    gravatar: http://en.gravatar.com/avatar/        # Gravatar头像服务器地址
