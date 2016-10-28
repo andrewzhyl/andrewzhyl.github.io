@@ -57,8 +57,12 @@ end
 
 ```
 
+---
+
+以下为统计输出结果：
 
 ree-1.8.7-2012.02
+
 ```
                      user     system      total        real
 single-threaded  5.660000   0.060000   5.720000 (  5.725174)
@@ -106,6 +110,7 @@ multi-threaded    2.410000   0.080000   2.490000 (  2.482332)
 ```
 
 jruby-9.0.4.0：
+
 ``` 
                       user     system      total        real
 single-threaded   7.740000   0.280000   8.020000 (  2.676519)
