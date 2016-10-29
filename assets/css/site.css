@@ -8,20 +8,37 @@ img{border:0;}
 input,textarea{resize:none;}
 
 @media screen and (min-width:1024px) {
+	// .main{
+	// 	position:relative; zoom:1;
+	// 	width:62%;
+	// 	padding:2em 3em;
+	// }
+	// aside{
+	// 	position:fixed;
+	// 	left:62%;
+	// 	top:0;
+	// 	right:0;
+	// 	height:100%;
+	// 	overflow:hidden;
+	// 	padding:2em 3em;
+	// 	box-shadow:5px 0 5px rgba(0,0,0,.1) inset;
+	// }
+
 	.main{
 		position:relative; zoom:1;
-		width:62%;
+		// width:62%;
+		left:28%;
 		padding:2em 3em;
 	}
 	aside{
 		position:fixed;
-		left:62%;
 		top:0;
-		right:0;
+		left: 0;
+		width:28%;
+		padding:2em 3em;
 		height:100%;
 		overflow:hidden;
-		padding:2em 3em;
-		box-shadow:5px 0 5px rgba(0,0,0,.1) inset;
+		box-shadow:-5px 0 5px rgba(0,0,0,.1) inset;
 	}
 }
 

@@ -3,7 +3,7 @@
 	<title>Andrew's Blog</title>
 	<link href="http://127.0.0.1/atom.xml" rel="self" />
 	<link href="http://127.0.0.1/" />
-	<updated>2016-10-27T10:47:14+08:00</updated>
+	<updated>2016-10-29T08:30:25+08:00</updated>
 	<id>http://127.0.0.1/</id>
 	<author>
 		<name>andrew</name>
@@ -11,13 +11,131 @@
 	</author>
 	
 	<entry>
+		<title>ruby 几个版本的 CPU-bound 实际测试统计</title>
+		<link href="http://127.0.0.1/posts/ruby-%E5%87%A0%E4%B8%AA%E7%89%88%E6%9C%AC%E7%9A%84-CPU-bound-%E5%AE%9E%E9%99%85%E6%B5%8B%E8%AF%95%E7%BB%9F%E8%AE%A1.html" />
+		<updated>2016-10-28T21:24:00+08:00</updated>
+		<id>http://127.0.0.1/posts/ruby-%E5%87%A0%E4%B8%AA%E7%89%88%E6%9C%AC%E7%9A%84-CPU-bound-%E5%AE%9E%E9%99%85%E6%B5%8B%E8%AF%95%E7%BB%9F%E8%AE%A1.html</id>
+		<content type="html"><![CDATA[<p>ruby代码：</p>
+
+<ul>
+  <li>为了适用于 ree-1.8.7， 这里没有选择 1.9.3 及之后版本标准库的 <code class="highlighter-rouge">prime</code>, 因为那样速度会更快，比较的统计结果会没有意义</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'benchmark'</span>
+
+<span class="k">def</span> <span class="nf">prime_sieve_upto</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="n">all_nums</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="nf">.</span><span class="n">n</span><span class="p">).</span><span class="nf">to_a</span>
+  <span class="n">all_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_nums</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span>
+  <span class="n">all_nums</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span>
+
+    <span class="c1">#jump over nils</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nb">p</span>
+
+    <span class="c1">#stop if we're too high already</span>
+    <span class="k">break</span> <span class="k">if</span> <span class="nb">p</span> <span class="o">*</span> <span class="nb">p</span> <span class="o">&gt;</span> <span class="n">n</span>
+
+    <span class="c1">#kill all multiples of this number</span>
+    <span class="p">(</span><span class="nb">p</span><span class="o">*</span><span class="nb">p</span><span class="p">).</span><span class="nf">step</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">p</span><span class="p">){</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">all_nums</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="c1">#remove unwanted nils</span>
+  <span class="n">all_nums</span><span class="p">.</span><span class="nf">compact</span>
+<span class="k">end</span>
+
+
+<span class="n">primes</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">num_threads</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">iterations_per_thread</span> <span class="o">=</span> <span class="n">iterations</span> <span class="o">/</span> <span class="n">num_threads</span>
+
+<span class="no">Benchmark</span><span class="p">.</span><span class="nf">bm</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+  <span class="n">x</span><span class="p">.</span><span class="nf">report</span><span class="p">(</span><span class="s1">'single-threaded'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">iterations</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+      <span class="n">prime_sieve_upto</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="n">x</span><span class="p">.</span><span class="nf">report</span><span class="p">(</span><span class="s1">'multi-threaded'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">num_threads</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span>
+      <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+        <span class="n">iterations_per_thread</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+          <span class="n">prime_sieve_upto</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:join</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre>
+</div>
+
+<hr />
+
+<p>以下为统计输出结果：</p>
+
+<p>ree-1.8.7-2012.02</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                     user     system      total        real
+single-threaded  5.660000   0.060000   5.720000 (  5.725174)
+multi-threaded   6.110000   0.110000   6.220000 (  6.228208)
+</code></pre>
+</div>
+
+<p>MRI ruby  1.9.3-p551</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.450000   0.060000   3.510000 (  3.531772)
+multi-threaded    3.660000   0.080000   3.740000 (  3.760532)
+</code></pre>
+</div>
+
+<p>MRI ruby 2.0.0-p598</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.630000   0.080000   3.710000 (  3.726324)
+multi-threaded    3.680000   0.090000   3.770000 (  3.808694)
+</code></pre>
+</div>
+
+<p>MRI ruby 2.0.0-p648</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.210000   0.060000   3.270000 (  3.276048)
+multi-threaded    3.330000   0.080000   3.410000 (  3.402474)
+</code></pre>
+</div>
+
+<p>MRI ruby  2.1.0</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   2.360000   0.070000   2.430000 (  2.422242)
+multi-threaded    2.390000   0.070000   2.460000 (  2.462325)
+</code></pre>
+</div>
+
+<p>MRI ruby  2.2.3：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   2.300000   0.070000   2.370000 (  2.361750)
+multi-threaded    2.410000   0.080000   2.490000 (  2.482332)
+</code></pre>
+</div>
+
+<p>jruby-9.0.4.0：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   7.740000   0.280000   8.020000 (  2.676519)
+multi-threaded   11.760000   0.230000  11.990000 (  3.064823)
+</code></pre>
+</div>
+]]></content>
+	</entry>
+	
+	<entry>
 		<title>《Working With Ruby Threads》学习笔记</title>
 		<link href="http://127.0.0.1/posts/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" />
 		<updated>2016-09-21T17:08:00+08:00</updated>
 		<id>http://127.0.0.1/posts/Working-With-Ruby-Threads-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</id>
-		<content type="html"><![CDATA[<h1 id="working-with-ruby-threads">《Working With Ruby Threads》学习笔记</h1>
-
-<h2 id="introduction">Introduction</h2>
+		<content type="html"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <h3 id="why-care">why care?</h3>
 
@@ -272,9 +390,7 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 		<link href="http://127.0.0.1/posts/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html" />
 		<updated>2016-09-10T04:20:00+08:00</updated>
 		<id>http://127.0.0.1/posts/Network-Programming-with-Go-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html</id>
-		<content type="html"><![CDATA[<h1 id="network-programming-with-go">《Network Programming with Go》学习笔记</h1>
-
-<p>~需要修改。。。。~</p>
+		<content type="html"><![CDATA[<p>~需要修改。。。。~</p>
 
 <h2 id="architecture">第一章： Architecture(体系结构)</h2>
 <p>### Protocol Layers（协议层）</p>
@@ -677,9 +793,7 @@ int select(int maxfd, fd_set *readfds, fd_set *writefds, fe_set *exceptfds, cons
 		<link href="http://127.0.0.1/posts/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" />
 		<updated>2016-08-13T04:20:00+08:00</updated>
 		<id>http://127.0.0.1/posts/%E7%90%86%E8%A7%A3-UNIX-%E8%BF%9B%E7%A8%8B-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html</id>
-		<content type="html"><![CDATA[<h1 id="unix-">《理解 UNIX 进程》学习笔记</h1>
-
-<p>@(学习笔记)</p>
+		<content type="html"><![CDATA[<p>@(学习笔记)</p>
 
 <p><img src="/assets/images/working_with_unix_processes.png" alt="本书结构图" /></p>
 
@@ -880,7 +994,7 @@ man find # 等同于 man 1 find
 </code></pre>
 </div>
 
-<h3 id="unix--1">2.6 Unix 进程之本</h3>
+<h3 id="unix-">2.6 Unix 进程之本</h3>
 
 <ul>
   <li>所有的代码都是在进程中执行的。</li>
@@ -2084,9 +2198,7 @@ sleep # 以便于有时间发送信号
 		<link href="http://127.0.0.1/posts/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712.html" />
 		<updated>2016-07-13T02:30:00+08:00</updated>
 		<id>http://127.0.0.1/posts/go%E6%8C%87%E5%8D%97-%E7%AC%94%E8%AE%B0_20160712.html</id>
-		<content type="html"><![CDATA[<h1 id="go-">GO 指南笔记</h1>
-
-<p>@(学习笔记)</p>
+		<content type="html"><![CDATA[<p>@(学习笔记)</p>
 
 <h3 id="section"><strong>零值</strong></h3>
 <ul>
@@ -2330,9 +2442,7 @@ Stringer 是一个可以用字符串描述自己的类型。<code class="highlig
 		<link href="http://127.0.0.1/posts/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html" />
 		<updated>2016-03-29T17:06:00+08:00</updated>
 		<id>http://127.0.0.1/posts/TCP-Sockets-%E7%BC%96%E7%A8%8B-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0.html</id>
-		<content type="html"><![CDATA[<h1 id="tcp-sockets-">《TCP Sockets 编程》读书笔记</h1>
-
-<h2 id="section">第一章：建立套接字</h2>
+		<content type="html"><![CDATA[<h2 id="section">第一章：建立套接字</h2>
 
 <h3 id="ruby-">1.1 ruby 的套接字库</h3>
 <p>socket 库是 ruby 标准库的组成，包含各种用于 TCP 套接字、UDP 套接字的类</p>
@@ -3559,76 +3669,6 @@ Socket#getsockopt -&gt; getsockopt<span class="o">(</span>2<span class="o">)</sp
   <li>线程池模式类似于 <code class="highlighter-rouge">preforking</code></li>
   <li>线程池在服务器启动后生产一批线程，将处理连接的任务交给独立线程来完成</li>
 </ul>
-]]></content>
-	</entry>
-	
-	<entry>
-		<title>像黑客一样写自己的技术博客</title>
-		<link href="http://127.0.0.1/posts/my-tech-blogging-like-a-hacker.html" />
-		<updated>2012-03-04T00:00:00+08:00</updated>
-		<id>http://127.0.0.1/posts/my-tech-blogging-like-a-hacker.html</id>
-		<content type="html"><![CDATA[<p>说实话，我发现自己的确是个形式主义者，工具癖，规划控……就是不想静下来仔细思考认真沉淀最后生产出点有质量的内容，而且从小就是（我曾多次准备好一个练习本规划好用来如何写组词造句等，但第一页都没写完过）。再加上重度的拖延症，偶尔稍微纠结下，曾经写点技术积累的想法就彻底夭折了。</p>
-
-<p>但在用了<a href="https://github.com/">GitHub</a>这么一段时间后，对<a href="http://daringfireball.net/projects/markdown/">Markdown</a>语法和<a href="https://github.com/mojombo/jekyll">jekyll</a>建站托管的迷恋一发不可收拾，基本上达到了手里拿着一把榔头就准备到处去敲钉子的地步。于是琢磨着用这些东西再次开个博客稍微的积累点技术方面东西，自然的，也是对<a href="http://wordpress.org/">WordPress</a>时代的一个告别：</p>
-
-<ul>
-  <li>其实我不想维护数据库</li>
-  <li>其实我只想生成静态的html</li>
-  <li>其实我不需要什么CMS</li>
-  <li>其实我讨厌富文本编辑器</li>
-  <li>其实我希望最好可以像使用svn一样维护版本</li>
-</ul>
-
-<p>其实，我只希望一切都很简单。</p>
-
-<p>然后我通过<a href="https://github.com/">GitHub</a>遇见了<a href="https://github.com/mojombo/jekyll">jekyll</a>，加上<a href="https://github.com/">Github</a>本身支持对网站项目的托管和域名指向，以及以前用的各种云服务，整个世界瞬间变的美好了！</p>
-
-<p>现在，我可以：</p>
-
-<ul>
-  <li>使用纯文本的<a href="http://daringfireball.net/projects/markdown/">Markdown</a>编辑文章</li>
-  <li>使用git维护文章的版本</li>
-  <li>不用租一个虚拟空间和数据库服务，而就在<a href="https://github.com/">GitHub</a>上托管整个网站</li>
-  <li>自定义域名指向</li>
-  <li>使用<a href="http://disqus.com/">Disqus</a>的云评论服务</li>
-  <li>一如既往的使用<a href="https://picasaweb.google.com/">Google Picasa</a>作为我的图片外链服务</li>
-  <li>用<a href="http://www.google.com/cse/">Google Custom Search</a>自定义站内搜索</li>
-  <li><a href="https://github.com/mojombo/jekyll">jekyll</a>自带的或者用<a href="http://softwaremaniacs.org/soft/highlight/en/">HighlightJS</a>做代码高亮</li>
-  <li><a href="http://en.gravatar.com/">Gravatar</a>统一头像标识服务</li>
-  <li>……</li>
-</ul>
-
-<p>感谢这个有云的时代！可以让我们通过一件件简单的工具打造属于每个程序员自己的站点，<a href="http://kyle.xlau.org/posts/blogging-like-a-hacker.html">像黑客一样写博客</a>（原文：<a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">Blogging Like a Hacker</a>）。于是我可以把精力只放在文章的内容上，这一定会更有效率。</p>
-
-<p>今后，我会在这里记录开发中遇到和解决的各种问题，与技术有关的思考，姑且就当做一个代码笔记本了。不过回到开始说的，不管形式如何，努力坚持产出才是王道。</p>
-
-]]></content>
-	</entry>
-	
-	<entry>
-		<title>Hello world!</title>
-		<link href="http://127.0.0.1/posts/hello-world.html" />
-		<updated>2012-03-04T00:00:00+08:00</updated>
-		<id>http://127.0.0.1/posts/hello-world.html</id>
-		<content type="html"><![CDATA[<p>这是一篇测试文章，你可以在<code class="highlighter-rouge">_posts</code>目录修改或删除它。</p>
-
-<p>现在，我可以：</p>
-
-<ul>
-  <li>使用纯文本的<a href="http://daringfireball.net/projects/markdown/">Markdown</a>编辑文章</li>
-  <li>使用git维护文章的版本</li>
-  <li>不用租一个虚拟空间和数据库服务，而就在<a href="https://github.com/">GitHub</a>上托管整个网站</li>
-  <li>自定义域名指向</li>
-  <li>使用<a href="http://disqus.com/">Disqus</a>的云评论服务</li>
-  <li>一如既往的使用<a href="https://picasaweb.google.com/">Google Picasa</a>作为我的图片外链服务</li>
-  <li>用<a href="http://www.google.com/cse/">Google Custom Search</a>自定义站内搜索</li>
-  <li><a href="https://github.com/mojombo/jekyll">jekyll</a>自带的或者用<a href="http://softwaremaniacs.org/soft/highlight/en/">HighlightJS</a>做代码高亮</li>
-  <li><a href="http://gravatar.com/">Gravatar</a>统一头像标识服务</li>
-  <li>……</li>
-</ul>
-
-<p>感谢这个有云的时代！可以让我们通过一件件简单的工具打造属于每个程序员自己的站点，<a href="http://kyle.xlau.org/posts/blogging-like-a-hacker.html">像黑客一样写博客</a>（原文：<a href="http://tom.preston-werner.com/2008/11/17/blogging-like-a-hacker.html">Blogging Like a Hacker</a>）。</p>
-
 ]]></content>
 	</entry>
 	

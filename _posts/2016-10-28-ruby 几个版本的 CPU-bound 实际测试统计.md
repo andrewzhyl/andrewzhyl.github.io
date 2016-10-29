@@ -3,6 +3,7 @@ layout: post
 title:  "ruby 几个版本的 CPU-bound 实际测试统计"
 date:   2016-10-28 13:24:00
 description: 'ruby 几个版本的 CPU-bound 实际测试统计'
+category: default
 ---
 
 

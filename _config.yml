@@ -10,15 +10,16 @@ desc: "记录一些东西"
 custom:
     category:
         default: "默认分类"
-        reading_notes: "读书笔记"
+        notes: "读书笔记"
+        
     categories:
       - name:  default
         title: "默认分类"
 
-      - name:  reading_notes
+      - name:  notes
         title: "读书笔记"
 
-    scrollingLoadCount: 0                          # 滚屏自动加载文章数量，“0”为关闭
+    scrollingLoadCount: 3                          # 滚屏自动加载文章数量，“0”为关闭
 
 meta:
     author:
