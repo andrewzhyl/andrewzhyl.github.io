@@ -35,7 +35,7 @@ input,textarea{resize:none;}
 		top:0;
 		left: 0;
 		width:28%;
-		padding:2em 3em;
+		padding:2rem 2rem;
 		height:100%;
 		overflow:hidden;
 		box-shadow:-5px 0 5px rgba(0,0,0,.1) inset;
@@ -55,7 +55,7 @@ header{font-size:80%;}
 header h1 .minor{color:#999; font-weight:normal;}
 header .additional{font-size:90%; color:#ccc;}
 
-aside{background:#eee; font-size:75%;}
+aside{background: #2d303b; font-size:75%; color: rgba(255,255,255,.5); font-size: 16px;}
 aside h2{margin:1em 0;}
 aside .feed-link{margin-left:0.5em; color: #d81;}
 aside nav ul{list-style:none; line-height:1.5em;}
@@ -69,6 +69,7 @@ aside .block-about figcaption{margin:0.2em 0;}
 aside .block-about figcaption:after{content:'<your-email@example.com>'; padding-left:.5em; color: #bbb; font-weight:bold; opacity: 0; transition:opacity .5s; -moz-transition:opacity .5s; -webkit-transition:opacity .5s;}
 aside .block-about:hover figcaption:after{opacity: 1;}
 aside .block-fork{position: absolute; top:0; right:0; margin: 0;}
+aside a{    color: #fff;}
 
 footer p{color:#aaa; font-size:75%; line-height:1.6em;}
 

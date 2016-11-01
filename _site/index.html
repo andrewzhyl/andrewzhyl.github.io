@@ -27,12 +27,126 @@
 
 
 
-<article>
+<article content-loaded="1">
 	<h2><a href="/posts/ruby-%E5%87%A0%E4%B8%AA%E7%89%88%E6%9C%AC%E7%9A%84-CPU-bound-%E5%AE%9E%E9%99%85%E6%B5%8B%E8%AF%95%E7%BB%9F%E8%AE%A1.html">ruby 几个版本的 CPU-bound 实际测试统计</a></h2>
 	<p class="meta">
 	<span class="datetime">2016-10-28</span> posted in [<a href="/category/default" class="category">默认分类</a>]
 </p>
 	<div class="article-content">
+	
+		<p>ruby代码：</p>
+
+<ul>
+  <li>为了适用于 ree-1.8.7， 这里没有选择 1.9.3 及之后版本标准库的 <code class="highlighter-rouge">prime</code>, 因为那样速度会更快，比较的统计结果会没有意义</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'benchmark'</span>
+
+<span class="k">def</span> <span class="nf">prime_sieve_upto</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="n">all_nums</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="nf">.</span><span class="n">n</span><span class="p">).</span><span class="nf">to_a</span>
+  <span class="n">all_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_nums</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span>
+  <span class="n">all_nums</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span>
+
+    <span class="c1">#jump over nils</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nb">p</span>
+
+    <span class="c1">#stop if we're too high already</span>
+    <span class="k">break</span> <span class="k">if</span> <span class="nb">p</span> <span class="o">*</span> <span class="nb">p</span> <span class="o">&gt;</span> <span class="n">n</span>
+
+    <span class="c1">#kill all multiples of this number</span>
+    <span class="p">(</span><span class="nb">p</span><span class="o">*</span><span class="nb">p</span><span class="p">).</span><span class="nf">step</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">p</span><span class="p">){</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">all_nums</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="c1">#remove unwanted nils</span>
+  <span class="n">all_nums</span><span class="p">.</span><span class="nf">compact</span>
+<span class="k">end</span>
+
+
+<span class="n">primes</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">num_threads</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">iterations_per_thread</span> <span class="o">=</span> <span class="n">iterations</span> <span class="o">/</span> <span class="n">num_threads</span>
+
+<span class="no">Benchmark</span><span class="p">.</span><span class="nf">bm</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+  <span class="n">x</span><span class="p">.</span><span class="nf">report</span><span class="p">(</span><span class="s1">'single-threaded'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">iterations</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+      <span class="n">prime_sieve_upto</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="n">x</span><span class="p">.</span><span class="nf">report</span><span class="p">(</span><span class="s1">'multi-threaded'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">num_threads</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span>
+      <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+        <span class="n">iterations_per_thread</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+          <span class="n">prime_sieve_upto</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:join</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre>
+</div>
+
+<hr />
+
+<p>以下为统计输出结果：</p>
+
+<p>ree-1.8.7-2012.02</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                     user     system      total        real
+single-threaded  5.660000   0.060000   5.720000 (  5.725174)
+multi-threaded   6.110000   0.110000   6.220000 (  6.228208)
+</code></pre>
+</div>
+
+<p>MRI ruby  1.9.3-p551</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.450000   0.060000   3.510000 (  3.531772)
+multi-threaded    3.660000   0.080000   3.740000 (  3.760532)
+</code></pre>
+</div>
+
+<p>MRI ruby 2.0.0-p598</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.630000   0.080000   3.710000 (  3.726324)
+multi-threaded    3.680000   0.090000   3.770000 (  3.808694)
+</code></pre>
+</div>
+
+<p>MRI ruby 2.0.0-p648</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.210000   0.060000   3.270000 (  3.276048)
+multi-threaded    3.330000   0.080000   3.410000 (  3.402474)
+</code></pre>
+</div>
+
+<p>MRI ruby  2.1.0</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   2.360000   0.070000   2.430000 (  2.422242)
+multi-threaded    2.390000   0.070000   2.460000 (  2.462325)
+</code></pre>
+</div>
+
+<p>MRI ruby  2.2.3：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   2.300000   0.070000   2.370000 (  2.361750)
+multi-threaded    2.410000   0.080000   2.490000 (  2.482332)
+</code></pre>
+</div>
+
+<p>jruby-9.0.4.0：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   7.740000   0.280000   8.020000 (  2.676519)
+multi-threaded   11.760000   0.230000  11.990000 (  3.064823)
+</code></pre>
+</div>
+
 	
 	</div>
 </article>
