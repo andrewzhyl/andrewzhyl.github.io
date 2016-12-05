@@ -197,6 +197,8 @@ thread.join
 - MRI doesn't let a thread hog the GIL when it hits blocking IO(当它触发阻塞 IO 的时候，MRI 不会让线程贪婪占用 GIL)
 - 因为 ruby 有 `GIL` ，所以它等于去除了操作系统并行执行的能力，但是等于所有的情况下都不能并行
 
+代码在：`chapter05/block_io_demo1.rb`
+
 ``` ruby
 require 'open-uri'
 3.times.map do 
@@ -209,6 +211,8 @@ end.each(&:value)
 运行以上代码，假设我们已经生成了所有的线程，他们都试图获取 `GIL` 来执行代码，Thread A 获得了 `GIL`,它创建了一个套接字并且试图打开一个连接到 `zombo.com`,这是线程 A 等待响应，并释放了 `GIL`, 线程 B 将获得 `GIL` 并且和线程 A 执行同样的步骤
 
 
+### Why?
+
 There are three reasons that the GIL exists(几种 GIL 存在的原因 ):
 
 1.  为了在竞争条件下保护 MRI 核心部件
@@ -218,4 +222,276 @@ There are three reasons that the GIL exists(几种 GIL 存在的原因 ):
 3. To reduce the likelihood of race conditions in your Ruby code(尽可能的减少竞争条件)
 
 
-...未完
+### Misconceptions
+
+#### 错误1: `Myth: the GIL guarantees your code will be thread-safe.`(GIL 保证你的代码是线程安全的)
+
+- 这个观点是错误的
+- GIL 只是大大减少并行的可能性，但并不能阻止竞争条件的发生，所以 GIL 不会保证线程安全
+
+代码在：`chapter04/unsafe_counter.rb`
+
+``` ruby
+counter = 0
+5.times.map do
+  Thread.new do
+    temp = @counter
+
+    # 加入以下这行，将会导致结果出错，因为 IO 阻塞时，线程会释放 GIL，导致两个线程的 @counter 值相同
+    # puts  temp 
+    temp = temp + 1
+    @counter = temp
+  end
+end.each(&:join)
+puts @counter
+
+```
+
+- 以上代码对于 @counter 的增加等同于 `+=`
+- 两个线程有可能同时竞争，对于 @counter 进行赋值，结果可能会少于 5，特别是在有 IO 阻塞，或者 JRuby 以及 Rubinius 的环境下会出现
+
+
+#### 错误2:`Myth: the GIL prevents concurrency`
+
+- GIL 阻止了并行(parallel) 执行 ruby 代码，但并不会阻止并发，这是术语的错误
+- 并发是可能发生的，甚至在单核 CPU 的环境，也会给每一个线程分配资源
+- 重要点：GIL 允许多个线程同时发生 IO 阻塞，这意味着可以在 ` IO-bound` 的情况下并行的执行代码
+
+
+## 第六章：Real Parallel Threading with JRuby and Rubinius
+
+- `JRuby and Rubinius don't have a GIL` JRuby 和 Rubinius 没有 GIL
+
+### Proof
+
+代码见 `chapter06/prime.rb`计算素数， MRI 没有 JRuby 和  Rubinius 快
+
+使用 1.8.7 的版本
+
+``` ruby
+require 'benchmark'
+
+def prime_sieve_upto(n)
+  all_nums = (0..n).to_a
+  all_nums[0] = all_nums[1] = nil
+  all_nums.each do |p|
+
+    #jump over nils
+    next unless p
+
+    #stop if we're too high already
+    break if p * p > n
+
+    #kill all multiples of this number
+    (p*p).step(n, p){ |m| all_nums[m] = nil }
+  end
+
+  #remove unwanted nils
+  all_nums.compact
+end
+
+
+primes = 1_000_000
+iterations = 10
+num_threads = 5
+iterations_per_thread = iterations / num_threads
+
+Benchmark.bm(15) do |x|
+  x.report('single-threaded') do
+    iterations.times do
+      prime_sieve_upto(primes)
+    end
+  end
+  x.report('multi-threaded') do
+    num_threads.times.map do
+      Thread.new do
+        iterations_per_thread.times do
+          prime_sieve_upto(primes)
+        end
+      end
+    end.each(&:join)
+  end
+end
+
+```
+
+
+ree-1.8.7-2012.02
+```
+                     user     system      total        real
+single-threaded  5.660000   0.060000   5.720000 (  5.725174)
+multi-threaded   6.110000   0.110000   6.220000 (  6.228208)
+```
+
+MRI ruby  1.9.3-p551
+
+```
+                      user     system      total        real
+single-threaded   3.450000   0.060000   3.510000 (  3.531772)
+multi-threaded    3.660000   0.080000   3.740000 (  3.760532)
+```
+
+MRI ruby 2.0.0-p598
+
+```
+                      user     system      total        real
+single-threaded   3.630000   0.080000   3.710000 (  3.726324)
+multi-threaded    3.680000   0.090000   3.770000 (  3.808694)
+```
+
+MRI ruby 2.0.0-p648
+
+```
+                      user     system      total        real
+single-threaded   3.210000   0.060000   3.270000 (  3.276048)
+multi-threaded    3.330000   0.080000   3.410000 (  3.402474)
+```
+
+MRI ruby  2.1.0
+
+```
+                      user     system      total        real
+single-threaded   2.360000   0.070000   2.430000 (  2.422242)
+multi-threaded    2.390000   0.070000   2.460000 (  2.462325)
+```
+
+MRI ruby  2.2.3：
+
+```
+                      user     system      total        real
+single-threaded   2.300000   0.070000   2.370000 (  2.361750)
+multi-threaded    2.410000   0.080000   2.490000 (  2.482332)
+```
+
+jruby-9.0.4.0：
+``` 
+                      user     system      total        real
+single-threaded   7.740000   0.280000   8.020000 (  2.676519)
+multi-threaded   11.760000   0.230000  11.990000 (  3.064823)
+```
+
+MRI ruby 还是一直在进步，Rubinius 就没测试了，装的好慢，可恨的 `GFW`
+
+
+### So... how many should you use?
+
+真是应用的或许不是很清晰，可能某处是  IO-bound, 某处是  CPU-bound，也可能都不是，而是 memory-bound，或者也可能在任何地方也并没有最大化消耗资源
+
+以 rails 应用作为例子：
+
+- 与数据库之间的通信，与客户端通信，调用外部服务，大多数的机会是出现  IO-bound. 
+- 另一方面会调用 CPU, 比如 渲染 HTML 模板， 或者转换数据到 JSON 文件
+
+`the only way to a surefire answer is to measure`:
+通过不同的线程数量去运行代码，然后分析测量结果，不通过测量，我们不能找到争取的答案
+
+## 第七章：How Many Threads Are Too Many?
+
+为了从并发获益，我们必须把一个问题拆分为可以同时运行的较小的任务，如果一个问题有不可分割的重要任务，那么使用并发也不能有更多的性能增益
+
+- 唯一有保证的方法是 measure(测量) 和 compare(比较):
+- 方法是：尝试在单核 CPU 上用一个线程，然后再试着用 5 个线程，比较两个的执行结果，然后改进它
+- 新人一般会解决任务会以为更多的线程会比较快
+
+
+### ALL the threads
+
+```
+1.upto(10_000) do |i|
+  Thread.new { sleep }
+  puts i
+end
+
+以上代码输出：
+1
+2
+...
+2043
+2044
+2045
+2046
+chapter06/spawning_threads.rb:2:in `initialize': can't create Thread: Resource temporarily unavailable (ThreadError)
+```
+- 这是因为 ruby 对一个进程可产生的线程有数量的硬限制
+- ree-1.8.7 以及在 linux 系统上，可以产生至少 10000 的线程，但是我们并不可能用到
+
+
+#### Context Switching
+
+- 虽然每个线程都需要很少的内存开销，4 核 CPU 只能并行执行 4 个线程，会有大量线程阻塞在 IO 以及大量线程处于空闲状态，线程调度器需要开销去管理这些线程
+- 虽然需要增加开销，但是产生比内核数量更多的线程也是有意义，因为 IO-bound 会释放 GIL，允许并行执行，而 CPU-bound 在非 MRI 的环境下是可以并行执行的，并且单核 CPU 也是可以实现并发的
+
+#### IO-bound
+
+
+- 如果代码执行调用 web 请求的外部服务，有更好的网络连接速度，程序会更快
+- 如果代码有大量读写硬盘操作，有支持更快读写的硬盘，程序会因为硬件升级而更快
+- 以上两条是 IO-bound 的情况，因为需要从 IO 设备等待响应，产生比内核更多的线程是有意义的
+
+代码例子见：`./chapter06/io_bound.rb` 
+
+- 如果 IO 操作延迟比较高，我们需要更多的线程去解决 sweet spot, 因为线程多，阻塞等待的时间会更长，如果 IO 延迟比较低，那么我们需要更少的线程去解决 sweet spot,因为等待时间少，线程释放也会很快
+
+
+### CPU-bound
+
+... 待续
+
+
+## 第八章：Thread safety
+
+### What's really at stake?
+
+When your code isn't thread-safe, the worst that can happen is that your underlying data becomes incorrect
+当你的代码不是线程安全的，这最坏的情况会发生，你的基础数据会变得不正确
+
+- If your code is 'thread-safe,' that means that you can run your code in a multi- threaded context and your underlying data will be safe.(基础数据安全)
+- If your code is 'thread-safe,' that means that you can run your code in a multi- threaded context and your underlying data remains consistent.(基础数据保持一致)
+-  If your code is 'thread-safe,' that means that you can run your code in a multi- threaded context and the semantics of your program are always correct.(程序在语义上正确)
+
+
+### The computer is oblivious
+
+- The computer is unaware of thread-safety issues.
+
+### Is anything thread-safe by default?
+
+- any concurrent modifications to the same object are not thread- safe.
+
+
+## 第九章：Protecting Data with Mutexes
+
+### Mutual exclusion
+
+- If you wrap some section of your code with a mutex, you guarantee that no two threads can enter that section at the same time.(如果你用 mutex 包含一段代码，在同一时间不会有两个线程同时进入)
+- Until the owning thread unlocks the mutex, no other thread can lock it(一直到所属的线程解锁前，没有其它线程能锁定)
+
+
+``` ruby
+# 通用的 mutex 使用方式
+mutex.synchronize do 
+  shared_array << nil
+end
+```
+
+
+### The contract
+
+- 注意： `the mutex is shared among all the threads` 互斥在所有线程中共享
+
+
+### Making key operations atomic
+- 使用 mutex 互斥所的操作需要具有原子性，不然会出现错误的结果
+
+### Mutexes and memory visibility
+
+- mutexes carry an implicit `memory barrier`(互斥锁能实现内存屏障)
+- 程序在运行时内存实际的访问顺序和程序代码编写的访问顺序不一定一致，这就是内存乱序访问, `Memory barrier` 能够让 CPU 或编译器在内存访问上有序
+
+### Mutex performance
+
+-  mutexes inhibit parallelism(互斥锁抑制并行)
+-  `GIL` 和互斥锁的行为一样，在同一时间只能有一个线程执行代码
+- restrict the critical section to be as small as possible, while still preserving the safety of your data（互斥所限制的部分应该尽可能的小，并且同时保证数据安全性）,限制部分更小，那么可以让其它更多的代码并行执行,就是所谓的`finer-grained mutex`细粒度互斥锁
+
+... 未完
