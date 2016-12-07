@@ -14,7 +14,7 @@ category: notes
 ### Protocol Layers（协议层）
 
 **ISO OSI Protocol**
-![Alt text](./1473431812089.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473431812089.png)
 
 每层的功能：
 - `网络层`提供交换及路由技术
@@ -25,7 +25,7 @@ category: notes
 
 **TCP/IP Protocol**
 
-![Alt text](./1473431977093.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473431977093.png)
 
 ### Gateways（网关）
 
@@ -43,7 +43,7 @@ category: notes
 - 在接收端，这些头信息会在向上传递时移除。
 
 TFTP（普通文件传输协议）将文件从一台计算机移动到另一台上。它使用IP协议上的UDP协议，该协议可通过以太网发送。看起来就像这样：
-![Alt text](./1473434814430.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473434814430.png)
 
 ### Connection Models(连接模型)
 
@@ -61,13 +61,13 @@ TFTP（普通文件传输协议）将文件从一台计算机移动到另一台�
 - Parlog 能在并发的进程之间，将任意的逻辑数据结构当做消息来发送
 - 消息传递是分布式系统最基本的机制
 
-![Alt text](./1473674193873.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473674193873.png)
 
 
 ### Distributed Computing Models(分布式计算模型)
 
 
-![Alt text](./1473674216217.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473674216217.png)
 
 考虑分布式系统的组件是否等价,三种模型：
 - 点对点（peer-to-peer）: 若两个组件等价，且均可发起并响应信息
@@ -77,23 +77,28 @@ TFTP（普通文件传输协议）将文件从一台计算机移动到另一台�
 
 ### Client/Server System
 
-![Alt text](./1473674889739.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473674889739.png)
 
 ### Client/Server Application
-![Alt text](./1473674904487.png)
+
+![Alt text](/assets/images/network-programming-with-go-golang/1473674904487.png)
 
 
 ### Server Distribution（服务器分布）
 
 单一客户端，单个服务器：
-![Alt text](./1473675214266.png)
+
+![Alt text](/assets/images/network-programming-with-go-golang/1473675214266.png)
 
 多个客户端，单一服务器：
-![Alt text](./1473675235161.png)
+
+![Alt text](/assets/images/network-programming-with-go-golang/1473675235161.png)
+
 主站只需接收请求并处理一次，而无需将它们传递给其它服务器来处理。当客户端可能并发时，这就是个通用的模型
 
 单一客户端，多个服务器，例如当业务逻辑服务器从数据库服务器获取信息时
-![Alt text](./1473675269067.png)
+
+![Alt text](/assets/images/network-programming-with-go-golang/1473675269067.png)
 
 
 ### Component Distribution
@@ -108,28 +113,28 @@ Data access 数据访问
 **应用逻辑组件**负责解释用户的响应，根据应用业务规则，准备查询并管理来自其组件的响应
 **数据访问组件**负责存储并检索数据。这一般是通过数据库进行，不过也不一定
 
-![Alt text](./1473676063281.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473676063281.png)
 
 Example: Distributed Database：
 Gartner第一种分类
-![Alt text](./1473676645585.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473676645585.png)
 
 例如 google map 会下载附近的地图为浏览器中的小型数据库，当用户移动了地图时，可以快速响应
 
 
 Example: Network File Service 网络文件服务
-![Alt text](./1473676805222.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473676805222.png)
 
 Gartner第二种分类允许远程客户端访问已共享的文件系统
 这类系统的例子：NFS、Microsoft共享和DCE等等。
 
 Example: Web:
-![Alt text](./1473676919558.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473676919558.png)
 Gartner第三种分类的一个例子就是Web上的小型Java应用
 
 
 Example: Terminal Emulation
-![Alt text](./1473677181590.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473677181590.png)
 
 Gartner第四种分类就是终端仿真。这允许远程系统在本地系统上作为普通的终端：
 Telnet就是最常见的例子。
@@ -137,11 +142,11 @@ Telnet就是最常见的例子。
 
 **Three Tier Models**:
 可以有三层、四层甚至多层。下图展示了一些可能的三层模型:
-![Alt text](./1473677365117.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473677365117.png)
 
 ### Middleware model 中间件模型
 
-![Alt text](./1473677961430.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473677961430.png)
 
 
 中间件示例
@@ -166,7 +171,8 @@ Telnet就是最常见的例子。
 
 ### Continuum of Processing
 Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据处理。一个更细粒度的分解方式为:
-![Alt text](./1473678080293.png)
+
+![Alt text](/assets/images/network-programming-with-go-golang/1473678080293.png)
 
 
 ### Points of Failure
@@ -224,7 +230,8 @@ Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据�
 ### The TCP/IP stack
 
 The TCP/IP stack is shorter than the OSI one:
-![Alt text](./1473773483879.png)
+
+![Alt text](/assets/images/network-programming-with-go-golang/1473773483879.png)
 
 - TCP is a connection-oriented protocol,
 - UDP (User Datagram Protocol) is a connectionless protocol.
@@ -389,5 +396,20 @@ int select(int maxfd, fd_set *readfds, fd_set *writefds, fe_set *exceptfds, cons
 - 参数exceptfds指定了被例外条件监控的文件描述符集。
 - 参数timeout起了定时器的作用：到了指定的时间，无论是否有设备准备好，都返回调用
 
+
+### 3.9 The types Conn, PacketConn and Listener
+
+使用  `Dial` 可以替代指定类型的 TCP and UDP 的建立连接方法 
+
+``` go
+func Dial(net, laddr, raddr string) (c Conn, err os.Error)
+```
+
+- `net` 可选："tcp", "tcp4" (IPv4-only), "tcp6" (IPv6-only), "udp", "udp4" (IPv4-only), "udp6" (IPv6-only), "ip", "ip4" (IPv4-only) and "ip6" IPv6-only)
+- 函数返回一个适应的 `Conn` 接口
+- `raddr` 是字符串
+
+IPGetHeadInfo 源代码例子  `chapter03/IPGetHeadInfo.go`
+ThreadedIPEchoServer 源代码例子  `chapter03/ThreadedIPEchoServer.go`
 
 未完。。。。

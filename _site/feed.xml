@@ -3,7 +3,7 @@
 	<title>Andrew's Blog</title>
 	<link href="http://127.0.0.1/atom.xml" rel="self" />
 	<link href="http://127.0.0.1/" />
-	<updated>2016-11-01T17:00:17+08:00</updated>
+	<updated>2016-12-07T13:31:51+08:00</updated>
 	<id>http://127.0.0.1/</id>
 	<author>
 		<name>andrew</name>
@@ -360,6 +360,8 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
   <li>因为 ruby 有 <code class="highlighter-rouge">GIL</code> ，所以它等于去除了操作系统并行执行的能力，但是等于所有的情况下都不能并行</li>
 </ul>
 
+<p>代码在：<code class="highlighter-rouge">chapter05/block_io_demo1.rb</code></p>
+
 <div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'open-uri'</span>
 <span class="mi">3</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span> 
   <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
@@ -371,6 +373,8 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 
 <p>运行以上代码，假设我们已经生成了所有的线程，他们都试图获取 <code class="highlighter-rouge">GIL</code> 来执行代码，Thread A 获得了 <code class="highlighter-rouge">GIL</code>,它创建了一个套接字并且试图打开一个连接到 <code class="highlighter-rouge">zombo.com</code>,这是线程 A 等待响应，并释放了 <code class="highlighter-rouge">GIL</code>, 线程 B 将获得 <code class="highlighter-rouge">GIL</code> 并且和线程 A 执行同样的步骤</p>
 
+<h3 id="why">Why?</h3>
+
 <p>There are three reasons that the GIL exists(几种 GIL 存在的原因 ):</p>
 
 <ol>
@@ -381,7 +385,301 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
   <li>To reduce the likelihood of race conditions in your Ruby code(尽可能的减少竞争条件)</li>
 </ol>
 
-<p>…未完</p>
+<h3 id="misconceptions">Misconceptions</h3>
+
+<h4 id="myth-the-gil-guarantees-your-code-will-be-thread-safegil-">错误1: <code class="highlighter-rouge">Myth: the GIL guarantees your code will be thread-safe.</code>(GIL 保证你的代码是线程安全的)</h4>
+
+<ul>
+  <li>这个观点是错误的</li>
+  <li>GIL 只是大大减少并行的可能性，但并不能阻止竞争条件的发生，所以 GIL 不会保证线程安全</li>
+</ul>
+
+<p>代码在：<code class="highlighter-rouge">chapter04/unsafe_counter.rb</code></p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="mi">5</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span>
+  <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="vi">@counter</span>
+
+    <span class="c1"># 加入以下这行，将会导致结果出错，因为 IO 阻塞时，线程会释放 GIL，导致两个线程的 @counter 值相同</span>
+    <span class="c1"># puts  temp </span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="vi">@counter</span> <span class="o">=</span> <span class="n">temp</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:join</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="vi">@counter</span>
+
+</code></pre>
+</div>
+
+<ul>
+  <li>以上代码对于 @counter 的增加等同于 <code class="highlighter-rouge">+=</code></li>
+  <li>两个线程有可能同时竞争，对于 @counter 进行赋值，结果可能会少于 5，特别是在有 IO 阻塞，或者 JRuby 以及 Rubinius 的环境下会出现</li>
+</ul>
+
+<h4 id="myth-the-gil-prevents-concurrency">错误2:<code class="highlighter-rouge">Myth: the GIL prevents concurrency</code></h4>
+
+<ul>
+  <li>GIL 阻止了并行(parallel) 执行 ruby 代码，但并不会阻止并发，这是术语的错误</li>
+  <li>并发是可能发生的，甚至在单核 CPU 的环境，也会给每一个线程分配资源</li>
+  <li>重要点：GIL 允许多个线程同时发生 IO 阻塞，这意味着可以在 ` IO-bound` 的情况下并行的执行代码</li>
+</ul>
+
+<h2 id="real-parallel-threading-with-jruby-and-rubinius">第六章：Real Parallel Threading with JRuby and Rubinius</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">JRuby and Rubinius don't have a GIL</code> JRuby 和 Rubinius 没有 GIL</li>
+</ul>
+
+<h3 id="proof">Proof</h3>
+
+<p>代码见 <code class="highlighter-rouge">chapter06/prime.rb</code>计算素数， MRI 没有 JRuby 和  Rubinius 快</p>
+
+<p>使用 1.8.7 的版本</p>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'benchmark'</span>
+
+<span class="k">def</span> <span class="nf">prime_sieve_upto</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+  <span class="n">all_nums</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="nf">.</span><span class="n">n</span><span class="p">).</span><span class="nf">to_a</span>
+  <span class="n">all_nums</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_nums</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span>
+  <span class="n">all_nums</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="nb">p</span><span class="o">|</span>
+
+    <span class="c1">#jump over nils</span>
+    <span class="k">next</span> <span class="k">unless</span> <span class="nb">p</span>
+
+    <span class="c1">#stop if we're too high already</span>
+    <span class="k">break</span> <span class="k">if</span> <span class="nb">p</span> <span class="o">*</span> <span class="nb">p</span> <span class="o">&gt;</span> <span class="n">n</span>
+
+    <span class="c1">#kill all multiples of this number</span>
+    <span class="p">(</span><span class="nb">p</span><span class="o">*</span><span class="nb">p</span><span class="p">).</span><span class="nf">step</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">p</span><span class="p">){</span> <span class="o">|</span><span class="n">m</span><span class="o">|</span> <span class="n">all_nums</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="kp">nil</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="c1">#remove unwanted nils</span>
+  <span class="n">all_nums</span><span class="p">.</span><span class="nf">compact</span>
+<span class="k">end</span>
+
+
+<span class="n">primes</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">num_threads</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">iterations_per_thread</span> <span class="o">=</span> <span class="n">iterations</span> <span class="o">/</span> <span class="n">num_threads</span>
+
+<span class="no">Benchmark</span><span class="p">.</span><span class="nf">bm</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">x</span><span class="o">|</span>
+  <span class="n">x</span><span class="p">.</span><span class="nf">report</span><span class="p">(</span><span class="s1">'single-threaded'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">iterations</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+      <span class="n">prime_sieve_upto</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="n">x</span><span class="p">.</span><span class="nf">report</span><span class="p">(</span><span class="s1">'multi-threaded'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">num_threads</span><span class="p">.</span><span class="nf">times</span><span class="p">.</span><span class="nf">map</span> <span class="k">do</span>
+      <span class="no">Thread</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span>
+        <span class="n">iterations_per_thread</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+          <span class="n">prime_sieve_upto</span><span class="p">(</span><span class="n">primes</span><span class="p">)</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">end</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:join</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre>
+</div>
+
+<p>ree-1.8.7-2012.02
+<code class="highlighter-rouge">
+                     user     system      total        real
+single-threaded  5.660000   0.060000   5.720000 (  5.725174)
+multi-threaded   6.110000   0.110000   6.220000 (  6.228208)
+</code></p>
+
+<p>MRI ruby  1.9.3-p551</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.450000   0.060000   3.510000 (  3.531772)
+multi-threaded    3.660000   0.080000   3.740000 (  3.760532)
+</code></pre>
+</div>
+
+<p>MRI ruby 2.0.0-p598</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.630000   0.080000   3.710000 (  3.726324)
+multi-threaded    3.680000   0.090000   3.770000 (  3.808694)
+</code></pre>
+</div>
+
+<p>MRI ruby 2.0.0-p648</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   3.210000   0.060000   3.270000 (  3.276048)
+multi-threaded    3.330000   0.080000   3.410000 (  3.402474)
+</code></pre>
+</div>
+
+<p>MRI ruby  2.1.0</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   2.360000   0.070000   2.430000 (  2.422242)
+multi-threaded    2.390000   0.070000   2.460000 (  2.462325)
+</code></pre>
+</div>
+
+<p>MRI ruby  2.2.3：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>                      user     system      total        real
+single-threaded   2.300000   0.070000   2.370000 (  2.361750)
+multi-threaded    2.410000   0.080000   2.490000 (  2.482332)
+</code></pre>
+</div>
+
+<p>jruby-9.0.4.0：
+<code class="highlighter-rouge">
+                      user     system      total        real
+single-threaded   7.740000   0.280000   8.020000 (  2.676519)
+multi-threaded   11.760000   0.230000  11.990000 (  3.064823)
+</code></p>
+
+<p>MRI ruby 还是一直在进步，Rubinius 就没测试了，装的好慢，可恨的 <code class="highlighter-rouge">GFW</code></p>
+
+<h3 id="so-how-many-should-you-use">So… how many should you use?</h3>
+
+<p>真是应用的或许不是很清晰，可能某处是  IO-bound, 某处是  CPU-bound，也可能都不是，而是 memory-bound，或者也可能在任何地方也并没有最大化消耗资源</p>
+
+<p>以 rails 应用作为例子：</p>
+
+<ul>
+  <li>与数据库之间的通信，与客户端通信，调用外部服务，大多数的机会是出现  IO-bound.</li>
+  <li>另一方面会调用 CPU, 比如 渲染 HTML 模板， 或者转换数据到 JSON 文件</li>
+</ul>
+
+<p><code class="highlighter-rouge">the only way to a surefire answer is to measure</code>:
+通过不同的线程数量去运行代码，然后分析测量结果，不通过测量，我们不能找到争取的答案</p>
+
+<h2 id="how-many-threads-are-too-many">第七章：How Many Threads Are Too Many?</h2>
+
+<p>为了从并发获益，我们必须把一个问题拆分为可以同时运行的较小的任务，如果一个问题有不可分割的重要任务，那么使用并发也不能有更多的性能增益</p>
+
+<ul>
+  <li>唯一有保证的方法是 measure(测量) 和 compare(比较):</li>
+  <li>方法是：尝试在单核 CPU 上用一个线程，然后再试着用 5 个线程，比较两个的执行结果，然后改进它</li>
+  <li>新人一般会解决任务会以为更多的线程会比较快</li>
+</ul>
+
+<h3 id="all-the-threads">ALL the threads</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>1.upto(10_000) do |i|
+  Thread.new { sleep }
+  puts i
+end
+
+以上代码输出：
+1
+2
+...
+2043
+2044
+2045
+2046
+chapter06/spawning_threads.rb:2:in `initialize': can't create Thread: Resource temporarily unavailable (ThreadError)
+</code></pre>
+</div>
+<ul>
+  <li>这是因为 ruby 对一个进程可产生的线程有数量的硬限制</li>
+  <li>ree-1.8.7 以及在 linux 系统上，可以产生至少 10000 的线程，但是我们并不可能用到</li>
+</ul>
+
+<h4 id="context-switching">Context Switching</h4>
+
+<ul>
+  <li>虽然每个线程都需要很少的内存开销，4 核 CPU 只能并行执行 4 个线程，会有大量线程阻塞在 IO 以及大量线程处于空闲状态，线程调度器需要开销去管理这些线程</li>
+  <li>虽然需要增加开销，但是产生比内核数量更多的线程也是有意义，因为 IO-bound 会释放 GIL，允许并行执行，而 CPU-bound 在非 MRI 的环境下是可以并行执行的，并且单核 CPU 也是可以实现并发的</li>
+</ul>
+
+<h4 id="io-bound">IO-bound</h4>
+
+<ul>
+  <li>如果代码执行调用 web 请求的外部服务，有更好的网络连接速度，程序会更快</li>
+  <li>如果代码有大量读写硬盘操作，有支持更快读写的硬盘，程序会因为硬件升级而更快</li>
+  <li>以上两条是 IO-bound 的情况，因为需要从 IO 设备等待响应，产生比内核更多的线程是有意义的</li>
+</ul>
+
+<p>代码例子见：<code class="highlighter-rouge">./chapter06/io_bound.rb</code></p>
+
+<ul>
+  <li>如果 IO 操作延迟比较高，我们需要更多的线程去解决 sweet spot, 因为线程多，阻塞等待的时间会更长，如果 IO 延迟比较低，那么我们需要更少的线程去解决 sweet spot,因为等待时间少，线程释放也会很快</li>
+</ul>
+
+<h3 id="cpu-bound">CPU-bound</h3>
+
+<p>… 待续</p>
+
+<h2 id="thread-safety">第八章：Thread safety</h2>
+
+<h3 id="whats-really-at-stake">What’s really at stake?</h3>
+
+<p>When your code isn’t thread-safe, the worst that can happen is that your underlying data becomes incorrect
+当你的代码不是线程安全的，这最坏的情况会发生，你的基础数据会变得不正确</p>
+
+<ul>
+  <li>If your code is ‘thread-safe,’ that means that you can run your code in a multi- threaded context and your underlying data will be safe.(基础数据安全)</li>
+  <li>If your code is ‘thread-safe,’ that means that you can run your code in a multi- threaded context and your underlying data remains consistent.(基础数据保持一致)</li>
+  <li>If your code is ‘thread-safe,’ that means that you can run your code in a multi- threaded context and the semantics of your program are always correct.(程序在语义上正确)</li>
+</ul>
+
+<h3 id="the-computer-is-oblivious">The computer is oblivious</h3>
+
+<ul>
+  <li>The computer is unaware of thread-safety issues.</li>
+</ul>
+
+<h3 id="is-anything-thread-safe-by-default">Is anything thread-safe by default?</h3>
+
+<ul>
+  <li>any concurrent modifications to the same object are not thread- safe.</li>
+</ul>
+
+<h2 id="protecting-data-with-mutexes">第九章：Protecting Data with Mutexes</h2>
+
+<h3 id="mutual-exclusion">Mutual exclusion</h3>
+
+<ul>
+  <li>If you wrap some section of your code with a mutex, you guarantee that no two threads can enter that section at the same time.(如果你用 mutex 包含一段代码，在同一时间不会有两个线程同时进入)</li>
+  <li>Until the owning thread unlocks the mutex, no other thread can lock it(一直到所属的线程解锁前，没有其它线程能锁定)</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="c1"># 通用的 mutex 使用方式</span>
+<span class="n">mutex</span><span class="p">.</span><span class="nf">synchronize</span> <span class="k">do</span> 
+  <span class="n">shared_array</span> <span class="o">&lt;&lt;</span> <span class="kp">nil</span>
+<span class="k">end</span>
+</code></pre>
+</div>
+
+<h3 id="the-contract">The contract</h3>
+
+<ul>
+  <li>注意： <code class="highlighter-rouge">the mutex is shared among all the threads</code> 互斥在所有线程中共享</li>
+</ul>
+
+<h3 id="making-key-operations-atomic">Making key operations atomic</h3>
+<ul>
+  <li>使用 mutex 互斥所的操作需要具有原子性，不然会出现错误的结果</li>
+</ul>
+
+<h3 id="mutexes-and-memory-visibility">Mutexes and memory visibility</h3>
+
+<ul>
+  <li>mutexes carry an implicit <code class="highlighter-rouge">memory barrier</code>(互斥锁能实现内存屏障)</li>
+  <li>程序在运行时内存实际的访问顺序和程序代码编写的访问顺序不一定一致，这就是内存乱序访问, <code class="highlighter-rouge">Memory barrier</code> 能够让 CPU 或编译器在内存访问上有序</li>
+</ul>
+
+<h3 id="mutex-performance">Mutex performance</h3>
+
+<ul>
+  <li>mutexes inhibit parallelism(互斥锁抑制并行)</li>
+  <li><code class="highlighter-rouge">GIL</code> 和互斥锁的行为一样，在同一时间只能有一个线程执行代码</li>
+  <li>restrict the critical section to be as small as possible, while still preserving the safety of your data（互斥所限制的部分应该尽可能的小，并且同时保证数据安全性）,限制部分更小，那么可以让其它更多的代码并行执行,就是所谓的<code class="highlighter-rouge">finer-grained mutex</code>细粒度互斥锁</li>
+</ul>
+
+<p>… 未完</p>
 ]]></content>
 	</entry>
 	
@@ -396,7 +694,7 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 <p>### Protocol Layers（协议层）</p>
 
 <p><strong>ISO OSI Protocol</strong>
-<img src="./1473431812089.png" alt="Alt text" /></p>
+<img src="/assets/images/network-programming-with-go-golang/1473431812089.png" alt="Alt text" /></p>
 
 <p>每层的功能：
 - <code class="highlighter-rouge">网络层</code>提供交换及路由技术
@@ -407,7 +705,7 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 
 <p><strong>TCP/IP Protocol</strong></p>
 
-<p><img src="./1473431977093.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473431977093.png" alt="Alt text" /></p>
 
 <h3 id="gateways">Gateways（网关）</h3>
 
@@ -426,7 +724,7 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 </ul>
 
 <p>TFTP（普通文件传输协议）将文件从一台计算机移动到另一台上。它使用IP协议上的UDP协议，该协议可通过以太网发送。看起来就像这样：
-<img src="./1473434814430.png" alt="Alt text" /></p>
+<img src="/assets/images/network-programming-with-go-golang/1473434814430.png" alt="Alt text" /></p>
 
 <h3 id="connection-models">Connection Models(连接模型)</h3>
 
@@ -446,11 +744,11 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 - Parlog 能在并发的进程之间，将任意的逻辑数据结构当做消息来发送
 - 消息传递是分布式系统最基本的机制</p>
 
-<p><img src="./1473674193873.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473674193873.png" alt="Alt text" /></p>
 
 <h3 id="distributed-computing-models">Distributed Computing Models(分布式计算模型)</h3>
 
-<p><img src="./1473674216217.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473674216217.png" alt="Alt text" /></p>
 
 <p>考虑分布式系统的组件是否等价,三种模型：
 - 点对点（peer-to-peer）: 若两个组件等价，且均可发起并响应信息
@@ -460,22 +758,27 @@ IO, have this status.(线程当前睡眠状态，阻塞等待一个同步锁，�
 
 <h3 id="clientserver-system">Client/Server System</h3>
 
-<p><img src="./1473674889739.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473674889739.png" alt="Alt text" /></p>
 
 <h3 id="clientserver-application">Client/Server Application</h3>
-<p><img src="./1473674904487.png" alt="Alt text" /></p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473674904487.png" alt="Alt text" /></p>
 
 <h3 id="server-distribution">Server Distribution（服务器分布）</h3>
 
-<p>单一客户端，单个服务器：
-<img src="./1473675214266.png" alt="Alt text" /></p>
+<p>单一客户端，单个服务器：</p>
 
-<p>多个客户端，单一服务器：
-<img src="./1473675235161.png" alt="Alt text" />
-主站只需接收请求并处理一次，而无需将它们传递给其它服务器来处理。当客户端可能并发时，这就是个通用的模型</p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473675214266.png" alt="Alt text" /></p>
 
-<p>单一客户端，多个服务器，例如当业务逻辑服务器从数据库服务器获取信息时
-<img src="./1473675269067.png" alt="Alt text" /></p>
+<p>多个客户端，单一服务器：</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473675235161.png" alt="Alt text" /></p>
+
+<p>主站只需接收请求并处理一次，而无需将它们传递给其它服务器来处理。当客户端可能并发时，这就是个通用的模型</p>
+
+<p>单一客户端，多个服务器，例如当业务逻辑服务器从数据库服务器获取信息时</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473675269067.png" alt="Alt text" /></p>
 
 <h3 id="component-distribution">Component Distribution</h3>
 
@@ -489,37 +792,37 @@ Data access 数据访问</p>
 <strong>应用逻辑组件</strong>负责解释用户的响应，根据应用业务规则，准备查询并管理来自其组件的响应
 <strong>数据访问组件</strong>负责存储并检索数据。这一般是通过数据库进行，不过也不一定</p>
 
-<p><img src="./1473676063281.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473676063281.png" alt="Alt text" /></p>
 
 <p>Example: Distributed Database：
 Gartner第一种分类
-<img src="./1473676645585.png" alt="Alt text" /></p>
+<img src="/assets/images/network-programming-with-go-golang/1473676645585.png" alt="Alt text" /></p>
 
 <p>例如 google map 会下载附近的地图为浏览器中的小型数据库，当用户移动了地图时，可以快速响应</p>
 
 <p>Example: Network File Service 网络文件服务
-<img src="./1473676805222.png" alt="Alt text" /></p>
+<img src="/assets/images/network-programming-with-go-golang/1473676805222.png" alt="Alt text" /></p>
 
 <p>Gartner第二种分类允许远程客户端访问已共享的文件系统
 这类系统的例子：NFS、Microsoft共享和DCE等等。</p>
 
 <p>Example: Web:
-<img src="./1473676919558.png" alt="Alt text" />
+<img src="/assets/images/network-programming-with-go-golang/1473676919558.png" alt="Alt text" />
 Gartner第三种分类的一个例子就是Web上的小型Java应用</p>
 
 <p>Example: Terminal Emulation
-<img src="./1473677181590.png" alt="Alt text" /></p>
+<img src="/assets/images/network-programming-with-go-golang/1473677181590.png" alt="Alt text" /></p>
 
 <p>Gartner第四种分类就是终端仿真。这允许远程系统在本地系统上作为普通的终端：
 Telnet就是最常见的例子。</p>
 
 <p><strong>Three Tier Models</strong>:
 可以有三层、四层甚至多层。下图展示了一些可能的三层模型:
-<img src="./1473677365117.png" alt="Alt text" /></p>
+<img src="/assets/images/network-programming-with-go-golang/1473677365117.png" alt="Alt text" /></p>
 
 <h3 id="middleware-model-">Middleware model 中间件模型</h3>
 
-<p><img src="./1473677961430.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473677961430.png" alt="Alt text" /></p>
 
 <p>中间件示例</p>
 
@@ -546,8 +849,9 @@ Telnet就是最常见的例子。</p>
 </ul>
 
 <h3 id="continuum-of-processing">Continuum of Processing</h3>
-<p>Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据处理。一个更细粒度的分解方式为:
-<img src="./1473678080293.png" alt="Alt text" /></p>
+<p>Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据处理。一个更细粒度的分解方式为:</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473678080293.png" alt="Alt text" /></p>
 
 <h3 id="points-of-failure">Points of Failure</h3>
 
@@ -610,8 +914,9 @@ Telnet就是最常见的例子。</p>
 
 <h3 id="the-tcpip-stack">The TCP/IP stack</h3>
 
-<p>The TCP/IP stack is shorter than the OSI one:
-<img src="./1473773483879.png" alt="Alt text" /></p>
+<p>The TCP/IP stack is shorter than the OSI one:</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473773483879.png" alt="Alt text" /></p>
 
 <ul>
   <li>TCP is a connection-oriented protocol,</li>
@@ -783,6 +1088,23 @@ int select(int maxfd, fd_set *readfds, fd_set *writefds, fe_set *exceptfds, cons
   <li>参数exceptfds指定了被例外条件监控的文件描述符集。</li>
   <li>参数timeout起了定时器的作用：到了指定的时间，无论是否有设备准备好，都返回调用</li>
 </ul>
+
+<h3 id="the-types-conn-packetconn-and-listener">3.9 The types Conn, PacketConn and Listener</h3>
+
+<p>使用  <code class="highlighter-rouge">Dial</code> 可以替代指定类型的 TCP and UDP 的建立连接方法</p>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">func</span><span class="x"> </span><span class="n">Dial</span><span class="p">(</span><span class="n">net</span><span class="p">,</span><span class="x"> </span><span class="n">laddr</span><span class="p">,</span><span class="x"> </span><span class="n">raddr</span><span class="x"> </span><span class="kt">string</span><span class="p">)</span><span class="x"> </span><span class="p">(</span><span class="n">c</span><span class="x"> </span><span class="n">Conn</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="n">os</span><span class="o">.</span><span class="n">Error</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<ul>
+  <li><code class="highlighter-rouge">net</code> 可选：”tcp”, “tcp4” (IPv4-only), “tcp6” (IPv6-only), “udp”, “udp4” (IPv4-only), “udp6” (IPv6-only), “ip”, “ip4” (IPv4-only) and “ip6” IPv6-only)</li>
+  <li>函数返回一个适应的 <code class="highlighter-rouge">Conn</code> 接口</li>
+  <li><code class="highlighter-rouge">raddr</code> 是字符串</li>
+</ul>
+
+<p>IPGetHeadInfo 源代码例子  <code class="highlighter-rouge">chapter03/IPGetHeadInfo.go</code>
+ThreadedIPEchoServer 源代码例子  <code class="highlighter-rouge">chapter03/ThreadedIPEchoServer.go</code></p>
 
 <p>未完。。。。</p>
 ]]></content>
