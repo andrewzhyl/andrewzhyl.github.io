@@ -6,16 +6,6 @@ description: '《Network Programming with Go》学习笔记'
 category: notes
 ---
 
-
-~需要修改。。。。~
-
-
-## 第一章： Architecture(体系结构)
-### Protocol Layers（协议层）
-
-**ISO OSI Protocol**
-![Alt text](/assets/images/network-programming-with-go-golang/1473431812089.png)
-
 ## 第一章： Architecture(体系结构)
 ### Protocol Layers（协议层）
 
