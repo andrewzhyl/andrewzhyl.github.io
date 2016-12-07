@@ -16,7 +16,14 @@ category: notes
 **ISO OSI Protocol**
 ![Alt text](/assets/images/network-programming-with-go-golang/1473431812089.png)
 
+## 第一章： Architecture(体系结构)
+### Protocol Layers（协议层）
+
+**ISO OSI Protocol**
+![Alt text](/assets/images/network-programming-with-go-golang/1473431812089.png)
+
 每层的功能：
+
 - `网络层`提供交换及路由技术
 - `传输层`提供了终端系统之间的数据透明传输，并且负责端到端的错误恢复及流程控制
 - `会话层`用来建立、管理、以及终止应用程序之间的连接
@@ -25,11 +32,12 @@ category: notes
 
 **TCP/IP Protocol**
 
-![Alt text](/assets/images/network-programming-with-go-golang/1473431977093.png)
+![Alt text](/assets/images/network-programming-with-go-golang/1473773483879.png)
 
 ### Gateways（网关）
 
 网关是一个统称，它用于连接起一个或多个网络。
+
 - 其中的`中继器`在物理层面上进行操作，它将信息从一个子网复制到另一个子网上。
 - `桥接`在数据连接层面上进行操作，它在网络之间复制帧。
 - `路由器`在网络层面上进行操作，它不仅在网络之间复制信息，还决定了信息的传输路线。
@@ -38,11 +46,12 @@ category: notes
 ### Packet encapsulation（数据包封装）
 
 - 在OIS或TCP/IP协议栈层与层之间的通信，是通过将数据包从一个层发送到下一个层，最终穿过整个网络的。
--每一层都有必须保持其自身层的管理信息。
--从上层接收到的数据包在向下传递时，会添加头信息。
+- 每一层都有必须保持其自身层的管理信息。
+- 从上层接收到的数据包在向下传递时，会添加头信息。
 - 在接收端，这些头信息会在向上传递时移除。
 
 TFTP（普通文件传输协议）将文件从一台计算机移动到另一台上。它使用IP协议上的UDP协议，该协议可通过以太网发送。看起来就像这样：
+
 ![Alt text](/assets/images/network-programming-with-go-golang/1473434814430.png)
 
 ### Connection Models(连接模型)
@@ -57,6 +66,7 @@ TFTP（普通文件传输协议）将文件从一台计算机移动到另一台�
 ### Communications Models(通信模型)
 
 **Communications Models(消息传递)**
+
 - 并发语言大多使用消息传递的机制，比如 Unix的管道
 - Parlog 能在并发的进程之间，将任意的逻辑数据结构当做消息来发送
 - 消息传递是分布式系统最基本的机制
@@ -66,10 +76,10 @@ TFTP（普通文件传输协议）将文件从一台计算机移动到另一台�
 
 ### Distributed Computing Models(分布式计算模型)
 
-
 ![Alt text](/assets/images/network-programming-with-go-golang/1473674216217.png)
 
 考虑分布式系统的组件是否等价,三种模型：
+
 - 点对点（peer-to-peer）: 若两个组件等价，且均可发起并响应信息
 - 过滤器（filter）:有一个组件将信息传至另一个组件，它在修改该信息后会传至第三个组件。
 例如：中间组件通过SQL从数据库中获取信息，并将其转换为HTML表单提供给第三个组件（它可能是个浏览器）。
@@ -100,7 +110,6 @@ TFTP（普通文件传输协议）将文件从一台计算机移动到另一台�
 
 ![Alt text](/assets/images/network-programming-with-go-golang/1473675269067.png)
 
-
 ### Component Distribution
 
 分解一些应用的一个简单有效的方式就是把它们看做三部分：
@@ -117,23 +126,28 @@ Data access 数据访问
 
 Example: Distributed Database：
 Gartner第一种分类
+
 ![Alt text](/assets/images/network-programming-with-go-golang/1473676645585.png)
 
 例如 google map 会下载附近的地图为浏览器中的小型数据库，当用户移动了地图时，可以快速响应
 
 
 Example: Network File Service 网络文件服务
+
 ![Alt text](/assets/images/network-programming-with-go-golang/1473676805222.png)
 
 Gartner第二种分类允许远程客户端访问已共享的文件系统
 这类系统的例子：NFS、Microsoft共享和DCE等等。
 
 Example: Web:
+
 ![Alt text](/assets/images/network-programming-with-go-golang/1473676919558.png)
+
 Gartner第三种分类的一个例子就是Web上的小型Java应用
 
 
 Example: Terminal Emulation
+
 ![Alt text](/assets/images/network-programming-with-go-golang/1473677181590.png)
 
 Gartner第四种分类就是终端仿真。这允许远程系统在本地系统上作为普通的终端：
@@ -142,6 +156,7 @@ Telnet就是最常见的例子。
 
 **Three Tier Models**:
 可以有三层、四层甚至多层。下图展示了一些可能的三层模型:
+
 ![Alt text](/assets/images/network-programming-with-go-golang/1473677365117.png)
 
 ### Middleware model 中间件模型
@@ -170,6 +185,7 @@ Telnet就是最常见的例子。
 - 终止本地处理和远程处理
 
 ### Continuum of Processing
+
 Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据处理。一个更细粒度的分解方式为:
 
 ![Alt text](/assets/images/network-programming-with-go-golang/1473678080293.png)
@@ -299,6 +315,7 @@ func ResolveIPAddr(net, addr string) (*IPAddr, os.Error)
 - The X Window System often takes ports 6000-6007, both on TCP and UDP.
 
 unix 系统中常用的端口列在 `/etc/services`
+
 `LookupPort` 方法查询整个端口
 ``` go
 func LookupPort(network, service string) (port int, err os.Error)
@@ -318,6 +335,7 @@ type TCPAddr struct {
 ``` go
 func ResolveTCPAddr(net, addr string) (*TCPAddr, os.Error)
 ```
+
 `net` 可选： `tcp`, `tcp4` or `tcp6`
 `addr`:  主机名或 IP 地址，中间是 `:`,后面跟端口号，本机的话，可以简写 `:80`
 
@@ -390,6 +408,7 @@ func (c *UDPConn) WriteToUDP(b []byte, addr *UDPAddr) (n int, err os.Error)
 /* c 函数*/
 int select(int maxfd, fd_set *readfds, fd_set *writefds, fe_set *exceptfds, const struct timeval *timeout);
 ```
+
 - select 的第一个参数是文件描述符集中要被检测的比特数，这个值必须至少比待检测的最大文件描述符大1
 - 参数 readfds 指定了被读监控的文件描述符集
 - 参数 writefds 指定了被写监控的文件描述符集
@@ -411,5 +430,6 @@ func Dial(net, laddr, raddr string) (c Conn, err os.Error)
 
 IPGetHeadInfo 源代码例子  `chapter03/IPGetHeadInfo.go`
 ThreadedIPEchoServer 源代码例子  `chapter03/ThreadedIPEchoServer.go`
+
 
 未完。。。。

@@ -3,7 +3,7 @@
 	<title>Andrew's Blog</title>
 	<link href="http://127.0.0.1/atom.xml" rel="self" />
 	<link href="http://127.0.0.1/" />
-	<updated>2016-12-07T13:31:51+08:00</updated>
+	<updated>2016-12-07T13:41:49+08:00</updated>
 	<id>http://127.0.0.1/</id>
 	<author>
 		<name>andrew</name>
@@ -696,35 +696,48 @@ chapter06/spawning_threads.rb:2:in `initialize': can't create Thread: Resource t
 <p><strong>ISO OSI Protocol</strong>
 <img src="/assets/images/network-programming-with-go-golang/1473431812089.png" alt="Alt text" /></p>
 
-<p>每层的功能：
-- <code class="highlighter-rouge">网络层</code>提供交换及路由技术
-- <code class="highlighter-rouge">传输层</code>提供了终端系统之间的数据透明传输，并且负责端到端的错误恢复及流程控制
-- <code class="highlighter-rouge">会话层</code>用来建立、管理、以及终止应用程序之间的连接
-- <code class="highlighter-rouge">表现层</code>提供数据表现差异的独立性（例如加密）
-- <code class="highlighter-rouge">应用层</code>支持应用程序和用户程序</p>
+<h2 id="architecture-1">第一章： Architecture(体系结构)</h2>
+<p>### Protocol Layers（协议层）</p>
+
+<p><strong>ISO OSI Protocol</strong>
+<img src="/assets/images/network-programming-with-go-golang/1473431812089.png" alt="Alt text" /></p>
+
+<p>每层的功能：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">网络层</code>提供交换及路由技术</li>
+  <li><code class="highlighter-rouge">传输层</code>提供了终端系统之间的数据透明传输，并且负责端到端的错误恢复及流程控制</li>
+  <li><code class="highlighter-rouge">会话层</code>用来建立、管理、以及终止应用程序之间的连接</li>
+  <li><code class="highlighter-rouge">表现层</code>提供数据表现差异的独立性（例如加密）</li>
+  <li><code class="highlighter-rouge">应用层</code>支持应用程序和用户程序</li>
+</ul>
 
 <p><strong>TCP/IP Protocol</strong></p>
 
-<p><img src="/assets/images/network-programming-with-go-golang/1473431977093.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473773483879.png" alt="Alt text" /></p>
 
 <h3 id="gateways">Gateways（网关）</h3>
 
-<p>网关是一个统称，它用于连接起一个或多个网络。
-- 其中的<code class="highlighter-rouge">中继器</code>在物理层面上进行操作，它将信息从一个子网复制到另一个子网上。
-- <code class="highlighter-rouge">桥接</code>在数据连接层面上进行操作，它在网络之间复制帧。
-- <code class="highlighter-rouge">路由器</code>在网络层面上进行操作，它不仅在网络之间复制信息，还决定了信息的传输路线。</p>
+<p>网关是一个统称，它用于连接起一个或多个网络。</p>
+
+<ul>
+  <li>其中的<code class="highlighter-rouge">中继器</code>在物理层面上进行操作，它将信息从一个子网复制到另一个子网上。</li>
+  <li><code class="highlighter-rouge">桥接</code>在数据连接层面上进行操作，它在网络之间复制帧。</li>
+  <li><code class="highlighter-rouge">路由器</code>在网络层面上进行操作，它不仅在网络之间复制信息，还决定了信息的传输路线。</li>
+</ul>
 
 <h3 id="packet-encapsulation">Packet encapsulation（数据包封装）</h3>
 
 <ul>
-  <li>在OIS或TCP/IP协议栈层与层之间的通信，是通过将数据包从一个层发送到下一个层，最终穿过整个网络的。
--每一层都有必须保持其自身层的管理信息。
--从上层接收到的数据包在向下传递时，会添加头信息。</li>
+  <li>在OIS或TCP/IP协议栈层与层之间的通信，是通过将数据包从一个层发送到下一个层，最终穿过整个网络的。</li>
+  <li>每一层都有必须保持其自身层的管理信息。</li>
+  <li>从上层接收到的数据包在向下传递时，会添加头信息。</li>
   <li>在接收端，这些头信息会在向上传递时移除。</li>
 </ul>
 
-<p>TFTP（普通文件传输协议）将文件从一台计算机移动到另一台上。它使用IP协议上的UDP协议，该协议可通过以太网发送。看起来就像这样：
-<img src="/assets/images/network-programming-with-go-golang/1473434814430.png" alt="Alt text" /></p>
+<p>TFTP（普通文件传输协议）将文件从一台计算机移动到另一台上。它使用IP协议上的UDP协议，该协议可通过以太网发送。看起来就像这样：</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473434814430.png" alt="Alt text" /></p>
 
 <h3 id="connection-models">Connection Models(连接模型)</h3>
 
@@ -739,10 +752,13 @@ chapter06/spawning_threads.rb:2:in `initialize': can't create Thread: Resource t
 
 <h3 id="communications-models">Communications Models(通信模型)</h3>
 
-<p><strong>Communications Models(消息传递)</strong>
-- 并发语言大多使用消息传递的机制，比如 Unix的管道
-- Parlog 能在并发的进程之间，将任意的逻辑数据结构当做消息来发送
-- 消息传递是分布式系统最基本的机制</p>
+<p><strong>Communications Models(消息传递)</strong></p>
+
+<ul>
+  <li>并发语言大多使用消息传递的机制，比如 Unix的管道</li>
+  <li>Parlog 能在并发的进程之间，将任意的逻辑数据结构当做消息来发送</li>
+  <li>消息传递是分布式系统最基本的机制</li>
+</ul>
 
 <p><img src="/assets/images/network-programming-with-go-golang/1473674193873.png" alt="Alt text" /></p>
 
@@ -750,11 +766,14 @@ chapter06/spawning_threads.rb:2:in `initialize': can't create Thread: Resource t
 
 <p><img src="/assets/images/network-programming-with-go-golang/1473674216217.png" alt="Alt text" /></p>
 
-<p>考虑分布式系统的组件是否等价,三种模型：
-- 点对点（peer-to-peer）: 若两个组件等价，且均可发起并响应信息
-- 过滤器（filter）:有一个组件将信息传至另一个组件，它在修改该信息后会传至第三个组件。
-例如：中间组件通过SQL从数据库中获取信息，并将其转换为HTML表单提供给第三个组件（它可能是个浏览器）。
-- 客户端-服务器(客户端-服务器): 最常见的就是不对等的情况：客户端向服务器发送请求，然后服务端响应</p>
+<p>考虑分布式系统的组件是否等价,三种模型：</p>
+
+<ul>
+  <li>点对点（peer-to-peer）: 若两个组件等价，且均可发起并响应信息</li>
+  <li>过滤器（filter）:有一个组件将信息传至另一个组件，它在修改该信息后会传至第三个组件。
+例如：中间组件通过SQL从数据库中获取信息，并将其转换为HTML表单提供给第三个组件（它可能是个浏览器）。</li>
+  <li>客户端-服务器(客户端-服务器): 最常见的就是不对等的情况：客户端向服务器发送请求，然后服务端响应</li>
+</ul>
 
 <h3 id="clientserver-system">Client/Server System</h3>
 
@@ -795,30 +814,36 @@ Data access 数据访问</p>
 <p><img src="/assets/images/network-programming-with-go-golang/1473676063281.png" alt="Alt text" /></p>
 
 <p>Example: Distributed Database：
-Gartner第一种分类
-<img src="/assets/images/network-programming-with-go-golang/1473676645585.png" alt="Alt text" /></p>
+Gartner第一种分类</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473676645585.png" alt="Alt text" /></p>
 
 <p>例如 google map 会下载附近的地图为浏览器中的小型数据库，当用户移动了地图时，可以快速响应</p>
 
-<p>Example: Network File Service 网络文件服务
-<img src="/assets/images/network-programming-with-go-golang/1473676805222.png" alt="Alt text" /></p>
+<p>Example: Network File Service 网络文件服务</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473676805222.png" alt="Alt text" /></p>
 
 <p>Gartner第二种分类允许远程客户端访问已共享的文件系统
 这类系统的例子：NFS、Microsoft共享和DCE等等。</p>
 
-<p>Example: Web:
-<img src="/assets/images/network-programming-with-go-golang/1473676919558.png" alt="Alt text" />
-Gartner第三种分类的一个例子就是Web上的小型Java应用</p>
+<p>Example: Web:</p>
 
-<p>Example: Terminal Emulation
-<img src="/assets/images/network-programming-with-go-golang/1473677181590.png" alt="Alt text" /></p>
+<p><img src="/assets/images/network-programming-with-go-golang/1473676919558.png" alt="Alt text" /></p>
+
+<p>Gartner第三种分类的一个例子就是Web上的小型Java应用</p>
+
+<p>Example: Terminal Emulation</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473677181590.png" alt="Alt text" /></p>
 
 <p>Gartner第四种分类就是终端仿真。这允许远程系统在本地系统上作为普通的终端：
 Telnet就是最常见的例子。</p>
 
 <p><strong>Three Tier Models</strong>:
-可以有三层、四层甚至多层。下图展示了一些可能的三层模型:
-<img src="/assets/images/network-programming-with-go-golang/1473677365117.png" alt="Alt text" /></p>
+可以有三层、四层甚至多层。下图展示了一些可能的三层模型:</p>
+
+<p><img src="/assets/images/network-programming-with-go-golang/1473677365117.png" alt="Alt text" /></p>
 
 <h3 id="middleware-model-">Middleware model 中间件模型</h3>
 
@@ -849,6 +874,7 @@ Telnet就是最常见的例子。</p>
 </ul>
 
 <h3 id="continuum-of-processing">Continuum of Processing</h3>
+
 <p>Gartner模型基于将一个应用分解为表现组件、应用逻辑和数据处理。一个更细粒度的分解方式为:</p>
 
 <p><img src="/assets/images/network-programming-with-go-golang/1473678080293.png" alt="Alt text" /></p>
@@ -992,8 +1018,9 @@ func ResolveIPAddr(net, addr string) (*IPAddr, os.Error)
   <li>The X Window System often takes ports 6000-6007, both on TCP and UDP.</li>
 </ul>
 
-<p>unix 系统中常用的端口列在 <code class="highlighter-rouge">/etc/services</code>
-<code class="highlighter-rouge">LookupPort</code> 方法查询整个端口
+<p>unix 系统中常用的端口列在 <code class="highlighter-rouge">/etc/services</code></p>
+
+<p><code class="highlighter-rouge">LookupPort</code> 方法查询整个端口
 <code class="highlighter-rouge">go
 func LookupPort(network, service string) (port int, err os.Error)
 </code></p>
@@ -1011,8 +1038,9 @@ type TCPAddr struct {
 <p><code class="highlighter-rouge">ResolveTCPAddr</code> 创建一个 <code class="highlighter-rouge">TCPAddr</code>
 <code class="highlighter-rouge">go
 func ResolveTCPAddr(net, addr string) (*TCPAddr, os.Error)
-</code>
-<code class="highlighter-rouge">net</code> 可选： <code class="highlighter-rouge">tcp</code>, <code class="highlighter-rouge">tcp4</code> or <code class="highlighter-rouge">tcp6</code>
+</code></p>
+
+<p><code class="highlighter-rouge">net</code> 可选： <code class="highlighter-rouge">tcp</code>, <code class="highlighter-rouge">tcp4</code> or <code class="highlighter-rouge">tcp6</code>
 <code class="highlighter-rouge">addr</code>:  主机名或 IP 地址，中间是 <code class="highlighter-rouge">:</code>,后面跟端口号，本机的话，可以简写 <code class="highlighter-rouge">:80</code></p>
 
 <h3 id="tcp-sockets">3.5 TCP Sockets</h3>
@@ -1081,6 +1109,7 @@ func ResolveTCPAddr(net, addr string) (*TCPAddr, os.Error)
 <pre><code class="language-gcode">/* c 函数*/
 int select(int maxfd, fd_set *readfds, fd_set *writefds, fe_set *exceptfds, const struct timeval *timeout);
 </code></pre>
+
 <ul>
   <li>select 的第一个参数是文件描述符集中要被检测的比特数，这个值必须至少比待检测的最大文件描述符大1</li>
   <li>参数 readfds 指定了被读监控的文件描述符集</li>
