@@ -494,4 +494,68 @@ end
 -  `GIL` 和互斥锁的行为一样，在同一时间只能有一个线程执行代码
 - restrict the critical section to be as small as possible, while still preserving the safety of your data（互斥所限制的部分应该尽可能的小，并且同时保证数据安全性）,限制部分更小，那么可以让其它更多的代码并行执行,就是所谓的`finer-grained mutex`细粒度互斥锁
 
+## 第 10 章: Signaling Threads with Condition Variables
+
+### The API by example
+
+- `ConditionVariable#wait` 会 unlock mutex，并使线程进入 sleep
+-  `ConditionVariable#signal` 发信号后，第一个等待线程会获取 mutex，并且继续执行
+
+代码在：chapter10/xkcd_printer.rb
+
+### Broadcast
+
+- `ConditionVariable#signal`
+
+重开1个正在等待状态变量的线程。重开的线程将尝试ConditionVariable#wait所指的mutex锁。若有等待状态的线程的话，就返回该线程。除此之外将返回nil 。
+
+- `ConditionVariable#broadcast` 
+
+重开所有正在等待状态变量的线程。重开的线程将尝试`ConditionVariable#wait` 所指的 mutex 锁
+
+## 第 11 章: Thread-safe Data Structures
+
+
+- 阻塞队列使用放在共享对象内部的 mutex，而不是全局的，对象共享给各个线程，这个有每个共享对象保证自己的并发读写正确
+- 书中的 `BlockingQueue` 使用 `ConditionVariable`，如果在队列为空的情况下，让线程进入 sleep
+- `Queue` 是 ruby 标准库提供的唯一线程安全的数据结构，它是通过 `require 'thread'` 加载的，它也是阻塞队列
+- ruby 的 `Array` 和 `Hash` 不是线程安全的， Jruby 以及 java 的也不是，在单线程中使用线程安全数据结构会降低性能，但是 java 有替代品
+- 在 ruby 中，要使用线程安全的 Array 和 Hash，可以用  `thread_safe` rubygem 中的 `ThreadSafe::Array` `ThreadSafe::Hash`
+
+## 第 12 章：Writing Thread-safe Code
+
+- Idiomatic Ruby code is most often thread-safe Ruby code
+惯用的(Idiomatic)Ruby 代码往往是线程安全的代码
+- Avoid mutating globals 避免修改全局，全局变量会在所有线程中共享
+  - 任何只有一个共享实例的东西都是全局的。比如：Constants（常量），AST(abstract syntax trees)，类变量，类方法
+  - modifying the AST at runtime is almost always a bad idea, especially when multiple threads are
+involved.（在运行时修改 AST 往往是坏主意，特别是在多线程环境下）
+   - In other words, it's expected that the AST will be modified at startup time(换句话说，AST 的修改最好在程序启动时)
+- Create more objects, rather than sharing one(创建更多对象，而不是共享一个)
+  - **Thread-locals:**
+    多个线程创建多个连接，对于少量的多线程是合适的，但对于并发较高的多线程不太适合，开销过大，改用线程池是比较合适的
+  ``` ruby
+  # Instead of
+   $redis = Redis.new
+   # use
+   Thread.current[:redis] = Redis.new
+  ```
+  -  **Resource pools:**
+  一个线程池将打开多个连接，或者是需要在多线程中共享的资源，当一个线程要使用一个连接时，它会要求连接池拿出一个连接，线程池负责检查连接是否可用并提供给线程使用，保证线程安全，当线程执行完成后，将连接放回连接池内
+  connection_pool rubygem：https://github.com/mperham/connection_pool
+  - **Avoid lazy loading（避免延迟加载）：**
+    `autoload`是延迟并在运行时加载，在 MRI ruby 中不是线程安全的，Jruby 中是线程安全的
+    rails3 中 `autoload`  也不是线程安全的，需要启用 `config.threadsafe!`，在 rails4 中是线程安全
+  - **Prefer data structures over mutexes：**（优先考虑线程安全的数据结构，而不是互斥锁）
+    互斥锁 mutex 是很难用好的，你需要决定很多问题：
+    - 互斥的粒度粗细
+    - 哪些代码应该在关键部分
+    - 会不会引发死锁
+    - 需要一个单个实例锁还是全局锁
+   大多数程序员并不熟悉 mutex，所以使用线程安全的数据结构就可以避免使用互斥锁的诸多顾虑，`you simply don't need tocreate any mutexes in your code.`（你根本不需要在你的代码中创建任何的互斥锁）
+    - **Finding bugs:**
+      尽管你已经遵循所有的最佳实践，但还是会有莫名其妙的 bug 出现，并且可能非常难以去追踪或重现，最好的办法是去阅读源代码
+      最常见的问题就是全局的引用，所以你可以试着用 2 个线程去同时访问，通过这样的实践，问题的原因可能会突然浮现
+
+
 ... 未完
