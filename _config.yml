@@ -3,7 +3,7 @@ email: andrew.zhyl@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   Hello, I'm andrewzhyl, I'm a programmer, contact me with andrew.zhyl@gmail.com.
 baseurl: "/" # the subpath of your site, e.g. /blog
-url: "/" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://andrewzhyl.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: abaiwoleca
 github_username:  andrewzhyl
 
