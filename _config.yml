@@ -1,35 +1,13 @@
-safe: false
-permalink: /posts/:title.html
-exclude:
-  - README.md
+title: Andrew's Blog
+email: andrew.zhyl@gmail.com
+description: >- # this means to ignore newlines until "baseurl:"
+  Hello, I'm andrewzhyl, I'm a programmer, contact me with andrew.zhyl@gmail.com.
+baseurl: "/" # the subpath of your site, e.g. /blog
+url: "/" # the base hostname & protocol for your site, e.g. http://example.com
+twitter_username: abaiwoleca
+github_username:  andrewzhyl
 
-name: Andrew's Blog
-# host: localhost
-desc: "记录一些东西"
-
-custom:
-    category:
-        default: "默认分类"
-        notes: "读书笔记"
-        
-    categories:
-      - name:  default
-        title: "默认分类"
-
-      - name:  notes
-        title: "读书笔记"
-
-    scrollingLoadCount: 3                          # 滚屏自动加载文章数量，“0”为关闭
-
-meta:
-    author:
-        name: andrew
-        email: andrew.zhyl@gmail.com
-    #     disqus: your-disqus-short-name              # Disqus缩略标识
-    #     gcse: 000346898720731947188:13h55x32l0y     # Google自定义搜索标识ID
-    #     github: your-github-account                 # GitHub账号
-    #     gravatar: 1cd8c12591616d8c22aaa624f8c07834  # Gravatar头像标识
-
-    # disqus: disqus.com/embed.js                     # Disqus评论的JS地址
-    gapi: http://www.google.com/jsapi               # Google API地址
-    gravatar: http://en.gravatar.com/avatar/        # Gravatar头像服务器地址
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
