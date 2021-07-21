@@ -3,8 +3,7 @@ layout: page
 title: About Me
 permalink: /about/
 ---
-
-andrew @ 西安，一个自学成才的半吊子程序员的笔记本，最近在看《马克思主义基本原理概论》，非常的喜欢，这方便有指点的可以聊聊
+我是 Andrew, 目前在西安，一个野生程序员的个人笔记本
 
 - 邮件：<andrew.zhyl@gmail.com>
 - twitter：<https://twitter.com/abaiwoleca>
