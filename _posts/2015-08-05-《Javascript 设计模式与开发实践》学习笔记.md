@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "《Javascript 设计模式与开发实践》学习笔记"
-date:   2016-08-05 18:30:00
+date:   2015-08-05
 description: '《Javascript 设计模式与开发实践》学习笔记'
 category: notes
 ---
