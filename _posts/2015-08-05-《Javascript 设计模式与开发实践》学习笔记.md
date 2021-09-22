@@ -6,7 +6,6 @@ description: '《Javascript 设计模式与开发实践》学习笔记'
 category: notes
 ---
 
-
 ## 第 1 章：面向对象的 Javascript
 
 - js 是通过原型委托的方式来实现对象与对象之间的继承

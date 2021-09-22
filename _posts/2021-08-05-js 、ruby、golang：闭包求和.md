@@ -6,7 +6,7 @@ description: 'js 、ruby、golang：闭包求和'
 category: notes
 ---
 
-### js 、ruby、golang：闭包求和
+## 闭包概念介绍
 
 闭包变量的作用域：
 
@@ -23,7 +23,7 @@ category: notes
 - 封装变量：把一些不需要暴露在全局的变量封装成 “私有变量”
 - 延续局部变量的寿命：
 
-**js 版闭包求和**
+## js 版闭包求和
 
 ``` javascript
 var getSum = (function() {
@@ -38,7 +38,7 @@ for( i = 0; i < 10; i++){
 }
 ```
 
-**ruby 版闭包计数器**
+## ruby 版闭包计数器
 
 ruby 中使用 `lambda` 实现
 
@@ -54,7 +54,7 @@ get_sum = addr
 end
 ```
 
-**golang 版闭包求和**
+## golang 版闭包求和
 
 ``` go
 func Adder() func(int) int {
@@ -73,7 +73,7 @@ func main() {
 }
 ```
 
-区别：
+## 三种语言的区别
 
 - js 中可以使用匿名函数，函数可以作为参数和函数值
 - ruby 版本需要借助 `lambda` 实现

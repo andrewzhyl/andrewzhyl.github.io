@@ -6,7 +6,7 @@ description: 'js 、ruby、golang：AOP 实现'
 category: notes
 ---
 
-### 介绍
+## AOP 介绍
 
 AOP(Aspect-Oriented Programming)，中文叫面向切面编程，主要作用是把一些跟核心业务逻辑模块无关的功能抽离出来，这些跟业务逻辑无关的功能通常包括日志统计、安全控制、异常处理等。把这些功能抽离出来，再通过“动态织入”的方式掺入业务逻辑模块中。
 
