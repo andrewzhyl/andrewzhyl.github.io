@@ -6,6 +6,7 @@ description: 'golang pdf 导出实践'
 category: notes
 
 ---
+**温馨提示：仅为个人笔记以免遗忘，不保证代码完整**
 
 Maroto 可以类似与 bootstrap 这样的前端库一样对 pdf 页面布局排版，使用行、列和组件来构建 pdf 文档，也可以支持图片、二维码等
 
@@ -80,7 +81,7 @@ func buildHeading(m pdf.Maroto) {
 		})
 		m.Row(10, func() {
 			m.Col(12, func() {
-				m.Text("小黄鞋大宗物业交易平台", props.Text{
+				m.Text("大宗物业交易平台", props.Text{
 					Size:   12.0,
 					Top:    3.0,
 					Family: "NotoSansSC",
